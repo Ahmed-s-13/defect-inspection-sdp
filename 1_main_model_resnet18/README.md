@@ -84,8 +84,8 @@ data/
     └── model_best.pt    ← the trained main ResNet-18 (45 MB)
 ```
 
-`model_best.pt` and `results/embeddings.npz` (365 MB) are shared outside git (see the
-top-level README). Put them back at those paths to skip retraining.
+`model_best.pt`, `data/work/` and `results/embeddings.npz` are shared as zip files
+outside git. See "Getting the data and trained models" in the top-level README.
 
 ## Setup
 

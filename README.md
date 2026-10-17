@@ -31,20 +31,35 @@ pip install -r requirements.txt
 
 The code picks the device as CUDA, then Apple MPS, then CPU.
 
-## Data and trained models (not in git)
+## Getting the data and trained models
 
 The datasets are about 23 GB, so they are **not** in this repository. GitHub rejects
-files over 100 MB and slows down badly past a few GB.
+files over 100 MB and slows down badly past a few GB. Small outputs (reports, CSV
+tables, figures) **are** in git under each folder's `results/`.
 
-| what | size | where it goes | how to get it |
+Instead, three zip files are shared. Each one is laid out relative to the repo root,
+so you unzip it **inside the cloned repo folder** and every file lands where the code expects it.
+
+| file | size | where to download | what it gives you |
 |---|---|---|---|
-| raw datasets D1–D10 | ~18 GB | `1_main_model_resnet18/data/raw`, `data/src` | `python download.py --get …` (see folder 1 README; needs your own Kaggle/Roboflow keys) |
-| crops, D1 split, hashes | ~3 GB | `1_main_model_resnet18/data/work` | `python prepare.py` (or the team's shared drive copy) |
-| **main model weights** `model_best.pt` | 45 MB | `1_main_model_resnet18/data/work/` | GitHub Release of this repo |
-| D1 embeddings `embeddings.npz` | 365 MB | `1_main_model_resnet18/results/` | `python embed.py`, or the shared drive |
-| healing work files | ~1.4 GB | `2_healing_experiment/work` | re-run steps 1–3 of the healing experiment |
+| `trained_models.zip` | ~75 MB | this repo's **Releases** page (`v1.0-models`) | the main ResNet-18 (`model_best.pt`), the MSRD teacher–student and the healer checkpoints |
+| `main_model_data_work.zip` | ~3.4 GB | team OneDrive folder (link shared privately) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed, run KL and healing steps 2–4 |
+| `D1_raw.zip` | ~0.9 GB | team OneDrive folder | the original D1 photos + labels: needed for the Cropper and healing step 1 |
 
-Small outputs (reports, CSV tables, figures) **are** in git under each folder's `results/`.
+```bash
+git clone https://github.com/<owner>/<repo>.git
+cd <repo>
+# put the downloaded zips in this folder, then:
+unzip trained_models.zip
+unzip main_model_data_work.zip
+unzip D1_raw.zip
+shasum -a 256 -c SHA256SUMS.txt   # optional: check the downloads (file is next to the zips)
+```
+
+The other raw datasets (D2–D10, ~17 GB) are only needed to re-run `prepare.py` from
+scratch. Download them yourself with `1_main_model_resnet18/download.py` and your own
+free Kaggle/Roboflow keys (see that folder's README). The healing experiment's
+`work/` files (~1.4 GB) are not shared; re-create them by running its steps 1–3.
 
 ## API keys
 
