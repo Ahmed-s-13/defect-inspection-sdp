@@ -42,9 +42,9 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 
 | file | size | where to download | what it gives you |
 |---|---|---|---|
-| `trained_models.zip` | ~75 MB | this repo's **Releases** page (`v1.0-models`) | the main ResNet-18 (`model_best.pt`), the MSRD teacher–student and the healer checkpoints |
-| `main_model_data_work.zip` | ~3.4 GB | team OneDrive folder (link shared privately) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed, run KL and healing steps 2–4 |
-| `D1_raw.zip` | ~0.9 GB | team OneDrive folder | the original D1 photos + labels: needed for the Cropper and healing step 1 |
+| `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the main ResNet-18 (`model_best.pt`), the MSRD teacher–student and the healer checkpoints |
+| `main_model_data_work.zip` | 2.8 GB | team OneDrive folder (link shared privately) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed, run KL and healing steps 2–4 |
+| `D1_raw.zip` | 756 MB | team OneDrive folder | the original D1 photos + labels: needed for the Cropper and healing step 1 |
 
 ```bash
 git clone https://github.com/<owner>/<repo>.git
