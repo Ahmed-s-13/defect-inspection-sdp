@@ -24,6 +24,31 @@ in [`findings.md`](findings.md) and the generated report in
 Per-class recall, the confusion matrix and the training curves are in
 [`results/d1_report.md`](results/d1_report.md).
 
+## Quick check: use the trained model without training
+
+After unzipping `trained_models.zip` and `main_model_data_work.zip` (see the top-level README):
+
+```bash
+python evaluate.py      # ~1-2 min: re-tests model_best.pt on D1-test and D1-val
+```
+
+It prints accuracy, macro-F1, per-class recall and the confusion matrix, and checks them
+against `results/d1_report.json`. `OK: results match the original training run` means the
+model, the data and your Python setup are all working.
+
+```bash
+python predict.py photo.jpg --box 375 326 486 411   # defect box in pixels, cut exactly like training
+python predict.py photo.jpg                          # no box: uses the centre square of the image
+python predict.py data/work/crops/D1/                # every image in a folder
+```
+
+Output looks like `aircraft_000933.jpg: CRACK  59.8%   (corrosion 40.2%, dent 0.0%)`.
+Two things to keep in mind:
+- The model was trained on square crops around a defect. With `--box` the input matches
+  training; without it, a wide shot of a whole panel will give unreliable answers.
+- There is **no "no damage" class yet**. The model always names one of the 6 defects,
+  even for a clean surface. Read the answer as "if this is a defect, which one".
+
 ## What is in this folder
 
 | path | what it is |
@@ -35,6 +60,8 @@ Per-class recall, the confusion matrix and the training curves are in
 | `train.py` | step 3+4: leak-free D1 split and **training of the main ResNet-18** |
 | `embed.py` | step 5: 512-d embeddings for every dataset |
 | `shift.py` | step 6: KL divergence (Gaussian + k-NN), figures, `summary.md` |
+| **`evaluate.py`** | **re-test the trained model on D1-test, no training needed** |
+| **`predict.py`** | **classify the defect in any image with the trained model** |
 | **`klshift/cropper.py`** | **the Cropper**: cuts "no damage" patches out of defect photos |
 | **`run_cropper.py`** + **`cropper.yaml`** | runs the Cropper; all its settings are in the YAML |
 | `make_synthetic.py` | tiny fake D1–D5 for a 2-minute pipeline check |

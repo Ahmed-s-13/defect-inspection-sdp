@@ -60,6 +60,14 @@ unzip D1_raw.zip
 shasum -a 256 -c SHA256SUMS.txt   # optional: check the downloads (file is next to the zips)
 ```
 
+Then check that everything works. Nothing needs to be trained; the models in the zip are already trained:
+
+```bash
+cd 1_main_model_resnet18
+python evaluate.py              # should end with "OK: results match the original training run"
+python predict.py data/work/crops/D1/<any crop>.jpg
+```
+
 The other raw datasets (D2–D10, ~17 GB) are only needed to re-run `prepare.py` from
 scratch. Download them yourself with `1_main_model_resnet18/download.py` and your own
 free Kaggle/Roboflow keys (see that folder's README). The healing experiment's
