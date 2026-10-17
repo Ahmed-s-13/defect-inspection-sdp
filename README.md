@@ -9,7 +9,7 @@ which defect it is. Everything here uses public datasets.
 
 | folder | status | what it is |
 |---|---|---|
-| [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | ResNet-18 defect classifier trained on D1 (6 classes), the dataset-shift (KL divergence) analysis across 10 public datasets, and **the Cropper** for "no damage" patches. Most of our data and results live here. |
+| [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | ResNet-18 defect classifier trained on D1 (6 classes) with an **MLP head** on its embeddings (D1-test accuracy 0.901), the dataset-shift (KL divergence) analysis across 10 public datasets, and **the Cropper** for "no damage" patches. Most of our data and results live here. |
 | [`2_healing_experiment/`](2_healing_experiment/) | experiment, in progress | "Heal" defect crops by inpainting to create non-defective training patches. Builds on folders 1 and 3. |
 | [`3_teacher_student_msrd/`](3_teacher_student_msrd/) | support code | MSRD teacher–student anomaly model, used by the healing experiment. |
 | [`4_early_classifiers_archive/`](4_early_classifiers_archive/) | archived | Our first models: plain CNN and SupCon ResNet-18, on smaller Roboflow datasets. |
@@ -60,12 +60,14 @@ unzip D1_raw.zip
 shasum -a 256 -c SHA256SUMS.txt   # optional: check the downloads (file is next to the zips)
 ```
 
-Then check that everything works. Nothing needs to be trained; the models in the zip are already trained:
+Then check that everything works. The ResNet-18 in the zip is already trained; only the small MLP head is built locally (about 40 s):
 
 ```bash
 cd 1_main_model_resnet18
 python evaluate.py              # should end with "OK: results match the original training run"
-python predict.py data/work/crops/D1/<any crop>.jpg
+python train_mlp.py             # ~40 s: builds the MLP head (data/work/mlp_head.pt), not in the zips yet
+python evaluate_mlp.py          # should end with "OK: results match the original MLP training run."
+python predict.py samples/ --compare
 ```
 
 The other raw datasets (D2–D10, ~17 GB) are only needed to re-run `prepare.py` from

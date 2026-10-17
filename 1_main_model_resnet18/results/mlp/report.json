@@ -1,0 +1,471 @@
+{
+  "classes": [
+    "corrosion",
+    "crack",
+    "dent",
+    "missing-head",
+    "paint-peel-off",
+    "scratch"
+  ],
+  "n_train_crops": 20051,
+  "n_train_embeddings": 20051,
+  "n_val": 4293,
+  "n_test": 4293,
+  "knn_k": 5,
+  "knn_weight": 0.5,
+  "args": {
+    "work": "data/work",
+    "results": "results",
+    "out": "results/mlp",
+    "aug_views": 0,
+    "seeds": 5,
+    "epochs": 60,
+    "batch": 512,
+    "lr": 0.001,
+    "wd": 0.01,
+    "hidden": [
+      1024,
+      512,
+      256
+    ],
+    "dropout": 0.5,
+    "in_dropout": 0.2,
+    "noise": 0.5,
+    "label_smoothing": 0.1,
+    "knn": 5,
+    "cpu": false,
+    "seed": 0
+  },
+  "device": "mps",
+  "val": {
+    "accuracy": 0.905427440018635,
+    "macro_f1": 0.8460111060066423,
+    "balanced_accuracy": 0.8387936157067953,
+    "per_class_recall": {
+      "corrosion": 0.7751,
+      "crack": 0.9442,
+      "dent": 0.9544,
+      "missing-head": 0.8852,
+      "paint-peel-off": 0.6977,
+      "scratch": 0.7761
+    },
+    "per_class_precision": {
+      "corrosion": 0.8746,
+      "crack": 0.9101,
+      "dent": 0.9512,
+      "missing-head": 0.9404,
+      "paint-peel-off": 0.6569,
+      "scratch": 0.7959
+    },
+    "confusion_matrix": [
+      [
+        293,
+        39,
+        17,
+        9,
+        17,
+        3
+      ],
+      [
+        8,
+        1235,
+        36,
+        1,
+        17,
+        11
+      ],
+      [
+        11,
+        40,
+        1676,
+        4,
+        14,
+        11
+      ],
+      [
+        0,
+        7,
+        9,
+        347,
+        29,
+        0
+      ],
+      [
+        21,
+        26,
+        10,
+        6,
+        180,
+        15
+      ],
+      [
+        2,
+        10,
+        14,
+        2,
+        17,
+        156
+      ]
+    ]
+  },
+  "val_mlp_only": {
+    "accuracy": 0.9005357558816678,
+    "macro_f1": 0.8397993996220734,
+    "balanced_accuracy": 0.8253595757342248,
+    "per_class_recall": {
+      "corrosion": 0.7646,
+      "crack": 0.9365,
+      "dent": 0.959,
+      "missing-head": 0.8852,
+      "paint-peel-off": 0.6705,
+      "scratch": 0.7363
+    },
+    "per_class_precision": {
+      "corrosion": 0.8679,
+      "crack": 0.9115,
+      "dent": 0.9304,
+      "missing-head": 0.9481,
+      "paint-peel-off": 0.6758,
+      "scratch": 0.8043
+    },
+    "confusion_matrix": [
+      [
+        289,
+        38,
+        24,
+        7,
+        17,
+        3
+      ],
+      [
+        6,
+        1225,
+        51,
+        1,
+        14,
+        11
+      ],
+      [
+        11,
+        39,
+        1684,
+        3,
+        12,
+        7
+      ],
+      [
+        1,
+        7,
+        11,
+        347,
+        26,
+        0
+      ],
+      [
+        23,
+        26,
+        16,
+        5,
+        173,
+        15
+      ],
+      [
+        3,
+        9,
+        24,
+        3,
+        14,
+        148
+      ]
+    ]
+  },
+  "val_resnet_fc": {
+    "accuracy": 0.8870253901700442,
+    "macro_f1": 0.826373189678773,
+    "balanced_accuracy": 0.8319232546071577,
+    "per_class_recall": {
+      "corrosion": 0.7593,
+      "crack": 0.945,
+      "dent": 0.9072,
+      "missing-head": 0.9286,
+      "paint-peel-off": 0.6357,
+      "scratch": 0.8159
+    },
+    "per_class_precision": {
+      "corrosion": 0.795,
+      "crack": 0.876,
+      "dent": 0.966,
+      "missing-head": 0.91,
+      "paint-peel-off": 0.6749,
+      "scratch": 0.7162
+    },
+    "confusion_matrix": [
+      [
+        287,
+        48,
+        8,
+        13,
+        19,
+        3
+      ],
+      [
+        12,
+        1236,
+        30,
+        3,
+        14,
+        13
+      ],
+      [
+        35,
+        72,
+        1593,
+        7,
+        23,
+        26
+      ],
+      [
+        2,
+        7,
+        5,
+        364,
+        13,
+        1
+      ],
+      [
+        23,
+        32,
+        7,
+        10,
+        164,
+        22
+      ],
+      [
+        2,
+        16,
+        6,
+        3,
+        10,
+        164
+      ]
+    ]
+  },
+  "test": {
+    "accuracy": 0.9010016305613789,
+    "macro_f1": 0.8373853977540788,
+    "balanced_accuracy": 0.8316624769436358,
+    "per_class_recall": {
+      "corrosion": 0.7381,
+      "crack": 0.9443,
+      "dent": 0.9413,
+      "missing-head": 0.9694,
+      "paint-peel-off": 0.7004,
+      "scratch": 0.6965
+    },
+    "per_class_precision": {
+      "corrosion": 0.8206,
+      "crack": 0.9029,
+      "dent": 0.9544,
+      "missing-head": 0.8941,
+      "paint-peel-off": 0.75,
+      "scratch": 0.7487
+    },
+    "confusion_matrix": [
+      [
+        279,
+        44,
+        16,
+        28,
+        9,
+        2
+      ],
+      [
+        17,
+        1237,
+        27,
+        6,
+        10,
+        13
+      ],
+      [
+        8,
+        47,
+        1652,
+        8,
+        22,
+        18
+      ],
+      [
+        1,
+        3,
+        2,
+        380,
+        3,
+        3
+      ],
+      [
+        35,
+        10,
+        18,
+        3,
+        180,
+        11
+      ],
+      [
+        0,
+        29,
+        16,
+        0,
+        16,
+        140
+      ]
+    ]
+  },
+  "test_mlp_only": {
+    "accuracy": 0.8951781970649895,
+    "macro_f1": 0.8329927528860918,
+    "balanced_accuracy": 0.8185008882837446,
+    "per_class_recall": {
+      "corrosion": 0.7275,
+      "crack": 0.9313,
+      "dent": 0.9476,
+      "missing-head": 0.9592,
+      "paint-peel-off": 0.6887,
+      "scratch": 0.6567
+    },
+    "per_class_precision": {
+      "corrosion": 0.7971,
+      "crack": 0.8853,
+      "dent": 0.9422,
+      "missing-head": 0.9193,
+      "paint-peel-off": 0.7729,
+      "scratch": 0.7904
+    },
+    "confusion_matrix": [
+      [
+        275,
+        52,
+        24,
+        18,
+        6,
+        3
+      ],
+      [
+        23,
+        1220,
+        38,
+        4,
+        13,
+        12
+      ],
+      [
+        10,
+        48,
+        1663,
+        8,
+        17,
+        9
+      ],
+      [
+        2,
+        3,
+        3,
+        376,
+        5,
+        3
+      ],
+      [
+        32,
+        17,
+        20,
+        3,
+        177,
+        8
+      ],
+      [
+        3,
+        38,
+        17,
+        0,
+        11,
+        132
+      ]
+    ]
+  },
+  "test_resnet_fc": {
+    "accuracy": 0.8795713952946658,
+    "macro_f1": 0.8124525326386863,
+    "balanced_accuracy": 0.8191706161513842,
+    "per_class_recall": {
+      "corrosion": 0.709,
+      "crack": 0.9405,
+      "dent": 0.8986,
+      "missing-head": 0.9668,
+      "paint-peel-off": 0.6887,
+      "scratch": 0.7114
+    },
+    "per_class_precision": {
+      "corrosion": 0.7723,
+      "crack": 0.8688,
+      "dent": 0.9693,
+      "missing-head": 0.8773,
+      "paint-peel-off": 0.7024,
+      "scratch": 0.659
+    },
+    "confusion_matrix": [
+      [
+        268,
+        52,
+        14,
+        33,
+        9,
+        2
+      ],
+      [
+        25,
+        1232,
+        20,
+        5,
+        12,
+        16
+      ],
+      [
+        21,
+        70,
+        1577,
+        11,
+        37,
+        39
+      ],
+      [
+        0,
+        5,
+        2,
+        379,
+        2,
+        4
+      ],
+      [
+        30,
+        23,
+        10,
+        4,
+        177,
+        13
+      ],
+      [
+        3,
+        36,
+        4,
+        0,
+        15,
+        143
+      ]
+    ]
+  },
+  "mcnemar_test": {
+    "only_mlp_right": 144,
+    "only_resnet_right": 52,
+    "p_value": 3.496265972216881e-11
+  }
+}
