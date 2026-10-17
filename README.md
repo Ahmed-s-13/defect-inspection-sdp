@@ -43,8 +43,12 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 | file | size | where to download | what it gives you |
 |---|---|---|---|
 | `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the main ResNet-18 (`model_best.pt`), the MSRD teacher–student and the healer checkpoints |
-| `main_model_data_work.zip` | 2.8 GB | team OneDrive folder (link shared privately) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed, run KL and healing steps 2–4 |
-| `D1_raw.zip` | 756 MB | team OneDrive folder | the original D1 photos + labels: needed for the Cropper and healing step 1 |
+| `main_model_data_work.zip` | 2.8 GB | team shared Google Drive (ask a team member for access) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed, run KL and healing steps 2–4 |
+| `D1_raw.zip` | 756 MB | team shared Google Drive | the original D1 photos + labels: needed for the Cropper and healing step 1 |
+
+Google Drive tips: download each zip on its own rather than the whole folder (Drive would
+wrap them in another zip), and for the 2.8 GB file click **Download anyway** when Drive says
+it can't scan it for viruses.
 
 ```bash
 git clone https://github.com/Ahmed-s-13/defect-inspection-sdp.git
