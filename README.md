@@ -47,8 +47,8 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 | `D1_raw.zip` | 756 MB | team OneDrive folder | the original D1 photos + labels: needed for the Cropper and healing step 1 |
 
 ```bash
-git clone https://github.com/<owner>/<repo>.git
-cd <repo>
+git clone https://github.com/Ahmed-s-13/defect-inspection-sdp.git
+cd defect-inspection-sdp
 # put the downloaded zips in this folder, then:
 unzip trained_models.zip
 unzip main_model_data_work.zip
