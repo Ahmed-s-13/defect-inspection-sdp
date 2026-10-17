@@ -1,0 +1,8 @@
+cls,images,distinct_photos,extra_copies,extra_share,images_with_a_copy,boxes
+dent,6909,2584,4325,62.6%,5716,11701
+crack,6259,2390,3869,61.8%,5049,8729
+corrosion,1267,594,673,53.1%,1085,2522
+missing-head,835,425,410,49.1%,742,2614
+paint-peel-off,821,419,402,49.0%,719,1730
+scratch,490,359,131,26.7%,299,1341
+ALL D1 (each image once),14760,5581,9179,62.2%,12209,28637

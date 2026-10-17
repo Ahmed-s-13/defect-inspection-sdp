@@ -1,0 +1,6 @@
+version,dataset,d1_class,estimator,crops,d1_crops,n,k,sym_mean,sym_std,class_noise_floor,note
+all,D5,Dent,gaussian,608,1327,357.0,16.0,1.2025855427105685,0.10817548712869027,0.4328402989801655,
+all,D5,Dent,knn,608,1327,357.0,16.0,0.41214580412318036,0.04488106109075351,0.012562133765715366,
+all,D5,Missing-Head,,947,376,,,,,,"D5: 335, D1 half: 38"
+dedup,D5,Dent,,143,1327,,,,,,"D5: 51, D1 half: 357"
+dedup,D5,Missing-Head,,748,376,,,,,,"D5: 207, D1 half: 38"

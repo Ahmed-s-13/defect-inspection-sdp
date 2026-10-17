@@ -1,0 +1,85 @@
+{
+  "best_epoch": 13,
+  "classes": [
+    "corrosion",
+    "crack",
+    "dent",
+    "missing-head",
+    "paint-peel-off",
+    "scratch"
+  ],
+  "n_train": 20051,
+  "n_val": 4293,
+  "n_test": 4293,
+  "test_accuracy": 0.8795713952946658,
+  "test_macro_f1": 0.8124525326386863,
+  "test_balanced_accuracy": 0.8191706161513842,
+  "test_per_class_recall": {
+    "corrosion": 0.709,
+    "crack": 0.9405,
+    "dent": 0.8986,
+    "missing-head": 0.9668,
+    "paint-peel-off": 0.6887,
+    "scratch": 0.7114
+  },
+  "test_support": {
+    "corrosion": 378,
+    "crack": 1310,
+    "dent": 1755,
+    "missing-head": 392,
+    "paint-peel-off": 257,
+    "scratch": 201
+  },
+  "train_macro_f1_no_aug": 0.9387426593344012,
+  "val_macro_f1": 0.826373189678773,
+  "confusion_matrix": [
+    [
+      268,
+      52,
+      14,
+      33,
+      9,
+      2
+    ],
+    [
+      25,
+      1232,
+      20,
+      5,
+      12,
+      16
+    ],
+    [
+      21,
+      70,
+      1577,
+      11,
+      37,
+      39
+    ],
+    [
+      0,
+      5,
+      2,
+      379,
+      2,
+      4
+    ],
+    [
+      30,
+      23,
+      10,
+      4,
+      177,
+      13
+    ],
+    [
+      3,
+      36,
+      4,
+      0,
+      15,
+      143
+    ]
+  ]
+}

@@ -1,0 +1,70 @@
+teacher resnet18, trainable 3.2 M, 18977 train clean patches, 1186 steps/epoch
+epoch  1 | L_KD 0.4055 | L_Recon 0.2180 | val AUROC 0.6244 | 390s
+epoch  2 | L_KD 0.2788 | L_Recon 0.1527 | val AUROC 0.6063 | 380s
+epoch  3 | L_KD 0.2455 | L_Recon 0.1318 | val AUROC 0.6241 | 367s
+epoch  4 | L_KD 0.2331 | L_Recon 0.1220 | val AUROC 0.6379 | 393s
+epoch  5 | L_KD 0.2214 | L_Recon 0.1156 | val AUROC 0.6250 | 359s
+epoch  6 | L_KD 0.2122 | L_Recon 0.1091 | val AUROC 0.6301 | 328s
+epoch  7 | L_KD 0.2060 | L_Recon 0.1010 | val AUROC 0.6171 | 327s
+epoch  8 | L_KD 0.2005 | L_Recon 0.0976 | val AUROC 0.6154 | 327s
+epoch  9 | L_KD 0.1969 | L_Recon 0.0945 | val AUROC 0.6206 | 327s
+epoch 10 | L_KD 0.1925 | L_Recon 0.0926 | val AUROC 0.6066 | 342s
+epoch 11 | L_KD 0.1933 | L_Recon 0.0925 | val AUROC 0.6218 | 379s
+epoch 12 | L_KD 0.1882 | L_Recon 0.0902 | val AUROC 0.6306 | 748s
+epoch 13 | L_KD 0.1870 | L_Recon 0.0888 | val AUROC 0.6083 | 494s
+epoch 14 | L_KD 0.1843 | L_Recon 0.0867 | val AUROC 0.6312 | 394s
+epoch 15 | L_KD 0.1826 | L_Recon 0.0860 | val AUROC 0.6303 | 359s
+epoch 16 | L_KD 0.1809 | L_Recon 0.0838 | val AUROC 0.6272 | 353s
+epoch 17 | L_KD 0.1801 | L_Recon 0.0832 | val AUROC 0.6100 | 338s
+epoch 18 | L_KD 0.1786 | L_Recon 0.0819 | val AUROC 0.6326 | 335s
+epoch 19 | L_KD 0.1812 | L_Recon 0.0824 | val AUROC 0.6260 | 334s
+epoch 20 | L_KD 0.1768 | L_Recon 0.0802 | val AUROC 0.6159 | 335s
+epoch 21 | L_KD 0.1760 | L_Recon 0.0800 | val AUROC 0.6267 | 335s
+epoch 22 | L_KD 0.1749 | L_Recon 0.0783 | val AUROC 0.6192 | 335s
+epoch 23 | L_KD 0.1735 | L_Recon 0.0777 | val AUROC 0.6129 | 335s
+epoch 24 | L_KD 0.1737 | L_Recon 0.0778 | val AUROC 0.6511 | 334s
+epoch 25 | L_KD 0.1719 | L_Recon 0.0763 | val AUROC 0.6336 | 334s
+epoch 26 | L_KD 0.1713 | L_Recon 0.0760 | val AUROC 0.6278 | 335s
+epoch 27 | L_KD 0.1711 | L_Recon 0.0756 | val AUROC 0.6458 | 335s
+epoch 28 | L_KD 0.1705 | L_Recon 0.0759 | val AUROC 0.6384 | 335s
+epoch 29 | L_KD 0.1692 | L_Recon 0.0744 | val AUROC 0.6366 | 334s
+epoch 30 | L_KD 0.1694 | L_Recon 0.0743 | val AUROC 0.6178 | 332s
+# Step 2: teacher-student (MSRD) baseline
+
+`msrd_anomaly.py` unchanged; teacher `resnet18` (ImageNet, frozen), 224 px, batch 16, Adam lr 0.005, c = 0.9, seed 0. Trained on D1-train clean patches only (unfiltered), 30 epochs at about 5.6 min/epoch; checkpoint picked by D1-val image AUROC (epoch 24).
+
+| metric | D1-val | D1-test | D1-test, filtered clean* |
+|---|---|---|---|
+| image AUROC (clean vs defect) | 0.628 | 0.621 | 0.652 |
+| specificity @ 99% defect recall | 0.094 | 0.093 | 0.098 |
+| specificity @ 95% defect recall | 0.183 | 0.181 | 0.191 |
+| pixel AUROC, box vs rest (all patches) | 0.669 | 0.664 | 0.667 |
+| pixel AUROC, box vs rest (inside defect crops) | 0.637 | 0.633 | 0.633 |
+| pointing game (map max inside box) | 0.550 | 0.540 | 0.540 |
+| share of map mass inside box | 0.363 | 0.357 | 0.357 |
+| share of crop area that is box (chance level) | 0.312 | 0.307 | 0.307 |
+| n clean / n defect | 4114 / 4293 | 4120 / 4293 | 3914 / 4293 |
+
+*The filter drops the clean patches this same model scores highest, so this column flatters the baseline. Use the unfiltered column as the baseline.
+
+| defect class | D1-test AUROC vs clean |
+|---|---|
+| corrosion | 0.655 |
+| crack | 0.714 |
+| dent | 0.593 |
+| missing-head | 0.506 |
+| paint-peel-off | 0.568 |
+| scratch | 0.479 |
+
+Pixel metrics are rough: boxes are not masks, and maps/masks are average-pooled to 56x56.
+
+Clean-set filter: dropped the top 5% per split by TS score ({'train': 949, 'val': 206, 'test': 206}); see `step2_dropped_clean.png`.
+
+![curves](step2_training_curves.png)
+
+![hist](step2_score_hist.png)
+
+![maps](step2_anomaly_maps.png)
+
+![dropped](step2_dropped_clean.png)
+

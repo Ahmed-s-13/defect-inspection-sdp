@@ -1,0 +1,14 @@
+{
+  "photos": 14760,
+  "photos_with_defect_boxes": 14615,
+  "squares_requested": 116920,
+  "step1_2_proposed_clear_of_defects": 59170,
+  "step3_rejected_not_surface": 21856,
+  "step4_rejected_maybe_damage": 0,
+  "passed_but_over_per_photo_limit": 19591,
+  "accepted": 17723,
+  "photos_with_a_patch": 9612,
+  "surface_score_median_on_defect_crops": 0.865,
+  "defect_crops_passing_surface_threshold": 0.694,
+  "damage_score_auc_defect_vs_accepted": 0.649
+}

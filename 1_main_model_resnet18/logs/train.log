@@ -1,0 +1,51 @@
+D1 split (groups / images / crops):
+  train   3854 groups  10293 images  20051 crops
+  val      830 groups   2194 images   4293 crops
+  test     830 groups   2128 images   4293 crops
+  multi-image groups: 2978
+split           test  train   val
+cls                              
+corrosion        378   1766   378
+crack           1310   6111  1308
+dent            1755   8190  1756
+missing-head     392   1830   392
+paint-peel-off   257   1215   258
+scratch          201    939   201
+class weights: {'corrosion': 1.89, 'crack': 0.55, 'dent': 0.41, 'missing-head': 1.83, 'paint-peel-off': 2.75, 'scratch': 3.56}
+training on mps: 20051 train / 4293 val crops
+epoch  1  loss 0.7866  train-acc(aug) 0.706  val macro-F1 0.6721  130s
+  -> about 2.2 min per epoch; max 30 epochs = up to 1.1 h (early stopping usually ends sooner)
+epoch  2  loss 0.5078  train-acc(aug) 0.824  val macro-F1 0.7093  109s
+epoch  3  loss 0.4230  train-acc(aug) 0.852  val macro-F1 0.7392  105s
+epoch  4  loss 0.3654  train-acc(aug) 0.875  val macro-F1 0.7641  109s
+epoch  5  loss 0.3202  train-acc(aug) 0.890  val macro-F1 0.7633  110s
+epoch  6  loss 0.2893  train-acc(aug) 0.901  val macro-F1 0.7464  104s
+epoch  7  loss 0.2644  train-acc(aug) 0.909  val macro-F1 0.7476  102s
+epoch  8  loss 0.2534  train-acc(aug) 0.912  val macro-F1 0.7749  102s
+epoch  9  loss 0.2255  train-acc(aug) 0.924  val macro-F1 0.7855  101s
+epoch 10  loss 0.2129  train-acc(aug) 0.925  val macro-F1 0.7745  102s
+epoch 11  loss 0.2088  train-acc(aug) 0.928  val macro-F1 0.7849  101s
+epoch 12  loss 0.2065  train-acc(aug) 0.930  val macro-F1 0.7932  102s
+epoch 13  loss 0.1706  train-acc(aug) 0.941  val macro-F1 0.8264  102s
+epoch 14  loss 0.1780  train-acc(aug) 0.940  val macro-F1 0.7952  102s
+epoch 15  loss 0.1796  train-acc(aug) 0.937  val macro-F1 0.7977  102s
+epoch 16  loss 0.1589  train-acc(aug) 0.945  val macro-F1 0.7947  102s
+epoch 17  loss 0.1618  train-acc(aug) 0.944  val macro-F1 0.8087  102s
+epoch 18  loss 0.1591  train-acc(aug) 0.942  val macro-F1 0.8146  104s
+early stop after epoch 18
+| metric | value |
+|---|---|
+| test accuracy | 0.8796 |
+| test macro-F1 | 0.8125 |
+| test balanced accuracy | 0.8192 |
+| val macro-F1 | 0.8264 |
+| train macro-F1 (no augmentation, 5000 crops) | 0.9387 |
+
+| class | test recall | test crops |
+|---|---|---|
+| corrosion | 0.7090 | 378 |
+| crack | 0.9405 | 1310 |
+| dent | 0.8986 | 1755 |
+| missing-head | 0.9668 | 392 |
+| paint-peel-off | 0.6887 | 257 |
+| scratch | 0.7114 | 201 |

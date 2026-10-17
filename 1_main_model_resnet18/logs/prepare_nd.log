@@ -1,0 +1,24 @@
+[D6] 10000 images, 10000 crops, 0 unreadable, classes: {'aircraft': 10000}
+[D7] 13208 images, 13607 crops, 0 unreadable, classes: {'B737': 3193, 'A320 family': 2116, 'E175': 1081, 'B747': 789, 'B777': 767, 'A380': 758, 'B787': 734, 'B767 family': 731, 'A350': 480, 'A330': 392, 'C-17': 379, 'A300': 344, 'B757': 344, 'F-35': 182, 'Airbus H family': 159, 'PA-18': 155, 'A340': 123, 'UH-60 family': 117, 'F-5': 109, 'MD-11': 97, 'Cessna high-wing': 96, 'ATR 42 - 72': 79, 'Robinson R series': 77, 'Learjet series': 54, 'Piper PA-28 series': 54, 'Dassault Falcon 7X': 37, 'Beechcraft King Air Series': 34, 'Bombardier CRJ series': 29, 'Bombardier Challenger series': 25, 'Cessna 680': 25, 'Embraer Phenom Series': 17, 'A220': 15, 'Beechcraft Bonanza series': 8, 'KC-135': 7}
+[D8] 3188 images, 3470 crops, 0 unreadable, classes: {'Aircraft': 3470}
+[D9] 3071 images, 4133 crops, 0 unreadable, classes: {'aircraft': 4133}
+[D6p] 10000 images, 19998 crops, 0 unreadable, classes: {'no-damage': 19998}
+[D7p] 13208 images, 25640 crops, 0 unreadable, classes: {'no-damage': 25640}
+[D8p] 3188 images, 5968 crops, 0 unreadable, classes: {'no-damage': 5968}
+[D9p] 3071 images, 7488 crops, 0 unreadable, classes: {'no-damage': 7488}
+[D1nd] 14760 images, 19071 crops, 0 unreadable, classes: {'no-damage': 19071}
+dataset  images  crops  images_without_boxes  skipped_small_boxes  unreadable  median_w  median_h  min_side  max_side  distinct_sizes most_common_size  median_aspect  square_share  median_crop_side                              shipped_splits
+     D1   14760  28637                   145                 1848           0       640       640       286      1240              42          640x640          1.000         0.805               160 {'train': 11808, 'test': 1476, 'val': 1476}
+   D1nd   14760  19071                  4715                 1848           0       640       640       286      1240              42          640x640          1.000         0.805               145 {'train': 11808, 'test': 1476, 'val': 1476}
+     D2    1218   1974                    14                    0           0      3000      3000       168      4608              84        3000x3000          1.000         0.587               648                             {'train': 1218}
+     D3    2179   3716                     2                    0           0       640       640       640       640               1          640x640          1.000         1.000               176    {'train': 1905, 'val': 138, 'test': 136}
+     D4    3601  11872                     5                  109           0       640       640       640       640               1          640x640          1.000         1.000                79    {'train': 2893, 'val': 362, 'test': 346}
+     D5    6803  11663                     7                  123           0       640       640       640       640               1          640x640          1.000         1.000               166    {'train': 5855, 'val': 598, 'test': 350}
+     D6   10000  10000                     0                    0           0      1024       679       393      1600            1220         1024x675          1.515         0.000               678  {'train': 3334, 'test': 3333, 'val': 3333}
+    D6p   10000  19998                     1                    0           0      1024       679       393      1600            1220         1024x675          1.515         0.000               167  {'train': 3334, 'test': 3333, 'val': 3333}
+     D7   13208  13607                   286                   27           0       880       495       268       880             182          880x495          1.778         0.000               494  {'train': 11658, 'val': 1036, 'test': 514}
+    D7p   13208  25640                   913                   27           0       880       495       268       880             182          880x495          1.778         0.000                92  {'train': 11658, 'val': 1036, 'test': 514}
+     D8    3188   3470                     0                    5           0       420       280       112      8256             647          420x280          1.500         0.002               280                 {'train': 2550, 'val': 638}
+    D8p    3188   5968                   223                    5           0       420       280       112      8256             647          420x280          1.500         0.002                71                 {'train': 2550, 'val': 638}
+     D9    3071   4133                     0                    0           0      1024       683       260      7019             421         1024x683          1.499         0.016               682                  {'test': 2345, 'val': 726}
+    D9p    3071   7488                    22                    0           0      1024       683       260      7019             421         1024x683          1.499         0.016               151                  {'test': 2345, 'val': 726}

@@ -1,0 +1,7 @@
+extracting 19224 crops on mps ...
+               crops  rep_crops
+dataset split                  
+D1nc    test    2903       1130
+        train  13388       5143
+        val     2933       1070
+added 19224 embeddings to results/embeddings.npz (189181 kept from before)

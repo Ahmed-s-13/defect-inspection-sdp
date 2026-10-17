@@ -1,0 +1,24 @@
+# Python 3.13. Versions are the ones the results were produced with.
+torch==2.14.0
+torchvision==0.29.0
+numpy==2.5.3
+pandas==3.0.6
+scikit-learn==1.9.1
+scipy==1.18.1
+matplotlib==3.11.2
+pillow==12.3.0
+PyYAML==6.0.3
+tqdm
+certifi
+
+# 1_main_model_resnet18
+ImageHash==4.3.2          # duplicate detection (overlap.py)
+umap-learn==0.5.12        # one figure in shift.py
+open_clip_torch==3.3.0    # the Cropper (CLIP surface check)
+
+# downloading datasets (only needed for download.py / prepare_data.py)
+roboflow==1.7.1
+kaggle==2.2.4
+
+# 4_early_classifiers_archive
+tabulate==0.10.0

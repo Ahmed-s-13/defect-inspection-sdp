@@ -1,0 +1,36 @@
+extracting 189181 crops on mps ...
+               crops  in_d1  in_d1_train  rep_crops  clusters
+dataset split                                                
+D1      test    4293   4293            0       1889       830
+        train  20051  20051        20051       8436      3854
+        val     4293   4293            0       1771       830
+D10     all    12830      0            0       2038      1019
+D10a    all     7320      0            0       1100       550
+D10n    all     5510      0            0       1056       528
+D1nd    test    2874   2874            0       1132       601
+        train  13306  13306        13306       5091      2723
+        val     2891   2891            0       1059       562
+D2      all     1974   1936         1348       1938      1173
+D4      all    11872     84           41      11466      3437
+D5      all    11663   8975         6575       3122      1531
+D6      all    10000      3            3      10000     10000
+D6p     all    19998      6            6      19998      9999
+D7      all    13607     65           52       5670      5372
+D7p     all    25640    114           88      10830      5184
+D8      all     3470      0            0       3470      3188
+D8p     all     5968      0            0       5968      2965
+D9      all     4133      1            0       4133      3071
+D9p     all     7488      2            0       7488      3049
+  corruption gaussian_noise severity 1 (8586 crops)
+  corruption gaussian_noise severity 2 (8586 crops)
+  corruption gaussian_noise severity 3 (8586 crops)
+  corruption blur severity 1 (8586 crops)
+  corruption blur severity 2 (8586 crops)
+  corruption blur severity 3 (8586 crops)
+  corruption low_contrast severity 1 (8586 crops)
+  corruption low_contrast severity 2 (8586 crops)
+  corruption low_contrast severity 3 (8586 crops)
+  corruption jpeg severity 1 (8586 crops)
+  corruption jpeg severity 2 (8586 crops)
+  corruption jpeg severity 3 (8586 crops)
+saved results/embeddings.npz and data/work/embeddings_corrupt.npz

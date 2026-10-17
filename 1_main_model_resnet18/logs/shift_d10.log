@@ -1,0 +1,7 @@
+<venv>/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+106991 of 189181 embeddings kept (3569 exact duplicates; one image per near-copy cluster)
+PCA variance kept: {8: 0.702, 16: 0.793, 32: 0.863, 64: 0.915}
+[all] n = 528; eligible: ['D1', 'D5', 'D10n', 'D10a']; too few: []
+[dedup] n = 505; eligible: ['D1', 'D5', 'D10n', 'D10a']; too few: []
+wrote results/d10/summary.md

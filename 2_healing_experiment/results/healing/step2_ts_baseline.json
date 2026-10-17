@@ -1,0 +1,70 @@
+{
+  "checkpoint": "work/ts/msrd_resnet18_best.pt",
+  "best_epoch": 24,
+  "backbone": "resnet18",
+  "val": {
+    "n_clean": 4114,
+    "n_defect": 4293,
+    "image_AUROC": 0.6281084027191046,
+    "spec_at_99_recall": 0.0935828877005348,
+    "spec_at_95_recall": 0.18303354399611083,
+    "per_class_AUROC": {
+      "corrosion": 0.6218731753491111,
+      "crack": 0.7100146772637329,
+      "dent": 0.6130263293404488,
+      "missing-head": 0.5455134533152104,
+      "paint-peel-off": 0.584188326493388,
+      "scratch": 0.45604984315176667
+    },
+    "pixel_AUROC_all": 0.669339970638986,
+    "pixel_AUROC_within_defect_crops": 0.6370576928735167,
+    "pointing_game": 0.5501979967388773,
+    "map_mass_in_box": 0.3633615970611572,
+    "box_area_share": 0.31236184201143774
+  },
+  "test": {
+    "n_clean": 4120,
+    "n_defect": 4293,
+    "image_AUROC": 0.6207529925663589,
+    "spec_at_99_recall": 0.09296116504854368,
+    "spec_at_95_recall": 0.18131067961165048,
+    "per_class_AUROC": {
+      "corrosion": 0.6548463425283814,
+      "crack": 0.7143205736307715,
+      "dent": 0.5929908997870164,
+      "missing-head": 0.5062952001188825,
+      "paint-peel-off": 0.568345547958143,
+      "scratch": 0.4794486306332416
+    },
+    "pixel_AUROC_all": 0.6642813068143757,
+    "pixel_AUROC_within_defect_crops": 0.6333527328693644,
+    "pointing_game": 0.5399487537852318,
+    "map_mass_in_box": 0.35671958327293396,
+    "box_area_share": 0.30744698298606654
+  },
+  "test_filtered_clean": {
+    "n_clean": 3914,
+    "n_defect": 4293,
+    "image_AUROC": 0.6519939055402783,
+    "spec_at_99_recall": 0.09785385794583545,
+    "spec_at_95_recall": 0.19085334695963208,
+    "per_class_AUROC": {
+      "corrosion": 0.6888509704682417,
+      "crack": 0.7506886611771406,
+      "dent": 0.62291678495051,
+      "missing-head": 0.5294664365490703,
+      "paint-peel-off": 0.5965256914716999,
+      "scratch": 0.5032095526455611
+    },
+    "pixel_AUROC_all": 0.6667737445078248,
+    "pixel_AUROC_within_defect_crops": 0.6333527328693644,
+    "pointing_game": 0.5399487537852318,
+    "map_mass_in_box": 0.35671958327293396,
+    "box_area_share": 0.30744698298606654
+  },
+  "dropped_per_split": {
+    "train": 949,
+    "val": 206,
+    "test": 206
+  }
+}

@@ -1,0 +1,41 @@
+# Settings for the Cropper (klshift/cropper.py). Every value here is also the code default.
+candidates_per_image: 8      # squares proposed per photo (step 1)
+keep_per_image: 2            # squares kept per photo, best surface score first
+margin: 0.25                 # keep-out around each defect box, fraction of box width/height per side (step 2)
+min_side: 32                 # px; smaller squares are skipped
+max_tries: 200               # random placements tried per photo
+
+# Step 3: CLIP zero-shot "is this aircraft skin?"
+clip_model: ViT-B-32
+clip_pretrained: laion2b_s34b_b79k
+surface_prompts:
+  - a close-up photo of an aircraft's metal skin
+  - a close-up photo of a painted metal panel
+  - a close-up photo of an airplane fuselage surface with rivets
+  - a close-up photo of an aircraft wing surface
+other_prompts:
+  - a photo of grass
+  - a photo of the sky
+  - a photo of trees and leaves
+  - a photo of the ground
+  - a photo of a concrete floor
+  - a photo of asphalt
+  - a photo of a person
+  - a photo of a building
+calibrate_keep: 0.90         # set the threshold so 90% of this dataset's defect crops (always aircraft skin) pass
+surface_threshold: 0.5       # fixed threshold, used only if calibrate_keep is null
+
+# Step 4: CLIP zero-shot "does this look damaged?" (weak; recorded, not used to filter while null)
+damage_prompts:
+  - a close-up photo of a crack in metal
+  - a close-up photo of a dent in a metal panel
+  - a close-up photo of corrosion on metal
+  - a close-up photo of a scratch on metal
+  - a close-up photo of peeling paint
+  - a close-up photo of a missing rivet
+clean_prompts:
+  - a close-up photo of clean undamaged metal
+  - a close-up photo of a smooth intact painted panel
+damage_threshold: null
+
+seed: 0
