@@ -1,8 +1,8 @@
 # ---- Data: too big for git (about 23 GB). Rebuild with the download/prepare scripts.
 1_main_model_resnet18/data/
 1_main_model_resnet18/synthetic/
-2_healing_experiment/work/
 4_early_classifiers_archive/data/
+2_healing_experiment/work/
 4_early_classifiers_archive/runs/
 
 # ---- Trained weights and large arrays: shared outside git (see README "Data and trained models")
@@ -37,3 +37,7 @@ CLAUDE.md
 1_main_model_resnet18/experiments/d1_sscd_grouped/reports/grouping_cache/
 1_main_model_resnet18/experiments/d1_sscd_grouped/reports/*.npy
 1_main_model_resnet18/experiments/d1_sscd_grouped/reports/neighbors.csv
+
+# Portable local dataset handoff (bulk files)
+handoffs/d1_sscd_grouped_mac/data/
+handoffs/d1_sscd_grouped_mac/models/

@@ -88,7 +88,7 @@ Evaluate or predict after training:
 
 Prediction automatically uses the MLP ensemble + kNN **if its matching checkpoint exists**. Otherwise it uses the ResNet-18 linear classifier and prints a note. `--resnet-only` explicitly selects the linear classifier.
 
-A first training attempt was interrupted before any completed epoch or trained checkpoint. The data-loading adjustment is prepared; training has not yet been restarted here. The readiness check performs one disposable training batch and saves no trained model. Old reported accuracy is not a result for this new split.
+The earlier attempt was interrupted. The current detached ResNet-18 run is documented in [reports/resnet18_run/](reports/resnet18_run/README.md); consult status.json there for its current state. The readiness check performs one disposable training batch and saves no trained model. Old reported accuracy is not a result for this new split.
 
 ## Re-run SSCD work
 

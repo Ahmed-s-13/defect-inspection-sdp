@@ -2,12 +2,16 @@
 
 ## Current D1 grouping work — 22 October 2026
 
+<!-- SSCD_RESNET_RUN_START -->
+**ResNet-18 training and evaluation completed.** [Overall and per-class results](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/resnet18_run/README.md), including both ordinary crop metrics and equal-source-family metrics. [Run status](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/resnet18_run/status.json).
+<!-- SSCD_RESNET_RUN_END -->
+
 The primary SSCD/grouped-data experiment is now in **[1_main_model_resnet18/experiments/d1_sscd_grouped/](1_main_model_resnet18/experiments/d1_sscd_grouped/README.md)**. It contains the runnable code, local data, frozen split, model integration, audits and progress status.
 
 - [Estimated unique sources and copies, including per class](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/unique_sources/README.md): **1,691 estimated source families; 13,069 excess copies (88.54%)**. This is a matching-based estimate, not verified synthetic-augmentation provenance.
 - [Grouped model instructions](1_main_model_resnet18/experiments/d1_sscd_grouped/main_model/README.md): ResNet-18, with an optional MLP/kNN head. SSCD uses a separate ResNet-50. YOLO is the annotation format only.
 - [Frozen portable manifests](1_main_model_resnet18/experiments/d1_sscd_grouped/manifests/README.md): 10,330 / 2,216 / 2,214 raw images and 20,046 / 4,295 / 4,296 usable crops in train/val/test.
-- Training status: first attempt interrupted before a completed epoch/checkpoint. **No new grouped-split accuracy is available yet.**
+- Current training status and results are recorded in the run section above.
 
 <!-- SSCD_COPY_ESTIMATES_START -->
 ## D1 SSCD augmentation/copy estimates
@@ -133,3 +137,7 @@ git-ignored. Never paste a key into a script, notebook or README.
 
 D1 (Kaggle Aircraft_dataset) has an unknown license and is assembled from other
 sources. Some result figures show crops from it. Check this before making the repo public.
+
+## Portable Mac handoff
+
+[Mac handoff instructions](handoffs/d1_sscd_grouped_mac/README.md): a self-contained fresh-training package with real images, frozen split, model code and Mac setup. A local ZIP is available at `handoffs/d1_sscd_grouped_mac.zip`. It excludes the ongoing run’s checkpoint.

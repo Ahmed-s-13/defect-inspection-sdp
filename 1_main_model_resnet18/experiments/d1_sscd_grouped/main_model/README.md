@@ -1,6 +1,6 @@
 # Main model on the grouped D1 split
 
-This is a local adaptation of `1_main_model_resnet18` from the original GitHub checkout. It is ready to train using `../data/d1_sscd_grouped/`; no full grouped-data training run has been performed yet.
+This is a local adaptation of `1_main_model_resnet18` from the original GitHub checkout. It is ready to train using `../data/d1_sscd_grouped/`; the current run status and results are in `../reports/resnet18_run/`.
 
 ## Which network does what?
 

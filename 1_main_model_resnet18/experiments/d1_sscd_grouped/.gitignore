@@ -3,8 +3,8 @@
 __pycache__/
 *.pyc
 .DS_Store
-data/
 models/
 reports/grouping_cache/
 reports/*.npy
 reports/*.npz
+data/

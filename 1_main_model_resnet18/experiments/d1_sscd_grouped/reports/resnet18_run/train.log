@@ -1,0 +1,104 @@
+Using frozen grouped split: /Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/data/d1_sscd_grouped/work/d1_split.csv
+split           test  train   val
+cls                              
+corrosion        378   1766   378
+crack           1310   6109  1310
+dent            1755   8191  1755
+missing-head     392   1830   392
+paint-peel-off   260   1211   259
+scratch          201    939   201
+class weights: {'corrosion': 1.89, 'crack': 0.55, 'dent': 0.41, 'missing-head': 1.83, 'paint-peel-off': 2.76, 'scratch': 3.56}
+training on mps: 20046 train / 4295 val crops
+epoch 1 batch 75/313 elapsed 77s
+epoch 1 batch 150/313 elapsed 136s
+epoch 1 batch 225/313 elapsed 195s
+epoch 1 batch 300/313 elapsed 256s
+epoch  1  loss 0.7892  train-acc(aug) 0.702  val macro-F1 0.5342  295s
+  -> about 4.9 min per epoch; max 30 epochs = up to 2.5 h (early stopping usually ends sooner)
+epoch 2 batch 75/313 elapsed 66s
+epoch 2 batch 150/313 elapsed 133s
+epoch 2 batch 225/313 elapsed 199s
+epoch 2 batch 300/313 elapsed 266s
+epoch  2  loss 0.4922  train-acc(aug) 0.831  val macro-F1 0.4966  291s
+epoch 3 batch 75/313 elapsed 65s
+epoch 3 batch 150/313 elapsed 138s
+epoch 3 batch 225/313 elapsed 206s
+epoch 3 batch 300/313 elapsed 285s
+epoch  3  loss 0.3990  train-acc(aug) 0.863  val macro-F1 0.5094  317s
+epoch 4 batch 75/313 elapsed 76s
+epoch 4 batch 150/313 elapsed 148s
+epoch 4 batch 225/313 elapsed 223s
+epoch 4 batch 300/313 elapsed 289s
+epoch  4  loss 0.3554  train-acc(aug) 0.879  val macro-F1 0.5065  316s
+epoch 5 batch 75/313 elapsed 75s
+epoch 5 batch 150/313 elapsed 155s
+epoch 5 batch 225/313 elapsed 234s
+epoch 5 batch 300/313 elapsed 312s
+epoch  5  loss 0.3028  train-acc(aug) 0.895  val macro-F1 0.5425  349s
+epoch 6 batch 75/313 elapsed 77s
+epoch 6 batch 150/313 elapsed 167s
+epoch 6 batch 225/313 elapsed 250s
+epoch 6 batch 300/313 elapsed 328s
+epoch  6  loss 0.2786  train-acc(aug) 0.906  val macro-F1 0.5562  362s
+epoch 7 batch 75/313 elapsed 86s
+epoch 7 batch 150/313 elapsed 173s
+epoch 7 batch 225/313 elapsed 262s
+epoch 7 batch 300/313 elapsed 353s
+epoch  7  loss 0.2554  train-acc(aug) 0.913  val macro-F1 0.5563  396s
+epoch 8 batch 75/313 elapsed 85s
+epoch 8 batch 150/313 elapsed 167s
+epoch 8 batch 225/313 elapsed 245s
+epoch 8 batch 300/313 elapsed 318s
+epoch  8  loss 0.2357  train-acc(aug) 0.921  val macro-F1 0.5479  350s
+epoch 9 batch 75/313 elapsed 84s
+epoch 9 batch 150/313 elapsed 171s
+epoch 9 batch 225/313 elapsed 257s
+epoch 9 batch 300/313 elapsed 345s
+epoch  9  loss 0.2162  train-acc(aug) 0.924  val macro-F1 0.5660  378s
+epoch 10 batch 75/313 elapsed 89s
+epoch 10 batch 150/313 elapsed 178s
+epoch 10 batch 225/313 elapsed 277s
+epoch 10 batch 300/313 elapsed 387s
+epoch 10  loss 0.2018  train-acc(aug) 0.929  val macro-F1 0.5882  427s
+epoch 11 batch 75/313 elapsed 91s
+epoch 11 batch 150/313 elapsed 204s
+epoch 11 batch 225/313 elapsed 301s
+epoch 11 batch 300/313 elapsed 404s
+epoch 11  loss 0.2011  train-acc(aug) 0.931  val macro-F1 0.5199  446s
+epoch 12 batch 75/313 elapsed 95s
+epoch 12 batch 150/313 elapsed 183s
+epoch 12 batch 225/313 elapsed 261s
+epoch 12 batch 300/313 elapsed 375s
+epoch 12  loss 0.1945  train-acc(aug) 0.934  val macro-F1 0.5555  417s
+epoch 13 batch 75/313 elapsed 100s
+epoch 13 batch 150/313 elapsed 194s
+epoch 13 batch 225/313 elapsed 300s
+epoch 13 batch 300/313 elapsed 400s
+epoch 13  loss 0.1727  train-acc(aug) 0.940  val macro-F1 0.5470  438s
+epoch 14 batch 75/313 elapsed 86s
+epoch 14 batch 150/313 elapsed 160s
+epoch 14 batch 225/313 elapsed 234s
+epoch 14 batch 300/313 elapsed 311s
+epoch 14  loss 0.1796  train-acc(aug) 0.937  val macro-F1 0.5792  342s
+epoch 15 batch 75/313 elapsed 67s
+epoch 15 batch 150/313 elapsed 135s
+epoch 15 batch 225/313 elapsed 200s
+epoch 15 batch 300/313 elapsed 271s
+epoch 15  loss 0.1575  train-acc(aug) 0.945  val macro-F1 0.5702  297s
+early stop after epoch 15
+| metric | value |
+|---|---|
+| test accuracy | 0.7218 |
+| test macro-F1 | 0.6739 |
+| test balanced accuracy | 0.7449 |
+| val macro-F1 | 0.5882 |
+| train macro-F1 (no augmentation, 5000 crops) | 0.9075 |
+
+| class | test recall | test crops |
+|---|---|---|
+| corrosion | 0.7937 | 378 |
+| crack | 0.6802 | 1310 |
+| dent | 0.6980 | 1755 |
+| missing-head | 0.9592 | 392 |
+| paint-peel-off | 0.6769 | 260 |
+| scratch | 0.6617 | 201 |
