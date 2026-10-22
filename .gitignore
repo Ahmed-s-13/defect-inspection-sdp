@@ -29,3 +29,11 @@ venv/
 .vscode/
 .claude/
 CLAUDE.md
+
+# SSCD grouped-D1 experiment: bulk local artifacts, portable manifests kept in git
+1_main_model_resnet18/experiments/d1_sscd_grouped/data/
+1_main_model_resnet18/experiments/d1_sscd_grouped/models/
+1_main_model_resnet18/experiments/d1_sscd_grouped/.cache/
+1_main_model_resnet18/experiments/d1_sscd_grouped/reports/grouping_cache/
+1_main_model_resnet18/experiments/d1_sscd_grouped/reports/*.npy
+1_main_model_resnet18/experiments/d1_sscd_grouped/reports/neighbors.csv

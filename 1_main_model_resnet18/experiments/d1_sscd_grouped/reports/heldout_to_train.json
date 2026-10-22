@@ -1,0 +1,12 @@
+{
+  "val": {
+    "n": 1476,
+    "to_train_above_095": 1009,
+    "to_train_above_090": 1134
+  },
+  "test": {
+    "n": 1476,
+    "to_train_above_095": 959,
+    "to_train_above_090": 1094
+  }
+}

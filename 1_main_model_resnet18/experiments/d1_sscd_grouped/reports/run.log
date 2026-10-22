@@ -1,0 +1,29 @@
+device mps images 14760
+/Users/wbk/Documents/ChatGPT/Plane damage classification+ possible segmentation/.venv/lib/python3.14/site-packages/torch/jit/_serialization.py:170: FutureWarning: `torch.jit.load` is not supported in Python 3.14+ and may break. Please switch to `torch.export`.
+  warnings.warn(
+embedded 32 seconds 3
+embedded 672 seconds 21
+embedded 1312 seconds 39
+embedded 1952 seconds 59
+embedded 2592 seconds 77
+embedded 3232 seconds 94
+embedded 3872 seconds 115
+embedded 4512 seconds 134
+embedded 5152 seconds 153
+embedded 5792 seconds 171
+embedded 6432 seconds 189
+embedded 7072 seconds 206
+embedded 7712 seconds 223
+embedded 8352 seconds 239
+embedded 8992 seconds 256
+embedded 9632 seconds 272
+embedded 10272 seconds 288
+embedded 10912 seconds 304
+embedded 11552 seconds 320
+embedded 12192 seconds 335
+embedded 12832 seconds 351
+embedded 13472 seconds 367
+embedded 14112 seconds 383
+embedded 14752 seconds 399
+{"images": 14760, "device": "mps", "views": 1, "preprocessing": "RGB, direct resize 320x320, ImageNet normalization", "thresholds_are_exploratory": true, "0.7": {"images_with_cross_split_candidate": 10936, "unique_cross_split_pairs": 19921}, "0.75": {"images_with_cross_split_candidate": 9906, "unique_cross_split_pairs": 15465}, "0.8": {"images_with_cross_split_candidate": 8911, "unique_cross_split_pairs": 12269}, "0.85": {"images_with_cross_split_candidate": 8029, "unique_cross_split_pairs": 9890}, "0.9": {"images_with_cross_split_candidate": 6972, "unique_cross_split_pairs": 7617}, "0.95": {"images_with_cross_split_candidate": 5673, "unique_cross_split_pairs": 5310}}
+DONE: embeddings, top20 candidates and stratified review pairs saved
