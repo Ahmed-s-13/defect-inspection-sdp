@@ -1,0 +1,82 @@
+{
+  "A. strict unseen (fair outside test)": {
+    "crops": 1040,
+    "photos": 278,
+    "fc_accuracy": 0.7692307692307693,
+    "fc_recall": {
+      "dent": 0.5668449197860963,
+      "missing-head": 0.813599062133646
+    },
+    "fc_balanced_accuracy": 0.6902219909598711,
+    "mlp_accuracy": 0.7442307692307693,
+    "mlp_recall": {
+      "dent": 0.6951871657754011,
+      "missing-head": 0.7549824150058617
+    },
+    "mlp_balanced_accuracy": 0.7250847903906315
+  },
+  "B1. all D5 dent + fastener damage": {
+    "crops": 7875,
+    "photos": 4362,
+    "fc_accuracy": 0.9307936507936508,
+    "fc_recall": {
+      "dent": 0.9408069582024644,
+      "missing-head": 0.9197002141327623
+    },
+    "fc_balanced_accuracy": 0.9302535861676133,
+    "mlp_accuracy": 0.9318095238095238,
+    "mlp_recall": {
+      "dent": 0.9664170089393573,
+      "missing-head": 0.8934689507494646
+    },
+    "mlp_balanced_accuracy": 0.929942979844411
+  },
+  "B2. photo also in D1-train (seen)": {
+    "crops": 4498,
+    "photos": 2850,
+    "fc_accuracy": 0.9811027123165852,
+    "fc_recall": {
+      "dent": 0.9744218640504555,
+      "missing-head": 0.9927007299270073
+    },
+    "fc_balanced_accuracy": 0.9835612969887314,
+    "mlp_accuracy": 0.9919964428634949,
+    "mlp_recall": {
+      "dent": 0.9898388227049755,
+      "missing-head": 0.995742092457421
+    },
+    "mlp_balanced_accuracy": 0.9927904575811982
+  },
+  "B3. photo not in D1-train (project check)": {
+    "crops": 3377,
+    "photos": 1512,
+    "fc_accuracy": 0.8637844240450103,
+    "fc_recall": {
+      "dent": 0.866147859922179,
+      "missing-head": 0.8623326959847036
+    },
+    "fc_balanced_accuracy": 0.8642402779534413,
+    "mlp_accuracy": 0.8516434705359787,
+    "mlp_recall": {
+      "dent": 0.914396887159533,
+      "missing-head": 0.8130975143403442
+    },
+    "mlp_balanced_accuracy": 0.8637472007499386
+  },
+  "C. Rupture: predicted as (ResNet fc)": {
+    "crack": 3257,
+    "scratch": 171,
+    "dent": 145,
+    "corrosion": 123,
+    "paint-peel-off": 51,
+    "missing-head": 41
+  },
+  "C. Rupture: predicted as (MLP head)": {
+    "crack": 3236,
+    "dent": 205,
+    "scratch": 167,
+    "corrosion": 86,
+    "paint-peel-off": 51,
+    "missing-head": 43
+  }
+}
