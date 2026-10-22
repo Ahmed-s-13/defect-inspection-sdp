@@ -1,0 +1,14 @@
+{
+  "source_directory": "/Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18",
+  "source_sha256": {
+    "train.py": "bea0d43063a02b042b5cca25f6e68bc0cfc28b10917dea9f3ff48ebc04a6421c",
+    "train_mlp.py": "6bec480d688b8185751e50cd888b694a6398d2f205da236f6904407dfdc23b5d",
+    "evaluate.py": "f155f0f06b9a6b62cc268adbe4e857f63a2c026b2a13190c23dd35fd56cbf2f7",
+    "evaluate_mlp.py": "28f5ef34370f4696bd5b4dd9b46b163344493636bedbdc8bbbd364eec0610a27",
+    "predict.py": "40ff7eb15df4be9f5527ddffa260510aef1d38b968628cc34f7c1fd3d9f9884b",
+    "prepare.py": "764c1f41494d52de33c08926452f61f12bc4cb1fc133b01915b99ffcd77c5aee",
+    "klshift/common.py": "ea10dccd7e09c369e00d6108d5a960174bf5ceeda6e675c465ebbfb94f159be3",
+    "klshift/mlp.py": "78a17de47bd574c86d9c38aa8331f4dcb4b748d6dda56794c4353c770b5f2a0c"
+  },
+  "note": "Local adaptations documented in README.md. Original checkout unchanged."
+}

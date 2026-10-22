@@ -1,0 +1,31 @@
+{
+  "images": 14760,
+  "device": "mps",
+  "views": 1,
+  "preprocessing": "RGB, direct resize 320x320, ImageNet normalization",
+  "thresholds_are_exploratory": true,
+  "0.7": {
+    "images_with_cross_split_candidate": 10936,
+    "unique_cross_split_pairs": 19921
+  },
+  "0.75": {
+    "images_with_cross_split_candidate": 9906,
+    "unique_cross_split_pairs": 15465
+  },
+  "0.8": {
+    "images_with_cross_split_candidate": 8911,
+    "unique_cross_split_pairs": 12269
+  },
+  "0.85": {
+    "images_with_cross_split_candidate": 8029,
+    "unique_cross_split_pairs": 9890
+  },
+  "0.9": {
+    "images_with_cross_split_candidate": 6972,
+    "unique_cross_split_pairs": 7617
+  },
+  "0.95": {
+    "images_with_cross_split_candidate": 5673,
+    "unique_cross_split_pairs": 5310
+  }
+}

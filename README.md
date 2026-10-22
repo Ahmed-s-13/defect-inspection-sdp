@@ -1,5 +1,52 @@
 # Edge-AI Wearable for Visual Inspection of Aircraft Structures: model code
 
+## Current D1 grouping work — 22 October 2026
+
+The primary SSCD/grouped-data experiment is now in **[1_main_model_resnet18/experiments/d1_sscd_grouped/](1_main_model_resnet18/experiments/d1_sscd_grouped/README.md)**. It contains the runnable code, local data, frozen split, model integration, audits and progress status.
+
+- [Estimated unique sources and copies, including per class](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/unique_sources/README.md): **1,691 estimated source families; 13,069 excess copies (88.54%)**. This is a matching-based estimate, not verified synthetic-augmentation provenance.
+- [Grouped model instructions](1_main_model_resnet18/experiments/d1_sscd_grouped/main_model/README.md): ResNet-18, with an optional MLP/kNN head. SSCD uses a separate ResNet-50. YOLO is the annotation format only.
+- [Frozen portable manifests](1_main_model_resnet18/experiments/d1_sscd_grouped/manifests/README.md): 10,330 / 2,216 / 2,214 raw images and 20,046 / 4,295 / 4,296 usable crops in train/val/test.
+- Training status: first attempt interrupted before a completed epoch/checkpoint. **No new grouped-split accuracy is available yet.**
+
+<!-- SSCD_COPY_ESTIMATES_START -->
+## D1 SSCD augmentation/copy estimates
+
+Dataset: **`d1_sscd_grouped`**. Counts refer to raw images, before bounding-box cropping. Estimated augmented/copy images means **images minus one representative per matched source family**. This includes crops, re-encodings and near-copies; synthetic augmentation provenance and the true original file are not known. The 720 broader split blocks are used only to prevent split leakage, not to count unique sources.
+
+**Overall: 14,760 images; 1,691 estimated source families; 13,069 excess copies (88.54%).**
+
+### Per class
+
+| Class | Images | Estimated source families | Estimated augmented/copy images | Estimated copy % |
+|---|---:|---:|---:|---:|
+| crack | 6,270 | 610 | 5,660 | 90.27% |
+| dent | 6,909 | 731 | 6,178 | 89.42% |
+| corrosion | 1,267 | 192 | 1,075 | 84.85% |
+| scratch | 497 | 255 | 242 | 48.69% |
+| missing-head | 908 | 313 | 595 | 65.53% |
+| paint-peel-off | 822 | 299 | 523 | 63.63% |
+
+### Active train/validation/test split
+
+| Split | Images | Estimated source families | Estimated augmented/copy images | Estimated copy % |
+|---|---:|---:|---:|---:|
+| train | 10,330 | 1,238 | 9,092 | 88.02% |
+| val | 2,216 | 241 | 1,975 | 89.12% |
+| test | 2,214 | 212 | 2,002 | 90.42% |
+
+These percentages measure redundancy **within each split**, not leakage between splits. All estimated families remain within one split; undetected relatives may still exist. Percentages use each row’s image count as denominator. Multi-class images/families appear in multiple class rows, so class rows do not sum to the total.
+
+**Confidence: not calibrated.** No defensible numerical confidence score or confidence interval is available. SSCD similarity is not a probability. Missed matches overestimate unique families; false merges underestimate them. Treat these as matching-based estimates, not ground truth.
+
+The reproducible report also provides `per_split_class.csv` for each class within each split.
+
+See [full SSCD report](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/unique_sources/README.md) and [class-by-split CSV](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/unique_sources/per_split_class.csv).
+<!-- SSCD_COPY_ESTIMATES_END -->
+
+The older accuracy results below are historical and may be inflated by undetected augmentation overlap. They are not results on the new grouped split. Bulk data, weights, caches and environments remain git-ignored; code, documentation, manifests and compact reports are reviewable in git.
+
+
 Senior Design Project, American University of Sharjah, with Gulf Aviation Engineering
 Services (GAES). A wearable (target: Jetson Orin NX class) runs an onboard model that
 tells the engineer whether the aircraft surface patch in view is fine or damaged, and

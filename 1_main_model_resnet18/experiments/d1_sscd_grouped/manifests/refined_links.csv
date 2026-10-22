@@ -1,0 +1,17 @@
+a,b,inliers,ratio,coverage,pixel_correlation,reason
+2115,8790,22,0.8148148148148148,0.07717819801912526,0.9710522379356595,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+10809,14022,50,0.8064516129032258,0.06504250050496763,0.9364928354202308,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+3688,12407,10,0.7142857142857143,0.09419004346958992,0.9335708973874872,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+3221,8205,10,0.9090909090909091,0.2457162008310339,0.9560166202159646,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+3221,6927,10,0.9090909090909091,0.2457162008310339,0.9560166202159646,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+6927,9178,10,0.9090909090909091,0.2457162008310339,0.9649482480072535,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+8205,9178,10,0.9090909090909091,0.2457162008310339,0.9649482480072535,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+3221,12653,11,1.0,0.2665537048620288,0.9520870873789528,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+9178,12653,11,1.0,0.2665537048620288,0.9520870873789528,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+201,5421,25,0.6944444444444444,0.09654394763470009,0.9877521321147167,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+7832,12671,57,0.9661016949152542,0.3247722310937046,0.9517828525005345,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+8312,12671,57,0.9661016949152542,0.3247722310937046,0.9517828525005345,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+10745,10990,15,0.8823529411764706,0.02177628867850082,0.9272407670985401,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+3079,3941,7,0.7777777777777778,0.08155075649984837,0.9705532902134361,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+2082,10599,9,0.8181818181818182,0.054194204844499154,0.955941833896605,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location
+5685,14527,11,0.8461538461538461,0.04680136113815621,0.9834770324631441,SIFT homography plus aligned pixel correlation >=0.9; conservative co-location

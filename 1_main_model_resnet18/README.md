@@ -1,5 +1,8 @@
 # 1. Main model: ResNet-18 on D1 (+ dataset shift analysis + the Cropper)
 
+> **Current grouped-D1 work:** use [experiments/d1_sscd_grouped/README.md](experiments/d1_sscd_grouped/README.md). It includes the SSCD source-family estimate, the saved conservative grouped split, and adapted ResNet-18/MLP scripts. The scores below describe the historical experiment, not the new split. The first grouped training attempt was interrupted before a completed epoch; no new trained checkpoint exists yet.
+
+
 > **This is the model the project currently uses.** Everything else in the repo
 > either builds on it (`2_healing_experiment`) or came before it (`4_early_classifiers_archive`).
 
