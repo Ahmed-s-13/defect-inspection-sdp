@@ -109,3 +109,7 @@ Keep `data/D1` with `data/d1_sscd_grouped`: the raw split folders contain relati
 ## Unique-source estimate
 
 The matching-based estimate is **1,691 source families and 13,069 excess copies (88.54%)**. See `reports/unique_sources/README.md` for the overall and per-class table, definitions, and limits. These estimates exclude the broad precautionary split-block merges.
+
+## Completed trained model
+
+ResNet-18 training is complete: best epoch 10 of 15. [Results and artifacts](reports/resnet18_run/README.md); [archived model](models/resnet18_sscd_grouped/README.md). Test accuracy 72.18%, macro-F1 0.6739; equal-source-family accuracy 74.05%, macro-F1 0.6929. No MLP was trained.

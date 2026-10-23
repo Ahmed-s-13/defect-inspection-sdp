@@ -1,6 +1,6 @@
 # 1. Main model: ResNet-18 on D1 (+ dataset shift analysis + the Cropper)
 
-> **Current grouped-D1 work:** use [experiments/d1_sscd_grouped/README.md](experiments/d1_sscd_grouped/README.md). It includes the SSCD source-family estimate, the saved conservative grouped split, and adapted ResNet-18/MLP scripts. The scores below describe the historical experiment, not the new split. The first grouped training attempt was interrupted before a completed epoch; no new trained checkpoint exists yet.
+> **Current grouped-D1 work:** use [experiments/d1_sscd_grouped/README.md](experiments/d1_sscd_grouped/README.md). It includes the SSCD source-family estimate, the saved conservative grouped split, and adapted ResNet-18/MLP scripts. The scores below describe the historical experiment, not the new split. The SSCD-split ResNet-18 run is now complete: [results and saved artifacts](experiments/d1_sscd_grouped/reports/resnet18_run/README.md). Test accuracy 72.18%, macro-F1 0.6739; no new MLP was trained.
 
 
 > **This is the model the project currently uses.** Everything else in the repo

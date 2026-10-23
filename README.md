@@ -3,7 +3,7 @@
 ## Current D1 grouping work — 22 October 2026
 
 <!-- SSCD_RESNET_RUN_START -->
-**ResNet-18 training and evaluation completed.** [Overall and per-class results](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/resnet18_run/README.md), including both ordinary crop metrics and equal-source-family metrics. [Run status](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/resnet18_run/status.json).
+**ResNet-18 training and evaluation completed.** Best epoch 10 of 15. Test accuracy **72.18%**, macro-F1 **0.6739**; equal-source-family accuracy **74.05%**, macro-F1 **0.6929**. [Saved weights and provenance](1_main_model_resnet18/experiments/d1_sscd_grouped/models/resnet18_sscd_grouped/README.md). [Overall and per-class results](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/resnet18_run/README.md), including both ordinary crop metrics and equal-source-family metrics. [Run status](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/resnet18_run/status.json).
 <!-- SSCD_RESNET_RUN_END -->
 
 The primary SSCD/grouped-data experiment is now in **[1_main_model_resnet18/experiments/d1_sscd_grouped/](1_main_model_resnet18/experiments/d1_sscd_grouped/README.md)**. It contains the runnable code, local data, frozen split, model integration, audits and progress status.

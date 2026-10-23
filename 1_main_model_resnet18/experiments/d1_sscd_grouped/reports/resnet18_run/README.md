@@ -59,3 +59,16 @@ Accuracy **0.7405**; macro-F1 **0.6929**; balanced accuracy **0.7314**.
 Family-weighted metrics give each estimated source family equal influence; they do not establish that families are truly independent.
 
 Families are estimated, not ground truth. No calibrated grouping confidence or training-seed uncertainty. Test was not used for model selection.
+
+## Saved artifacts
+
+The completed selected weights are archived at [models/resnet18_sscd_grouped/model_best.pt](../../models/resnet18_sscd_grouped/model_best.pt), alongside their matching local split manifest. The default operational checkpoint remains in `../../data/d1_sscd_grouped/work/model_best.pt`.
+
+- [Artifact provenance and configuration](model_artifacts.json)
+- [Per-epoch training history](d1_history.csv)
+- [Confusion matrix](d1_confusion.png) and [training curves](d1_training_curves.png)
+- [Validation predictions](val_predictions.csv) and [test predictions](test_predictions.csv)
+- [Machine-readable metrics](metrics.json)
+- `source_snapshot/`: saved training/evaluation code and requirements
+
+Weights are stored locally in this repository and remain git-ignored. This run trained ResNet-18 only; no new MLP checkpoint exists.

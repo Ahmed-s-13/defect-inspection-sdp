@@ -1,0 +1,265 @@
+{
+  "model": "torchvision ResNet-18, ImageNet initialization, 6-class linear classifier",
+  "trained_mlp": false,
+  "best_epoch": 10,
+  "epochs_completed": 15,
+  "selection_metric": "validation macro-F1",
+  "classes": [
+    "corrosion",
+    "crack",
+    "dent",
+    "missing-head",
+    "paint-peel-off",
+    "scratch"
+  ],
+  "checkpoint_path": "models/resnet18_sscd_grouped/model_best.pt",
+  "checkpoint_sha256": "a4abe5ca0678b0ba61ec2cd212626e14ce661e04bf770e86c53edb6b71b18eee",
+  "split_sha256": "2f75881baa61be766243b309e483c2e0f26051fa757e02a649d1a01de84ab71b",
+  "split_assignments": "manifests/split_manifest.csv",
+  "hyperparameters": {
+    "seed": 0,
+    "epochs_max": 30,
+    "patience": 5,
+    "batch_size": 64,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.05,
+    "workers": 4,
+    "device": "mps",
+    "class_weighted_loss": true,
+    "family_balanced_sampling": false
+  },
+  "checkpoint_contents": [
+    "state",
+    "classes",
+    "epoch",
+    "split_sha256"
+  ],
+  "limitation": "Inference/fine-tuning checkpoint; optimizer, scheduler and RNG state were not saved, so exact interrupted-training resume is not supported. Absolute split paths are local to this Mac.",
+  "validation": "Archived weight checksum matches trained checkpoint; checkpoint loaded successfully with matching split checksum.",
+  "source_snapshot_sha256": {
+    "requirements.txt": "56cddd7e81246b4f61b5e6b310b4faa75053fc782b551b1a0cea6b8376f3e8c9",
+    "main_model/train.py": "8a4b3b2949b7fe59c0d92ef34810570d812e3254f2b8569c9438130eb60e5181",
+    "main_model/evaluate.py": "ca8722fdb28d84720c6bf0340eb9801c49e9bfc2892a5c628efda12953dea8f7",
+    "scripts/run_resnet_detached.py": "a855bcd2af957343dc4e86c6cf8b69f1d7c96b286d4c86d57898529b8a1a5543",
+    "scripts/report_resnet.py": "d928d5327b2c5d17842538b46ad205b824a6bd1611d0c44fd10cdd9202b20935",
+    "main_model/klshift/common.py": "0d2ffcb8f8e3829a711a67decd044af08f977029302394d16e6dac08c1636d2a"
+  },
+  "test": {
+    "crops": 4296,
+    "source_families": 211,
+    "all_crops": {
+      "accuracy": 0.7218342644320298,
+      "macro_f1": 0.6739487125830763,
+      "balanced_accuracy": 0.7449345760155398,
+      "classification_report": {
+        "corrosion": {
+          "precision": 0.5199306759098787,
+          "recall": 0.7936507936507936,
+          "f1-score": 0.6282722513089005,
+          "support": 378.0
+        },
+        "crack": {
+          "precision": 0.7468566638725901,
+          "recall": 0.6801526717557251,
+          "f1-score": 0.7119456652017578,
+          "support": 1310.0
+        },
+        "dent": {
+          "precision": 0.9351145038167938,
+          "recall": 0.698005698005698,
+          "f1-score": 0.799347471451876,
+          "support": 1755.0
+        },
+        "missing-head": {
+          "precision": 0.8392857142857143,
+          "recall": 0.9591836734693877,
+          "f1-score": 0.8952380952380953,
+          "support": 392.0
+        },
+        "paint-peel-off": {
+          "precision": 0.3893805309734513,
+          "recall": 0.676923076923077,
+          "f1-score": 0.4943820224719101,
+          "support": 260.0
+        },
+        "scratch": {
+          "precision": 0.4208860759493671,
+          "recall": 0.6616915422885572,
+          "f1-score": 0.5145067698259188,
+          "support": 201.0
+        },
+        "accuracy": 0.7218342644320298,
+        "macro avg": {
+          "precision": 0.641909027467966,
+          "recall": 0.7449345760155398,
+          "f1-score": 0.6739487125830763,
+          "support": 4296.0
+        },
+        "weighted avg": {
+          "precision": 0.7753442780922765,
+          "recall": 0.7218342644320298,
+          "f1-score": 0.734608720837558,
+          "support": 4296.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          300,
+          7,
+          5,
+          40,
+          21,
+          5
+        ],
+        [
+          173,
+          891,
+          60,
+          6,
+          64,
+          116
+        ],
+        [
+          47,
+          252,
+          1225,
+          11,
+          167,
+          53
+        ],
+        [
+          6,
+          0,
+          2,
+          376,
+          7,
+          1
+        ],
+        [
+          36,
+          23,
+          4,
+          13,
+          176,
+          8
+        ],
+        [
+          15,
+          20,
+          14,
+          2,
+          17,
+          133
+        ]
+      ]
+    },
+    "equal_source_family": {
+      "accuracy": 0.7404561501182658,
+      "macro_f1": 0.6929363703739496,
+      "balanced_accuracy": 0.7314177789244454,
+      "classification_report": {
+        "corrosion": {
+          "precision": 0.31602798483912237,
+          "recall": 0.6645249531471654,
+          "f1-score": 0.42834705538631035,
+          "support": 9.325435840744076
+        },
+        "crack": {
+          "precision": 0.5266634939589582,
+          "recall": 0.6474871398873348,
+          "f1-score": 0.580858757908225,
+          "support": 27.88635856122564
+        },
+        "dent": {
+          "precision": 0.903672753715093,
+          "recall": 0.7553475913570326,
+          "f1-score": 0.8228796469207822,
+          "support": 83.00242618642827
+        },
+        "missing-head": {
+          "precision": 0.904135889343816,
+          "recall": 0.9442738311055716,
+          "f1-score": 0.923769065511258,
+          "support": 26.56752928650482
+        },
+        "paint-peel-off": {
+          "precision": 0.8016400494480475,
+          "recall": 0.6879748566564416,
+          "f1-score": 0.7404708369243422,
+          "support": 42.60620480679429
+        },
+        "scratch": {
+          "precision": 0.6358145816048519,
+          "recall": 0.6888983013931268,
+          "f1-score": 0.6612928595927793,
+          "support": 21.61204531830393
+        },
+        "accuracy": 0.7404561501182646,
+        "macro avg": {
+          "precision": 0.6813257921516481,
+          "recall": 0.7314177789244454,
+          "f1-score": 0.6929363703739496,
+          "support": 211.00000000000102
+        },
+        "weighted avg": {
+          "precision": 0.7798938728245662,
+          "recall": 0.7404561501182619,
+          "f1-score": 0.7529685820685952,
+          "support": 211.00000000000102
+        }
+      },
+      "confusion_matrix": [
+        [
+          6.196984815147354,
+          0.31358945753730305,
+          0.5245901639344263,
+          1.3823316099146823,
+          0.7655996585574049,
+          0.14234013565290954
+        ],
+        [
+          3.00295681873366,
+          18.05605854668068,
+          1.8614806332085532,
+          0.13462085645184235,
+          1.2788166167621966,
+          3.5524250893884184
+        ],
+        [
+          1.2599711940824474,
+          10.451804182145281,
+          62.69568269670848,
+          0.6366720785978935,
+          3.954169945303118,
+          4.004126089590377
+        ],
+        [
+          0.9999999999999999,
+          0.0,
+          0.2222222222222222,
+          25.08702266237738,
+          0.2148061410356492,
+          0.043478260869565216
+        ],
+        [
+          7.660173160173161,
+          3.93939393939394,
+          0.4583333333333333,
+          0.45075757575757575,
+          29.311997644629297,
+          0.7855491535068999
+        ],
+        [
+          0.488888888888889,
+          1.523015873015873,
+          3.6164372267862777,
+          0.05555555555555555,
+          1.0396464646464647,
+          14.888501309410858
+        ]
+      ]
+    }
+  },
+  "finished_utc": "2026-10-22T08:36:09.911735+00:00"
+}
