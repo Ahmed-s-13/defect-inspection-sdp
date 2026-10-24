@@ -1,0 +1,3 @@
+[D1] 14760 images, 28637 crops, 0 unreadable, classes: {'dent': 11701, 'crack': 8729, 'missing-head': 2614, 'corrosion': 2522, 'paint-peel-off': 1730, 'scratch': 1341}
+dataset  images  crops  images_without_boxes  skipped_small_boxes  unreadable  median_w  median_h  min_side  max_side  distinct_sizes most_common_size  median_aspect  square_share  median_crop_side                              shipped_splits
+     D1   14760  28637                   145                 1848           0       640       640       286      1240              42          640x640            1.0         0.805               160 {'train': 11808, 'test': 1476, 'val': 1476}

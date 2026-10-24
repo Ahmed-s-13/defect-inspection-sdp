@@ -1,0 +1,8 @@
+{
+  "old_dataset_name": "d1_grouped",
+  "dataset_name": "d1_sscd_grouped",
+  "old_crop_manifest_sha256": "eb3f91b0b91736f76e4ee50ba256ed457a175a3c6bff3b2e6a2573885ba1f36b",
+  "new_crop_manifest_sha256": "2f75881baa61be766243b309e483c2e0f26051fa757e02a649d1a01de84ab71b",
+  "image_assignments_changed": false,
+  "historical_logs_and_drafts": "Preserved as original evidence; active scripts, manifests and documentation use d1_sscd_grouped."
+}

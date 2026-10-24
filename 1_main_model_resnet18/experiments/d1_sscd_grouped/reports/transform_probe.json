@@ -1,0 +1,102 @@
+{
+  "seed": 123,
+  "image_ids": [
+    11630,
+    5126,
+    13393,
+    2716,
+    369,
+    11970,
+    4916,
+    9297,
+    4077,
+    3558,
+    13611,
+    10051,
+    12088,
+    11687,
+    8734,
+    2187,
+    12710,
+    3154,
+    2592,
+    227,
+    792,
+    10942,
+    12160,
+    13124,
+    6653,
+    3246,
+    7566,
+    3613,
+    3758,
+    3955,
+    6044,
+    6626
+  ],
+  "results": {
+    "flip": {
+      "n": 32,
+      "median_same_image_cosine": 0.9578191041946411,
+      "min_same_image_cosine": 0.9109775424003601,
+      "source_in_top20": 32,
+      "source_top1": 23
+    },
+    "rotate90": {
+      "n": 32,
+      "median_same_image_cosine": 0.7951286435127258,
+      "min_same_image_cosine": 0.6266442537307739,
+      "source_in_top20": 32,
+      "source_top1": 22
+    },
+    "rotate180": {
+      "n": 32,
+      "median_same_image_cosine": 0.8112354278564453,
+      "min_same_image_cosine": 0.7261853814125061,
+      "source_in_top20": 32,
+      "source_top1": 22
+    },
+    "rotate270": {
+      "n": 32,
+      "median_same_image_cosine": 0.777781069278717,
+      "min_same_image_cosine": 0.6522532105445862,
+      "source_in_top20": 32,
+      "source_top1": 19
+    },
+    "transpose": {
+      "n": 32,
+      "median_same_image_cosine": 0.8004712462425232,
+      "min_same_image_cosine": 0.6601587533950806,
+      "source_in_top20": 32,
+      "source_top1": 24
+    },
+    "transverse": {
+      "n": 32,
+      "median_same_image_cosine": 0.7770988345146179,
+      "min_same_image_cosine": 0.6236902475357056,
+      "source_in_top20": 32,
+      "source_top1": 18
+    },
+    "flip_vertical": {
+      "n": 32,
+      "median_same_image_cosine": 0.8200112581253052,
+      "min_same_image_cosine": 0.7254720330238342,
+      "source_in_top20": 32,
+      "source_top1": 22
+    },
+    "center_crop_80": {
+      "n": 32,
+      "median_same_image_cosine": 0.8356249928474426,
+      "min_same_image_cosine": 0.7061161398887634,
+      "source_in_top20": 32,
+      "source_top1": 18
+    },
+    "color": {
+      "n": 32,
+      "median_same_image_cosine": 0.9888765215873718,
+      "min_same_image_cosine": 0.9790244698524475,
+      "source_in_top20": 32,
+      "source_top1": 27
+    }
+  }
+}

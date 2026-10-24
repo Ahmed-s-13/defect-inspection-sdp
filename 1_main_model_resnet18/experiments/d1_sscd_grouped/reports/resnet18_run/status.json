@@ -1,0 +1,29 @@
+{
+  "status": "complete",
+  "started_utc": "2026-10-22T07:01:17.718641+00:00",
+  "supervisor_pid": 14950,
+  "model": "ResNet-18 linear classifier (no MLP)",
+  "split_sha256": "2f75881baa61be766243b309e483c2e0f26051fa757e02a649d1a01de84ab71b",
+  "stages": [
+    {
+      "stage": "train",
+      "status": "complete",
+      "started_utc": "2026-10-22T07:01:17.726567+00:00",
+      "pid": 14952,
+      "returncode": 0,
+      "finished_utc": "2026-10-22T08:34:24.832851+00:00"
+    },
+    {
+      "stage": "report",
+      "status": "complete",
+      "started_utc": "2026-10-22T08:34:24.835634+00:00",
+      "pid": 21673,
+      "returncode": 0,
+      "finished_utc": "2026-10-22T08:36:09.909115+00:00"
+    }
+  ],
+  "power": "caffeinate -is: prevents idle sleep; system-sleep protection on AC; cannot survive shutdown or forced/lid sleep",
+  "offline": true,
+  "heartbeat_utc": "2026-10-22T08:35:54.900637+00:00",
+  "finished_utc": "2026-10-22T08:36:09.911735+00:00"
+}

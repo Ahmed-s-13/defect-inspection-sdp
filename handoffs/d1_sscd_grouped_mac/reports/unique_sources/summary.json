@@ -1,0 +1,338 @@
+{
+  "overall": {
+    "images": 14760,
+    "estimated_source_families": 1691,
+    "estimated_excess_copies": 13069,
+    "estimated_excess_copy_percent": 88.54,
+    "strict_initial_families": 1701
+  },
+  "per_class": [
+    {
+      "class": "crack",
+      "images": 6270,
+      "estimated_source_families": 610,
+      "estimated_excess_copies": 5660,
+      "estimated_excess_copy_percent": 90.27,
+      "strict_initial_families": 612,
+      "raw_annotation_boxes": 8759
+    },
+    {
+      "class": "dent",
+      "images": 6909,
+      "estimated_source_families": 731,
+      "estimated_excess_copies": 6178,
+      "estimated_excess_copy_percent": 89.42,
+      "strict_initial_families": 735,
+      "raw_annotation_boxes": 11716
+    },
+    {
+      "class": "corrosion",
+      "images": 1267,
+      "estimated_source_families": 192,
+      "estimated_excess_copies": 1075,
+      "estimated_excess_copy_percent": 84.85,
+      "strict_initial_families": 192,
+      "raw_annotation_boxes": 2522
+    },
+    {
+      "class": "scratch",
+      "images": 497,
+      "estimated_source_families": 255,
+      "estimated_excess_copies": 242,
+      "estimated_excess_copy_percent": 48.69,
+      "strict_initial_families": 261,
+      "raw_annotation_boxes": 1384
+    },
+    {
+      "class": "missing-head",
+      "images": 908,
+      "estimated_source_families": 313,
+      "estimated_excess_copies": 595,
+      "estimated_excess_copy_percent": 65.53,
+      "strict_initial_families": 313,
+      "raw_annotation_boxes": 4327
+    },
+    {
+      "class": "paint-peel-off",
+      "images": 822,
+      "estimated_source_families": 299,
+      "estimated_excess_copies": 523,
+      "estimated_excess_copy_percent": 63.63,
+      "strict_initial_families": 301,
+      "raw_annotation_boxes": 1777
+    }
+  ],
+  "refinement_links": 16,
+  "family_size_distribution": {
+    "1": 419,
+    "2": 131,
+    "3": 357,
+    "4": 71,
+    "5": 33,
+    "6": 74,
+    "7": 23,
+    "8": 30,
+    "9": 36,
+    "10": 45,
+    "11": 57,
+    "12": 60,
+    "13": 32,
+    "14": 78,
+    "15": 13,
+    "16": 11,
+    "17": 16,
+    "18": 18,
+    "19": 12,
+    "20": 6,
+    "21": 10,
+    "22": 12,
+    "23": 10,
+    "24": 11,
+    "25": 13,
+    "26": 15,
+    "27": 5,
+    "28": 6,
+    "29": 1,
+    "30": 5,
+    "31": 1,
+    "32": 1,
+    "33": 2,
+    "34": 2,
+    "35": 4,
+    "36": 3,
+    "37": 2,
+    "38": 4,
+    "39": 5,
+    "40": 6,
+    "41": 4,
+    "42": 4,
+    "43": 1,
+    "48": 2,
+    "50": 4,
+    "51": 1,
+    "53": 2,
+    "54": 2,
+    "55": 2,
+    "56": 2,
+    "57": 1,
+    "58": 2,
+    "60": 2,
+    "63": 2,
+    "64": 2,
+    "66": 3,
+    "67": 1,
+    "70": 1,
+    "72": 1,
+    "74": 1,
+    "75": 1,
+    "81": 1,
+    "86": 1,
+    "92": 1,
+    "103": 1,
+    "115": 1,
+    "118": 1,
+    "129": 1,
+    "155": 1,
+    "175": 1,
+    "184": 1
+  },
+  "singleton_families": 419,
+  "images_in_multi_image_families": 14341,
+  "images_without_raw_class": 143,
+  "method": "Connected components of strict SSCD/pHash + geometric/pixel matching links, plus 16 low-score alignment/pixel refinement links. Broad split-block similarity and visual precaution links are excluded.",
+  "meaning": "Excess copies = images minus one representative per estimated family. It does not prove each excess image is synthetically augmented; families can include re-encodings, crops, near-duplicates, and overlapping views. The actual original member cannot be inferred.",
+  "limitations": "Not ground truth or a confidence interval. Missed matches increase estimated families; erroneous merges decrease them. Per-class counts are distinct images/families containing that label; multi-class images and families occur in several rows, so rows do not sum to the overall total. Raw labels are used before the 4-pixel crop filter.",
+  "split_blocks_not_unique_sources": 720,
+  "per_split": [
+    {
+      "split": "train",
+      "images": 10330,
+      "estimated_source_families": 1238,
+      "estimated_excess_copies": 9092,
+      "estimated_excess_copy_percent": 88.02,
+      "strict_initial_families": 1241
+    },
+    {
+      "split": "val",
+      "images": 2216,
+      "estimated_source_families": 241,
+      "estimated_excess_copies": 1975,
+      "estimated_excess_copy_percent": 89.12,
+      "strict_initial_families": 247
+    },
+    {
+      "split": "test",
+      "images": 2214,
+      "estimated_source_families": 212,
+      "estimated_excess_copies": 2002,
+      "estimated_excess_copy_percent": 90.42,
+      "strict_initial_families": 213
+    }
+  ],
+  "per_split_class": [
+    {
+      "split": "train",
+      "class": "crack",
+      "images": 4382,
+      "estimated_source_families": 494,
+      "estimated_excess_copies": 3888,
+      "estimated_excess_copy_percent": 88.73,
+      "strict_initial_families": 495
+    },
+    {
+      "split": "train",
+      "class": "dent",
+      "images": 4985,
+      "estimated_source_families": 520,
+      "estimated_excess_copies": 4465,
+      "estimated_excess_copy_percent": 89.57,
+      "strict_initial_families": 522
+    },
+    {
+      "split": "train",
+      "class": "corrosion",
+      "images": 960,
+      "estimated_source_families": 146,
+      "estimated_excess_copies": 814,
+      "estimated_excess_copy_percent": 84.79,
+      "strict_initial_families": 146
+    },
+    {
+      "split": "train",
+      "class": "scratch",
+      "images": 293,
+      "estimated_source_families": 164,
+      "estimated_excess_copies": 129,
+      "estimated_excess_copy_percent": 44.03,
+      "strict_initial_families": 165
+    },
+    {
+      "split": "train",
+      "class": "missing-head",
+      "images": 642,
+      "estimated_source_families": 218,
+      "estimated_excess_copies": 424,
+      "estimated_excess_copy_percent": 66.04,
+      "strict_initial_families": 218
+    },
+    {
+      "split": "train",
+      "class": "paint-peel-off",
+      "images": 554,
+      "estimated_source_families": 207,
+      "estimated_excess_copies": 347,
+      "estimated_excess_copy_percent": 62.64,
+      "strict_initial_families": 207
+    },
+    {
+      "split": "val",
+      "class": "crack",
+      "images": 1075,
+      "estimated_source_families": 76,
+      "estimated_excess_copies": 999,
+      "estimated_excess_copy_percent": 92.93,
+      "strict_initial_families": 77
+    },
+    {
+      "split": "val",
+      "class": "dent",
+      "images": 836,
+      "estimated_source_families": 115,
+      "estimated_excess_copies": 721,
+      "estimated_excess_copy_percent": 86.24,
+      "strict_initial_families": 117
+    },
+    {
+      "split": "val",
+      "class": "corrosion",
+      "images": 222,
+      "estimated_source_families": 33,
+      "estimated_excess_copies": 189,
+      "estimated_excess_copy_percent": 85.14,
+      "strict_initial_families": 33
+    },
+    {
+      "split": "val",
+      "class": "scratch",
+      "images": 123,
+      "estimated_source_families": 57,
+      "estimated_excess_copies": 66,
+      "estimated_excess_copy_percent": 53.66,
+      "strict_initial_families": 61
+    },
+    {
+      "split": "val",
+      "class": "missing-head",
+      "images": 164,
+      "estimated_source_families": 50,
+      "estimated_excess_copies": 114,
+      "estimated_excess_copy_percent": 69.51,
+      "strict_initial_families": 50
+    },
+    {
+      "split": "val",
+      "class": "paint-peel-off",
+      "images": 94,
+      "estimated_source_families": 35,
+      "estimated_excess_copies": 59,
+      "estimated_excess_copy_percent": 62.77,
+      "strict_initial_families": 37
+    },
+    {
+      "split": "test",
+      "class": "crack",
+      "images": 813,
+      "estimated_source_families": 40,
+      "estimated_excess_copies": 773,
+      "estimated_excess_copy_percent": 95.08,
+      "strict_initial_families": 40
+    },
+    {
+      "split": "test",
+      "class": "dent",
+      "images": 1088,
+      "estimated_source_families": 96,
+      "estimated_excess_copies": 992,
+      "estimated_excess_copy_percent": 91.18,
+      "strict_initial_families": 96
+    },
+    {
+      "split": "test",
+      "class": "corrosion",
+      "images": 85,
+      "estimated_source_families": 13,
+      "estimated_excess_copies": 72,
+      "estimated_excess_copy_percent": 84.71,
+      "strict_initial_families": 13
+    },
+    {
+      "split": "test",
+      "class": "scratch",
+      "images": 81,
+      "estimated_source_families": 34,
+      "estimated_excess_copies": 47,
+      "estimated_excess_copy_percent": 58.02,
+      "strict_initial_families": 35
+    },
+    {
+      "split": "test",
+      "class": "missing-head",
+      "images": 102,
+      "estimated_source_families": 45,
+      "estimated_excess_copies": 57,
+      "estimated_excess_copy_percent": 55.88,
+      "strict_initial_families": 45
+    },
+    {
+      "split": "test",
+      "class": "paint-peel-off",
+      "images": 174,
+      "estimated_source_families": 57,
+      "estimated_excess_copies": 117,
+      "estimated_excess_copy_percent": 67.24,
+      "strict_initial_families": 57
+    }
+  ],
+  "confidence_score": null,
+  "confidence_note": "No calibrated confidence score or confidence interval: no independently labelled matching benchmark is available. SSCD cosine similarity is not a probability of shared origin."
+}

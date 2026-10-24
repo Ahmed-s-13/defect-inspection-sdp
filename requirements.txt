@@ -12,7 +12,8 @@ tqdm
 certifi
 
 # 1_main_model_resnet18
-ImageHash==4.3.2          # duplicate detection (overlap.py)
+ImageHash==4.3.2          # duplicate detection (overlap.py, d1_grouped)
+opencv-python==5.0.0.93   # SIFT copy confirmation (d1_grouped, enhanced_res/external_d5.py)
 umap-learn==0.5.12        # one figure in shift.py
 open_clip_torch==3.3.0    # the Cropper (CLIP surface check)
 

@@ -1,0 +1,10 @@
+.venv/
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
+models/
+reports/grouping_cache/
+reports/*.npy
+reports/*.npz
+data/

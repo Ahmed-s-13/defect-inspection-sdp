@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-22",
+  "from": "/Users/wbk/Documents/ChatGPT/Plane damage classification+ possible segmentation",
+  "primary_directory": "/Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped",
+  "old_crop_manifest_sha256": "86dfd7655f21736f62467d86df79b2e8938928c106a859d78bc703b04ac9626a",
+  "new_crop_manifest_sha256": "eb3f91b0b91736f76e4ee50ba256ed457a175a3c6bff3b2e6a2573885ba1f36b",
+  "assignments_changed": false,
+  "notes": "Self-contained local copy including raw data, crops, relative symlinks, models and Python packages. Historical logs/drafts retained as evidence."
+}

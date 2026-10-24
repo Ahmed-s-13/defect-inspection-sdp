@@ -1,0 +1,39 @@
+Using frozen grouped split: /Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/data/d1_sscd_grouped/work/d1_split.csv
+split           test  train   val
+cls                              
+corrosion        378   1766   378
+crack           1310   6109  1310
+dent            1755   8191  1755
+missing-head     392   1830   392
+paint-peel-off   260   1211   259
+scratch          201    939   201
+{
+  "status": "PASS",
+  "checks": [
+    "frozen manifest checksum",
+    "all raw links and labels resolve",
+    "all crop paths resolve",
+    "exact crop inventory coverage",
+    "source groups and split blocks never cross splits",
+    "image/crop split consistency",
+    "ImageNet ResNet18 forward/backward/optimizer step",
+    "512-dimensional feature extraction",
+    "MLP forward/backward",
+    "5-NN normalized probabilities",
+    "checkpoint roundtrip",
+    "stale split/backbone/head rejection"
+  ],
+  "smoke_only": true,
+  "saved_trained_checkpoint": false,
+  "device": "cpu",
+  "images": 14760,
+  "crops": 28637,
+  "classes": [
+    "corrosion",
+    "crack",
+    "dent",
+    "missing-head",
+    "paint-peel-off",
+    "scratch"
+  ]
+}

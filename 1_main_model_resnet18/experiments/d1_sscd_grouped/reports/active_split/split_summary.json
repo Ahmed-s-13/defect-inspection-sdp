@@ -1,0 +1,85 @@
+{
+  "seed": 20261021,
+  "colocate_threshold": 0.45,
+  "allocation_solver_message": "Time limit reached. (HiGHS Status 13: Time limit reached)",
+  "images": 14760,
+  "crops": 28637,
+  "verified_components": 1701,
+  "conservative_split_blocks": 720,
+  "extra_colocation_merges": 945,
+  "largest_split_blocks": [
+    1500,
+    574,
+    347,
+    293,
+    260,
+    257,
+    227,
+    203,
+    201,
+    195,
+    195,
+    184,
+    161,
+    159,
+    146,
+    130,
+    125,
+    122,
+    121,
+    120
+  ],
+  "image_counts": {
+    "train": 10330,
+    "val": 2216,
+    "test": 2214
+  },
+  "crop_counts": {
+    "train": 20046,
+    "test": 4296,
+    "val": 4295
+  },
+  "block_counts": {
+    "test": 109,
+    "train": 503,
+    "val": 108
+  },
+  "class_crop_counts": {
+    "test": {
+      "corrosion": 378,
+      "crack": 1310,
+      "dent": 1755,
+      "missing-head": 392,
+      "paint-peel-off": 260,
+      "scratch": 201
+    },
+    "train": {
+      "corrosion": 1766,
+      "crack": 6109,
+      "dent": 8191,
+      "missing-head": 1830,
+      "paint-peel-off": 1211,
+      "scratch": 939
+    },
+    "val": {
+      "corrosion": 378,
+      "crack": 1310,
+      "dent": 1755,
+      "missing-head": 392,
+      "paint-peel-off": 259,
+      "scratch": 201
+    }
+  },
+  "max_cross_split_single_view_sscd": 0.44900625944137573,
+  "cross_split_directed_pairs_above_threshold": {
+    "0.45": 0,
+    "0.75": 0,
+    "0.8": 0,
+    "0.9": 0,
+    "0.95": 0
+  },
+  "accepted_cross_split_edges": 0,
+  "split_sha256": "2f75881baa61be766243b309e483c2e0f26051fa757e02a649d1a01de84ab71b",
+  "limitation": "Zero detected accepted-edge leaks and no single-view cosine >= 0.45 cross-split pairs. Not proof that all transformed copies are found. Broad similarity blocks deliberately co-locate uncertain pairs and may contain different scenes. All D4 pHash <=10 candidates were considered; geometric SSCD candidates were top20 >=0.5.",
+  "migration_note": "Dataset renamed to d1_sscd_grouped; only path strings changed, image-to-split assignments unchanged."
+}
