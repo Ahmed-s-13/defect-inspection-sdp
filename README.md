@@ -1,5 +1,13 @@
 # Edge-AI Wearable for Visual Inspection of Aircraft Structures: model code
 
+## Main model — 24 October 2026
+
+**The defect classifier in use is [`enhanced_res`](1_main_model_resnet18/enhanced_res/README.md)**: a ResNet-18 +
+MLP head trained and tested on [`d1_grouped`](1_main_model_resnet18/d1_grouped/README.md), a leak-free re-split
+of D1 (no photo or copy of it in both train and test). Grouped D1-test accuracy **80.4%**, macro-F1 **0.738**,
+against 78.1% / 0.715 for the previous ResNet-18 + MLP recipe retrained on the same split. Run it with
+`python predict.py` in `1_main_model_resnet18/`; the weights are `enhanced_res_model.zip` (team Google Drive).
+
 ## Current D1 grouping work — 22 October 2026
 
 <!-- SSCD_RESNET_RUN_START -->
@@ -60,7 +68,7 @@ which defect it is. Everything here uses public datasets.
 
 | folder | status | what it is |
 |---|---|---|
-| [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | ResNet-18 defect classifier trained on D1 (6 classes) with an **MLP head** on its embeddings (D1-test accuracy 0.901), the dataset-shift (KL divergence) analysis across 10 public datasets, and **the Cropper** for "no damage" patches. Most of our data and results live here. |
+| [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | **enhanced_res** ([`enhanced_res/`](1_main_model_resnet18/enhanced_res/)): ResNet-18 + MLP head for 6 defect classes, trained on the leak-free [`d1_grouped/`](1_main_model_resnet18/d1_grouped/) split (grouped D1-test accuracy 0.804). Also the legacy ResNet-18 + MLP head, the dataset-shift (KL divergence) analysis across 10 public datasets, and **the Cropper** for "no damage" patches. Most of our data and results live here. |
 | [`2_healing_experiment/`](2_healing_experiment/) | experiment, in progress | "Heal" defect crops by inpainting to create non-defective training patches. Builds on folders 1 and 3. |
 | [`3_teacher_student_msrd/`](3_teacher_student_msrd/) | support code | MSRD teacher–student anomaly model, used by the healing experiment. |
 | [`4_early_classifiers_archive/`](4_early_classifiers_archive/) | archived | Our first models: plain CNN and SupCon ResNet-18, on smaller Roboflow datasets. |
@@ -93,9 +101,11 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 
 | file | size | where to download | what it gives you |
 |---|---|---|---|
-| `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the main ResNet-18 (`model_best.pt`), the MSRD teacher–student and the healer checkpoints |
+| `enhanced_res_model.zip` | 136 MB | team shared Google Drive | **the main model**: `data/work/enhanced_res/` (backbone + MLP head) |
+| `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the legacy ResNet-18 (`model_best.pt`), the MSRD teacher–student and the healer checkpoints |
 | `main_model_data_work.zip` | 2.8 GB | team shared Google Drive (ask a team member for access) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed, run KL and healing steps 2–4 |
-| `D1_raw.zip` | 756 MB | team shared Google Drive | the original D1 photos + labels: needed for the Cropper and healing step 1 |
+| `D1_raw.zip` | 756 MB | team shared Google Drive | the original D1 photos + labels: needed for the Cropper, healing step 1 and rebuilding d1_grouped |
+| `d1_grouped` folder | ~850 MB | team shared Google Drive | the d1_grouped split as a ready YOLO dataset; put its `dataset/` in `1_main_model_resnet18/data/d1_grouped/`. Not needed for the ResNet: the split itself (`d1_grouped/groups.csv`) is in git |
 
 Google Drive tips: download each zip on its own rather than the whole folder (Drive would
 wrap them in another zip), and for the 2.8 GB file click **Download anyway** when Drive says
@@ -105,20 +115,28 @@ it can't scan it for viruses.
 git clone https://github.com/Ahmed-s-13/defect-inspection-sdp.git
 cd defect-inspection-sdp
 # put the downloaded zips in this folder, then:
+unzip enhanced_res_model.zip
 unzip trained_models.zip
 unzip main_model_data_work.zip
 unzip D1_raw.zip
 shasum -a 256 -c SHA256SUMS.txt   # optional: check the downloads (file is next to the zips)
 ```
 
-Then check that everything works. The ResNet-18 in the zip is already trained; only the small MLP head is built locally (about 40 s):
+Then check that everything works:
 
 ```bash
 cd 1_main_model_resnet18
+python enhanced_res/evaluate.py      # main model; should end with "OK: results match the original enhanced_res run."
+python predict.py samples/ --compare
+```
+
+The legacy model (still used by the healing experiment) is checked the same way; its small MLP head is built
+locally (about 40 s):
+
+```bash
 python evaluate.py              # should end with "OK: results match the original training run"
 python train_mlp.py             # ~40 s: builds the MLP head (data/work/mlp_head.pt), not in the zips yet
 python evaluate_mlp.py          # should end with "OK: results match the original MLP training run."
-python predict.py samples/ --compare
 ```
 
 The other raw datasets (D2–D10, ~17 GB) are only needed to re-run `prepare.py` from

@@ -1,64 +1,80 @@
 # 1. Main model: ResNet-18 on D1 (+ dataset shift analysis + the Cropper)
 
-> **Current grouped-D1 work:** use [experiments/d1_sscd_grouped/README.md](experiments/d1_sscd_grouped/README.md). It includes the SSCD source-family estimate, the saved conservative grouped split, and adapted ResNet-18/MLP scripts. The scores below describe the historical experiment, not the new split. The SSCD-split ResNet-18 run is now complete: [results and saved artifacts](experiments/d1_sscd_grouped/reports/resnet18_run/README.md). Test accuracy 72.18%, macro-F1 0.6739; no new MLP was trained.
+> **The model the project uses is [`enhanced_res/`](enhanced_res/README.md)**: a ResNet-18 + MLP head trained and
+> tested on [`d1_grouped/`](d1_grouped/README.md), a leak-free re-split of D1 in which no photo (or any of its
+> flipped, rotated, cropped or recoloured copies) is in both training and test.
+> Everything else in the repo either builds on this folder (`2_healing_experiment`) or came before it
+> (`4_early_classifiers_archive`).
 
+## Headline results (grouped D1 test: 4,255 crops from 175 source groups)
 
-> **This is the model the project currently uses.** Everything else in the repo
-> either builds on it (`2_healing_experiment`) or came before it (`4_early_classifiers_archive`).
+| model | accuracy | macro-F1 | balanced accuracy |
+|---|---|---|---|
+| ResNet-18 + MLP head (the recipe below), retrained on d1_grouped | 0.781 | 0.715 | 0.711 |
+| **enhanced_res (in use)** | **0.804** | **0.738** | **0.737** |
+
+What enhanced_res changes, the D5 outside test, and how to run or retrain it: [`enhanced_res/README.md`](enhanced_res/README.md).
+How the leak-free split was built (fingerprint → confirm → group → check): [`d1_grouped/README.md`](d1_grouped/README.md).
+
+Teammates' parallel grouping with an SSCD copy detector is in
+[experiments/d1_sscd_grouped/](experiments/d1_sscd_grouped/README.md). Its ResNet-18 run on the SSCD split scored
+72.18% test accuracy (macro-F1 0.674, no MLP head): [results](experiments/d1_sscd_grouped/reports/resnet18_run/README.md).
+
+## Quick check: use the trained model without training
+
+After unzipping `main_model_data_work.zip` and `enhanced_res_model.zip` (see the top-level README):
+
+```bash
+python enhanced_res/evaluate.py                      # re-tests enhanced_res on grouped test + val (+ D5)
+python predict.py samples/ --compare                 # 30 held-out grouped-test crops, with the legacy answer next to it
+python predict.py photo.jpg --box 375 326 486 411   # defect box in pixels, cut exactly like training
+python predict.py photo.jpg                          # no box: uses the centre square of the image
+python predict.py data/work/crops/D1/                # every image in a folder
+python predict.py photo.jpg --legacy                 # the legacy ResNet-18 + MLP head (original D1 split)
+```
+
+Output looks like `aircraft_000933.jpg: CRACK  59.8%   (corrosion 40.2%, dent 0.0%)`.
+`samples/` holds 5 grouped-test crops per class plus `labels.csv` (one per source group, never trained on).
+The legacy model scores higher on them (0.97 vs 0.80) only because D1's original split put copies of these
+photos in its training set.
+Two things to keep in mind:
+- The model was trained on square crops around a defect. With `--box` the input matches
+  training; without it, a wide shot of a whole panel will give unreliable answers.
+- There is **no "no damage" class yet**. The model always names one of the 6 defects,
+  even for a clean surface. Read the answer as "if this is a defect, which one".
+
+## The legacy model and the dataset-shift analysis
 
 A stock torchvision ResNet-18 (ImageNet weights, only `fc` replaced) is trained on
 D1 (Kaggle Aircraft_dataset, 6 defect classes). Its last layer is then replaced by a more
 accurate **MLP head** trained on its 512-d embeddings (step 7, see below). The ResNet is also
 used as a fixed feature extractor: D2–D10 are fed through it and the KL divergence between their 512-d
-embedding distributions is measured, to see how far each public dataset is from D1.
+embedding distributions is measured, to see how far each public dataset is from D1. The healing experiment
+still uses this model and its split.
 
 The full task spec is in [`docs/TASK_SPEC.md`](docs/TASK_SPEC.md), the interpretation
 in [`findings.md`](findings.md) and the generated report in
 [`results/summary.md`](results/summary.md).
 
-## Headline results (D1-test, 4,293 crops)
+Legacy results on D1's original split (D1-test, 4,293 crops). **These are inflated**: that split puts copies of
+the same photos in train and test (on d1_grouped the same recipe scores 0.781, see above).
 
-| metric | ResNet-18 (own `fc` layer) | **ResNet-18 + MLP head (in use)** |
+| metric | ResNet-18 (own `fc` layer) | ResNet-18 + MLP head |
 |---|---|---|
-| accuracy | 0.880 | **0.901** |
-| macro-F1 | 0.813 | **0.837** |
-| balanced accuracy | 0.819 | **0.832** |
+| accuracy | 0.880 | 0.901 |
+| macro-F1 | 0.813 | 0.837 |
+| balanced accuracy | 0.819 | 0.832 |
 | train macro-F1 (overfitting check) | 0.939 | |
 
 Per-class recall, the confusion matrix and the training curves: ResNet-18 in
 [`results/d1_report.md`](results/d1_report.md), MLP head in [`results/mlp/report.md`](results/mlp/report.md).
-
-## Quick check: use the trained model without training
-
-After unzipping `trained_models.zip` and `main_model_data_work.zip` (see the top-level README):
+To re-test the legacy model (needs `trained_models.zip`):
 
 ```bash
 python evaluate.py      # ~1-2 min: re-tests model_best.pt on D1-test and D1-val
 python train_mlp.py     # ~40 s: trains the MLP head (data/work/mlp_head.pt) from results/embeddings.npz
 python evaluate_mlp.py  # a few seconds: re-tests the MLP head on D1-test and D1-val
 ```
-
-Each prints accuracy, macro-F1, per-class recall and the confusion matrix, and checks them
-against `results/d1_report.json` / `results/mlp/report.json`. `OK: results match ...` means the
-model, the data and your Python setup are all working.
-
-```bash
-python predict.py samples/ --compare                 # 30 held-out test crops, MLP head vs ResNet fc
-python predict.py photo.jpg --box 375 326 486 411   # defect box in pixels, cut exactly like training
-python predict.py photo.jpg                          # no box: uses the centre square of the image
-python predict.py data/work/crops/D1/                # every image in a folder
-python predict.py photo.jpg --resnet-only            # the ResNet's own fc layer instead of the MLP head
-```
-
-Output looks like `aircraft_000933.jpg: CRACK  59.8%   (corrosion 40.2%, dent 0.0%)`.
-`predict.py` uses the MLP head when `data/work/mlp_head.pt` exists, and otherwise falls back to the
-ResNet's `fc` layer with a note. `samples/` holds 5 D1-test crops per class plus `labels.csv`. None
-of them were used for training or for any choice, and the accuracy on them is printed at the end.
-Two things to keep in mind:
-- The model was trained on square crops around a defect. With `--box` the input matches
-  training; without it, a wide shot of a whole panel will give unreliable answers.
-- There is **no "no damage" class yet**. The model always names one of the 6 defects,
-  even for a clean surface. Read the answer as "if this is a defect, which one".
 
 ## What is in this folder
 
@@ -68,15 +84,17 @@ Two things to keep in mind:
 | `download.py` | step 0: download D1–D10 (Kaggle / Roboflow / direct) |
 | `prepare.py` | step 1: cut one square crop per box (box + 25%, 224 px) for every dataset |
 | `overlap.py` | step 2: perceptual-hash duplicate check between datasets |
-| `train.py` | step 3+4: leak-free D1 split and **training of the main ResNet-18** |
+| **`d1_grouped/`** | **the leak-free D1 split the main model uses** (`groups.csv`), its code and audit sheets |
+| **`enhanced_res/`** | **the main model**: training, MLP head, D5 outside test, evaluation, results |
+| `train.py` | step 3+4: D1 split by phash groups and training of the legacy ResNet-18 |
 | `embed.py` | step 5: 512-d embeddings for every dataset |
 | `shift.py` | step 6: KL divergence (Gaussian + k-NN), figures, `summary.md` |
-| **`evaluate.py`** | **re-test the trained model on D1-test, no training needed** |
-| **`predict.py`** | **classify the defect in any image with the trained model (ResNet-18 + MLP head)** |
-| **`klshift/mlp.py`** | **the MLP head**: MLP ensemble + kNN on the 512-d embeddings |
-| **`train_mlp.py`** | step 7: trains the MLP head on the D1 embeddings |
-| **`evaluate_mlp.py`** | re-test the MLP head on D1-test, no training needed |
-| `make_samples.py`, `samples/` | 30 held-out D1-test crops for a quick `predict.py` try |
+| `evaluate.py` | re-test the legacy model on D1-test, no training needed |
+| **`predict.py`** | **classify the defect in any image with the main model (enhanced_res; `--legacy` for the old one)** |
+| `klshift/mlp.py` | the legacy MLP head: MLP ensemble + kNN on the 512-d embeddings |
+| `train_mlp.py` | step 7: trains the legacy MLP head on the D1 embeddings |
+| `evaluate_mlp.py` | re-test the legacy MLP head on D1-test, no training needed |
+| `make_samples.py`, `samples/` | 30 held-out grouped-test crops (d1_grouped) for a quick `predict.py` try |
 | **`klshift/cropper.py`** | **the Cropper**: cuts "no damage" patches out of defect photos |
 | **`run_cropper.py`** + **`cropper.yaml`** | runs the Cropper; all its settings are in the YAML |
 | `make_synthetic.py` | tiny fake D1–D5 for a 2-minute pipeline check |
@@ -159,15 +177,20 @@ rebuilt with `download.py` + `prepare.py`. Layout:
 data/
 ├── raw/D1 … D10/        downloads (7 GB)
 ├── src/                 large source archives for D6, D9, D10 (11 GB)
+├── d1_grouped/dataset/  the d1_grouped split as a YOLO dataset (team Google Drive, or d1_grouped/split.py)
 └── work/                everything derived (3 GB)
     ├── crops/           224-px crops per dataset + one CSV each
-    ├── d1_split.csv     the leak-free D1 train/val/test split (used by the healing experiment)
-    ├── model_best.pt    ← the trained main ResNet-18 (45 MB)
-    └── mlp_head.pt      ← the MLP head from train_mlp.py (63 MB)
+    ├── enhanced_res/    ← the main model: enhanced_res_backbone.pt (45 MB) + enhanced_res_head.pt (91 MB),
+    │                      plus training runs and caches
+    ├── d1_grouped_cache/  fingerprints and SIFT keypoints from d1_grouped/group.py (2.3 GB, only for rebuilding)
+    ├── d1_split.csv     the legacy D1 split by phash groups (used by the healing experiment)
+    ├── model_best.pt    ← the legacy ResNet-18 (45 MB)
+    └── mlp_head.pt      ← the legacy MLP head from train_mlp.py (63 MB)
 ```
 
-`model_best.pt`, `data/work/` and `results/embeddings.npz` are shared as zip files
-outside git. See "Getting the data and trained models" in the top-level README.
+The weights, `data/work/` and `results/embeddings.npz` are shared as zip files outside git
+(`enhanced_res_model.zip` holds `data/work/enhanced_res/`). See "Getting the data and trained models" in the
+top-level README. The d1_grouped split itself (`d1_grouped/groups.csv`) is in git.
 
 ## Setup
 

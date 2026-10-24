@@ -1,0 +1,65 @@
+{
+  "final_backbone": "r2",
+  "base": [
+    "r0",
+    "h0"
+  ],
+  "final": [
+    "r2",
+    "h4"
+  ],
+  "test": {
+    "base": {
+      "accuracy": 0.7811985898942421,
+      "macro_f1": 0.7151065356776729,
+      "balanced_accuracy": 0.7114937163942079,
+      "recall": {
+        "corrosion": 0.6032,
+        "crack": 0.7361,
+        "dent": 0.8793,
+        "missing-head": 0.939,
+        "paint-peel-off": 0.6264,
+        "scratch": 0.485
+      }
+    },
+    "final": {
+      "accuracy": 0.8044653349001175,
+      "macro_f1": 0.737587801275153,
+      "balanced_accuracy": 0.7366583471645706,
+      "recall": {
+        "corrosion": 0.5873,
+        "crack": 0.8009,
+        "dent": 0.8765,
+        "missing-head": 0.9448,
+        "paint-peel-off": 0.6755,
+        "scratch": 0.535
+      }
+    },
+    "base_ci": [
+      0.6699371169711169,
+      0.7536653590501369
+    ],
+    "final_ci": [
+      0.6915558779845495,
+      0.7757336392691779
+    ],
+    "diff_ci": [
+      0.0016664870922443985,
+      0.04495795905498908
+    ],
+    "mcnemar": {
+      "only_final_right": 251,
+      "only_base_right": 152,
+      "p": 9.329292890027139e-07
+    }
+  },
+  "d5": {
+    "base_acc": 0.7596153846153846,
+    "final_acc": 0.8403846153846154,
+    "n": 1040,
+    "counts": {
+      "missing-head": 853,
+      "dent": 187
+    }
+  }
+}
