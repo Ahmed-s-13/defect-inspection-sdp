@@ -5,7 +5,7 @@ The model is a ResNet-18 backbone (trained by train_backbone.py) followed by an 
             8 flips/90-degree rotations (test-time augmentation)
   head      5 MLPs (softmax averaged), blended with a 5-nearest-neighbour vote over the train crops' features,
             then an optional class-prior correction p(c) / prior(c)^tau
-Weights live in data/work/enhanced_res/ (git-ignored; enhanced_res_model.zip): enhanced_res_backbone.pt and
+Weights live in data/work/enhanced_res/ (git-ignored; enhanced_res_model.zip on the GitHub Releases page): enhanced_res_backbone.pt and
 enhanced_res_head.pt.
 
   from enhanced_res.model import EnhancedRes

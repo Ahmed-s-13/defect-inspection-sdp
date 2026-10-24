@@ -42,8 +42,8 @@ read for the report.
 
 ## Getting the model
 
-The weights are not in git (like all `*.pt` files). Unzip `enhanced_res_model.zip` (team Google Drive) in the
-repo root; it gives `1_main_model_resnet18/data/work/enhanced_res/enhanced_res_backbone.pt` (45 MB) and
+The weights are not in git (like all `*.pt` files). Download `enhanced_res_model.zip` from this repo's
+**Releases** page (`v2.0-enhanced-res`) and unzip it in the repo root; it gives `1_main_model_resnet18/data/work/enhanced_res/enhanced_res_backbone.pt` (45 MB) and
 `enhanced_res_head.pt` (91 MB). You also need `main_model_data_work.zip` for the D1 crops. The split itself is
 `../d1_grouped/groups.csv`, which is in git.
 

@@ -8,7 +8,7 @@
 
 The main model is enhanced_res (enhanced_res/README.md): a ResNet-18 trained on the leak-free d1_grouped split,
 whose layer3 + layer4 features, averaged over the crop's 8 flips/rotations, go to an MLP-ensemble + kNN head.
-Grouped D1-test accuracy 0.804 (macro-F1 0.738). Weights: data/work/enhanced_res/ (enhanced_res_model.zip).
+Grouped D1-test accuracy 0.804 (macro-F1 0.738). Weights: data/work/enhanced_res/ (enhanced_res_model.zip, GitHub Release v2.0-enhanced-res).
 
 --legacy uses the earlier model (data/work/model_best.pt + mlp_head.pt), trained on D1's original split. Its
 0.901 test accuracy is inflated by copies of training photos in that test set; on d1_grouped the same recipe

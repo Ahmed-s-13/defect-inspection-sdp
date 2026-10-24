@@ -6,7 +6,7 @@
 MLP head trained and tested on [`d1_grouped`](1_main_model_resnet18/d1_grouped/README.md), a leak-free re-split
 of D1 (no photo or copy of it in both train and test). Grouped D1-test accuracy **80.4%**, macro-F1 **0.738**,
 against 78.1% / 0.715 for the previous ResNet-18 + MLP recipe retrained on the same split. Run it with
-`python predict.py` in `1_main_model_resnet18/`; the weights are `enhanced_res_model.zip` (team Google Drive).
+`python predict.py` in `1_main_model_resnet18/`; the weights are `enhanced_res_model.zip` on this repo's **Releases** page (`v2.0-enhanced-res`).
 
 ## Current D1 grouping work — 22 October 2026
 
@@ -101,7 +101,7 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 
 | file | size | where to download | what it gives you |
 |---|---|---|---|
-| `enhanced_res_model.zip` | 136 MB | team shared Google Drive | **the main model**: `data/work/enhanced_res/` (backbone + MLP head) |
+| `enhanced_res_model.zip` | 136 MB | this repo's **Releases** page (`v2.0-enhanced-res`) | **the main model**: `data/work/enhanced_res/` (backbone + MLP head) |
 | `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the legacy ResNet-18 (`model_best.pt`), the MSRD teacher–student and the healer checkpoints |
 | `main_model_data_work.zip` | 2.8 GB | team shared Google Drive (ask a team member for access) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed, run KL and healing steps 2–4 |
 | `D1_raw.zip` | 756 MB | team shared Google Drive | the original D1 photos + labels: needed for the Cropper, healing step 1 and rebuilding d1_grouped |
