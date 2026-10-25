@@ -18,6 +18,8 @@ The model was trained on square crops around a defect (box + 25% margin, 224 px)
 --box gives the most faithful result. Without it the centre square of the image is used,
 which works for crops and close-ups but not for wide shots.
 
+Each image gets its 2 most likely defect classes with their softmax probability (--top N for more).
+
 The model has no "no damage" class: it always names one of the 6 defect types, even
 for a clean surface. Read the output as "if this is a defect, which one".
 
@@ -80,7 +82,7 @@ def main():
     ap.add_argument("--box", type=float, nargs=4, metavar=("X1", "Y1", "X2", "Y2"),
                     help="defect box in pixels of the original image (single image only)")
     ap.add_argument("--work", default="data/work", help="folder with enhanced_res/ and the legacy model files")
-    ap.add_argument("--top", type=int, default=3, help="how many classes to list per image")
+    ap.add_argument("--top", type=int, default=2, help="how many classes to list per image, with their softmax probability")
     ap.add_argument("--legacy", action="store_true", help="use the earlier ResNet-18 + MLP head (original D1 split)")
     ap.add_argument("--resnet-only", action="store_true", help="with --legacy: the ResNet's own fc layer, no MLP head")
     ap.add_argument("--compare", action="store_true", help="also print the legacy model's answer")
@@ -128,8 +130,9 @@ def main():
             for j, p in enumerate(chunk):
                 top = prob[j].argsort(descending=True)[:a.top].tolist()
                 best = top[0]
-                others = ", ".join(f"{classes[k]} {prob[j, k] * 100:.1f}%" for k in top[1:])
-                line = f"{p.name}: {classes[best].upper()}  {prob[j, best] * 100:.1f}%" + (f"   ({others})" if others else "")
+                ranked = "   ".join(f"{r}. {classes[k].upper() if r == 1 else classes[k]} {prob[j, k] * 100:.1f}%"
+                                    for r, k in enumerate(top, 1))
+                line = f"{p.name}:  {ranked}"
                 ob = int(prob_o[j].argmax()) if other else None
                 if other:
                     line += f"   | legacy: {classes[ob]} {prob_o[j, ob] * 100:.1f}%"
