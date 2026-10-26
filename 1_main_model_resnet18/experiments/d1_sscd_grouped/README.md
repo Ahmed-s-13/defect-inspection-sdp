@@ -29,6 +29,22 @@ Earlier threshold-0.75 and threshold-0.50 drafts still had copies in visual revi
 
 This is a practical, audited split, not a proof that every augmented sibling has been identified. The saved evidence makes it possible to improve the grouping without guessing.
 
+## Alternative grouping: `d1_grouped` (local only, git-ignored)
+
+A second, independently built leak-free split of the same 14,760 D1 images lives next to this folder in [`../d1_grouped/`](../d1_grouped/README.md). It is **git-ignored** (3.2 GB with images and cache); only the comparison below is tracked. It was built with perceptual hashes and ResNet-50 features over all 8 flips/rotations, SIFT+RANSAC confirmation, union-find grouping (861 groups), and a 70/15/15 group-level split with a repeat-until-clean leak check. It is similar in spirit to the SSCD pipeline here, but uses different fingerprints and thresholds, and a different split.
+
+Comparison (script `scripts/compare_d1_grouped.py`, full report [`reports/compare_d1_grouped/README.md`](reports/compare_d1_grouped/README.md)):
+
+- **Splits differ a lot**: only 53.9% of images land in the same split in both (val overlap 5.7%, test overlap 9.3% Jaccard). Both are independent random group-level allocations, so scores on one test set are not comparable to the other.
+- **SSCD strict groups nest inside d1_grouped groups**: 99.6% of the 1,701 SSCD strict groups lie wholly inside one d1_grouped group (every SSCD pair is also a d1_grouped pair). d1_grouped is coarser: its 861 groups merge several SSCD families each.
+- **SSCD split blocks vs d1_grouped groups**: 93.4% of d1_grouped groups sit inside one SSCD block, but the SSCD blocks are the more conservative unit (35% of SSCD-block pairs are co-grouped in d1_grouped).
+- **Cross-leakage**: 6 SSCD strict groups (41 images) straddle splits of d1_grouped; 28 d1_grouped groups (2,883 images) straddle splits of the SSCD split. Neither split is leak-free by the other's standard, though the SSCD blocks are the stricter unit.
+
+### Union split and Siamese audit
+
+- **Union split** (`manifests/union_split.csv`, `union_split.portable.csv`; `scripts/build_union_split.py`): images linked by *either* an SSCD split block or a d1_grouped group, then whole components split 70/15/15 (613 components, largest 1,924 images; 10,860 / 1,908 / 1,992 images; 19,970 / 4,376 / 4,291 crops; corrosion is 66.9/18.2/14.9). No SSCD or d1_grouped group straddles it. It is a candidate, not yet the active split: the frozen SSCD split and its checksum are unchanged.
+- **Siamese audit** (`scripts/siamese_audit.py`, [report](reports/siamese_audit/README.md)): a shared-weight ResNet-18 trained contrastively on SSCD strict groups (15% held out; held-out nearest-neighbour hit rate 99.8%). Share of val+test images with a train match scoring >= 0.90: original D1 split 96.6%, SSCD 1.3%, d1_grouped 5.2%, **union 0.4%**. The top flagged union pairs are mostly same-hardware, different-scene crops, a few possible same-object re-shoots. Because the Siamese learned from the same groupings, it is a consistency check, not independent ground truth.
+
 ## Where to look
 
 | Path | What you will find |
@@ -70,6 +86,14 @@ Then train a fresh **ResNet-18** on the saved grouped split:
 ```
 
 The training script reads the existing split; it does not create a new one. It starts from ImageNet weights, not the old D1 checkpoint. Default: up to 30 epochs, early stopping after 5 epochs without validation macro-F1 improvement. It selects CUDA, Apple MPS, or CPU in that order, depending on availability.
+
+### Train on any split (detached, GPU, stays awake)
+
+```sh
+.venv/bin/python scripts/train_on_split.py union        # or: original | sscd | d1_grouped
+```
+
+It refuses to start without the Apple GPU (MPS), runs `main_model/train.py` in its own session under `caffeinate -ims` (survives screen-off and closing the terminal/app), and writes logs and `status.json` to `reports/runs/<split>/` and weights to `data/splits/<split>/work/model_best.pt`. Keep the Mac on AC power: lid-close sleep, power loss and shutdown cannot be prevented. Extra arguments go to `train.py` (e.g. `--epochs 30`).
 
 To add the MLP ensemble and nearest-neighbour head after ResNet training:
 

@@ -41,3 +41,15 @@ CLAUDE.md
 # Portable local dataset handoff (bulk files)
 handoffs/d1_sscd_grouped_mac/data/
 handoffs/d1_sscd_grouped_mac/models/
+
+# Alternative grouped split (d1_grouped), local only
+1_main_model_resnet18/experiments/d1_grouped/
+
+# graphify knowledge graph output and any stray graphify files (local only)
+graphify-out/
+**/graphify-out/
+.graphify*
+**/.graphify*
+
+# Mac handoff package (local only)
+handoffs/

@@ -21,6 +21,10 @@ The primary SSCD/grouped-data experiment is now in **[1_main_model_resnet18/expe
 - [Frozen portable manifests](1_main_model_resnet18/experiments/d1_sscd_grouped/manifests/README.md): 10,330 / 2,216 / 2,214 raw images and 20,046 / 4,295 / 4,296 usable crops in train/val/test.
 - Current training status and results are recorded in the run section above.
 
+**Alternative grouping.** A second leak-free split, `d1_grouped` (861 groups; phash + ResNet-50 + SIFT), is kept locally at `1_main_model_resnet18/experiments/d1_grouped/` and is git-ignored. [Comparison with the SSCD split](1_main_model_resnet18/experiments/d1_sscd_grouped/reports/compare_d1_grouped/README.md): SSCD strict families nest inside d1_grouped groups (99.6%), but the two splits agree on only 53.9% of images.
+
+A candidate **union split** (SSCD blocks + d1_grouped groups) and a Siamese leakage audit are described [here](1_main_model_resnet18/experiments/d1_sscd_grouped/README.md); the union split has the fewest near-duplicate train matches of the three grouped splits.
+
 <!-- SSCD_COPY_ESTIMATES_START -->
 ## D1 SSCD augmentation/copy estimates
 

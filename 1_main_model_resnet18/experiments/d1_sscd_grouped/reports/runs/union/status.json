@@ -1,0 +1,24 @@
+{
+  "split": "union",
+  "pid": 8970,
+  "device": "mps",
+  "command": [
+    "caffeinate",
+    "-ims",
+    "/Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/.venv/bin/python",
+    "main_model/train.py",
+    "--workers",
+    "4",
+    "--work",
+    "/Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/data/splits/union/work",
+    "--results",
+    "/Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/reports/runs/union"
+  ],
+  "started_utc": "2026-10-24T08:36:33.388025+00:00",
+  "split_sha256": "3ef1d98ca8df5bc5e79b55e558494516718cfed2f9522da56085f07785a45728",
+  "crops": {
+    "train": 19970,
+    "val": 4376,
+    "test": 4291
+  }
+}

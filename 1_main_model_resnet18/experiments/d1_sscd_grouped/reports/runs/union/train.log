@@ -1,0 +1,112 @@
+Using frozen grouped split: /Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/data/splits/union/work/d1_split.csv
+split           test  train   val
+cls                              
+corrosion        375   1688   459
+crack           1309   6111  1309
+dent            1755   8191  1755
+missing-head     392   1830   392
+paint-peel-off   259   1211   260
+scratch          201    939   201
+class weights: {'corrosion': 1.97, 'crack': 0.54, 'dent': 0.41, 'missing-head': 1.82, 'paint-peel-off': 2.75, 'scratch': 3.54}
+training on mps: 19970 train / 4376 val crops
+epoch 1 batch 75/312 elapsed 71s
+epoch 1 batch 150/312 elapsed 130s
+epoch 1 batch 225/312 elapsed 189s
+epoch 1 batch 300/312 elapsed 247s
+epoch  1  loss 0.7397  train-acc(aug) 0.722  val macro-F1 0.5974  284s
+  -> about 4.7 min per epoch; max 30 epochs = up to 2.4 h (early stopping usually ends sooner)
+epoch 2 batch 75/312 elapsed 62s
+epoch 2 batch 150/312 elapsed 124s
+epoch 2 batch 225/312 elapsed 185s
+epoch 2 batch 300/312 elapsed 247s
+epoch  2  loss 0.4583  train-acc(aug) 0.843  val macro-F1 0.6024  274s
+epoch 3 batch 75/312 elapsed 68s
+epoch 3 batch 150/312 elapsed 137s
+epoch 3 batch 225/312 elapsed 203s
+epoch 3 batch 300/312 elapsed 270s
+epoch  3  loss 0.3800  train-acc(aug) 0.870  val macro-F1 0.6569  298s
+epoch 4 batch 75/312 elapsed 67s
+epoch 4 batch 150/312 elapsed 133s
+epoch 4 batch 225/312 elapsed 201s
+epoch 4 batch 300/312 elapsed 269s
+epoch  4  loss 0.3242  train-acc(aug) 0.891  val macro-F1 0.6430  295s
+epoch 5 batch 75/312 elapsed 68s
+epoch 5 batch 150/312 elapsed 137s
+epoch 5 batch 225/312 elapsed 205s
+epoch 5 batch 300/312 elapsed 275s
+epoch  5  loss 0.2778  train-acc(aug) 0.905  val macro-F1 0.6356  303s
+epoch 6 batch 75/312 elapsed 69s
+epoch 6 batch 150/312 elapsed 139s
+epoch 6 batch 225/312 elapsed 211s
+epoch 6 batch 300/312 elapsed 284s
+epoch  6  loss 0.2529  train-acc(aug) 0.914  val macro-F1 0.6226  312s
+epoch 7 batch 75/312 elapsed 75s
+epoch 7 batch 150/312 elapsed 150s
+epoch 7 batch 225/312 elapsed 227s
+epoch 7 batch 300/312 elapsed 309s
+epoch  7  loss 0.2399  train-acc(aug) 0.919  val macro-F1 0.6177  342s
+epoch 8 batch 75/312 elapsed 90s
+epoch 8 batch 150/312 elapsed 172s
+epoch 8 batch 225/312 elapsed 255s
+epoch 8 batch 300/312 elapsed 337s
+epoch  8  loss 0.2220  train-acc(aug) 0.927  val macro-F1 0.6623  369s
+epoch 9 batch 75/312 elapsed 97s
+epoch 9 batch 150/312 elapsed 200s
+epoch 9 batch 225/312 elapsed 290s
+epoch 9 batch 300/312 elapsed 377s
+epoch  9  loss 0.1973  train-acc(aug) 0.931  val macro-F1 0.6438  411s
+epoch 10 batch 75/312 elapsed 86s
+epoch 10 batch 150/312 elapsed 169s
+epoch 10 batch 225/312 elapsed 253s
+epoch 10 batch 300/312 elapsed 340s
+epoch 10  loss 0.1917  train-acc(aug) 0.933  val macro-F1 0.6794  375s
+epoch 11 batch 75/312 elapsed 86s
+epoch 11 batch 150/312 elapsed 169s
+epoch 11 batch 225/312 elapsed 251s
+epoch 11 batch 300/312 elapsed 334s
+epoch 11  loss 0.1842  train-acc(aug) 0.937  val macro-F1 0.6205  367s
+epoch 12 batch 75/312 elapsed 81s
+epoch 12 batch 150/312 elapsed 161s
+epoch 12 batch 225/312 elapsed 242s
+epoch 12 batch 300/312 elapsed 324s
+epoch 12  loss 0.1599  train-acc(aug) 0.946  val macro-F1 0.6568  357s
+epoch 13 batch 75/312 elapsed 81s
+epoch 13 batch 150/312 elapsed 170s
+epoch 13 batch 225/312 elapsed 264s
+epoch 13 batch 300/312 elapsed 357s
+epoch 13  loss 0.1595  train-acc(aug) 0.944  val macro-F1 0.5989  394s
+epoch 14 batch 75/312 elapsed 96s
+epoch 14 batch 150/312 elapsed 193s
+epoch 14 batch 225/312 elapsed 315s
+epoch 14 batch 300/312 elapsed 421s
+epoch 14  loss 0.1567  train-acc(aug) 0.946  val macro-F1 0.6685  458s
+epoch 15 batch 75/312 elapsed 88s
+epoch 15 batch 150/312 elapsed 174s
+epoch 15 batch 225/312 elapsed 264s
+epoch 15 batch 300/312 elapsed 376s
+epoch 15  loss 0.1494  train-acc(aug) 0.949  val macro-F1 0.6547  436s
+early stop after epoch 15
+Python(11349) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(11352) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(11353) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(11357) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(11371) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(11374) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(11375) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(11378) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+| metric | value |
+|---|---|
+| test accuracy | 0.6101 |
+| test macro-F1 | 0.5418 |
+| test balanced accuracy | 0.5778 |
+| val macro-F1 | 0.6794 |
+| train macro-F1 (no augmentation, 5000 crops) | 0.9312 |
+
+| class | test recall | test crops |
+|---|---|---|
+| corrosion | 0.3467 | 375 |
+| crack | 0.4790 | 1309 |
+| dent | 0.7362 | 1755 |
+| missing-head | 0.8291 | 392 |
+| paint-peel-off | 0.4788 | 259 |
+| scratch | 0.5970 | 201 |
