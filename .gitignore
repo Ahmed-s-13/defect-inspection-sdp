@@ -46,3 +46,15 @@ handoffs/d1_sscd_grouped_mac/models/
 # see trt_enhanced_res/README.md); engines only run on the GPU that built them (each machine runs trt_runner.py)
 trt_enhanced_res/onnx/*.onnx
 trt_enhanced_res/engines/*.engine
+
+# Alternative grouped split (d1_grouped), local only
+1_main_model_resnet18/experiments/d1_grouped/
+
+# graphify knowledge graph output and any stray graphify files (local only)
+graphify-out/
+**/graphify-out/
+.graphify*
+**/.graphify*
+
+# Mac handoff package (local only)
+handoffs/

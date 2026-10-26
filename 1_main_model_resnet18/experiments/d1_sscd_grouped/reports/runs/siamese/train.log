@@ -1,0 +1,24 @@
+Using frozen grouped split: /Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/data/splits/siamese/work/d1_split.csv
+split           test  train   val
+cls                              
+corrosion        378   1766   378
+crack           1309   6111  1309
+dent            1755   8191  1755
+missing-head     391   1807   416
+paint-peel-off   259   1211   260
+scratch          201    939   201
+class weights: {'corrosion': 1.89, 'crack': 0.55, 'dent': 0.41, 'missing-head': 1.85, 'paint-peel-off': 2.76, 'scratch': 3.55}
+training on mps: 20025 train / 4319 val crops
+epoch 1 batch 75/312 elapsed 72s
+epoch 1 batch 150/312 elapsed 133s
+epoch 1 batch 225/312 elapsed 191s
+epoch 1 batch 300/312 elapsed 258s
+epoch  1  loss 0.7683  train-acc(aug) 0.719  val macro-F1 0.5581  294s
+  -> about 4.9 min per epoch; max 30 epochs = up to 2.5 h (early stopping usually ends sooner)
+epoch 2 batch 75/312 elapsed 61s
+epoch 2 batch 150/312 elapsed 123s
+epoch 2 batch 225/312 elapsed 192s
+epoch 2 batch 300/312 elapsed 269s
+epoch  2  loss 0.4933  train-acc(aug) 0.825  val macro-F1 0.6223  310s
+epoch 3 batch 75/312 elapsed 74s
+epoch 3 batch 150/312 elapsed 142s

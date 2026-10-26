@@ -1,0 +1,24 @@
+{
+  "split": "siamese",
+  "pid": 15847,
+  "device": "mps",
+  "command": [
+    "caffeinate",
+    "-ims",
+    "/Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/.venv/bin/python",
+    "main_model/train.py",
+    "--workers",
+    "4",
+    "--work",
+    "/Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/data/splits/siamese/work",
+    "--results",
+    "/Users/wbk/Documents/GitHub/defect-inspection-sdp/1_main_model_resnet18/experiments/d1_sscd_grouped/reports/runs/siamese"
+  ],
+  "started_utc": "2026-10-24T14:16:24.112320+00:00",
+  "split_sha256": "674f4fc252960e2ebf03c19ce11135a42490ffc867c8e517529a66c24d5e2ce0",
+  "crops": {
+    "train": 20025,
+    "val": 4319,
+    "test": 4293
+  }
+}
