@@ -41,3 +41,8 @@ CLAUDE.md
 # Portable local dataset handoff (bulk files)
 handoffs/d1_sscd_grouped_mac/data/
 handoffs/d1_sscd_grouped_mac/models/
+
+# enhanced_res on TensorRT: ONNX files are over GitHub's 100 MB limit (enhanced_res_onnx.zip on the team Drive,
+# see trt_enhanced_res/README.md); engines only run on the GPU that built them (each machine runs trt_runner.py)
+trt_enhanced_res/onnx/*.onnx
+trt_enhanced_res/engines/*.engine

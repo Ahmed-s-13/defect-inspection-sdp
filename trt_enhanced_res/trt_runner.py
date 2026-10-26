@@ -1,27 +1,39 @@
-"""Build and run TensorRT engines for the enhanced_res backbone (adapted from tensorrt_for_laptop/tensorrt/trt_engine.py,
+"""Step 2: build TensorRT engines for the WHOLE enhanced_res (adapted from tensorrt_for_laptop/tensorrt/trt_engine.py,
 which hard-codes the legacy model's output names and sizes).
 
-  python trt_runner.py                 builds engines/enhanced_res_fp32.engine and _fp16.engine from onnx/*.onnx
+  python trt_runner.py                 builds engines/enhanced_res_full_fp32.engine and _fp16.engine from onnx/*.onnx
   python trt_runner.py --rebuild       rebuild even if they exist
 
-Each engine has two optimisation profiles: 1 crop (latency, the wearable's case) and 1..MAX crops tuned for MAX
-(throughput). One crop = 8 TTA views run inside the engine, so MAX=4 crops means a batch of 32 views.
-Engine in: input float32 [N,3,224,224]; out: feats float32 [N,768], logits float32 [N,6].
+An engine only runs on the GPU model and TensorRT version it was built with, so build it on the machine that uses it
+(the Jetson builds its own). Two optimisation profiles: 1 crop (latency, the wearable's case) and 1..MAX crops tuned
+for MAX (throughput). One crop = 8 TTA views inside, so MAX=4 crops means 32 views.
+Engine in: input float32 [N,3,224,224]; out: probs float32 [N,6].
+
+Building engines needs no PyTorch (only tensorrt + cuda-python, as in requirements.txt). TRTModel below keeps its
+buffers in torch CUDA tensors and is only used by benchmark.py; predict_trt.py has its own PyTorch-free runner.
 """
 import argparse
 import time
 from pathlib import Path
 
-import torch  # import torch before tensorrt (CUDA DLL order on Windows)
-
-from erc import ENGINE_DIR, ONNX_DIR
-
+HERE = Path(__file__).resolve().parent
+ONNX_DIR, ENGINE_DIR = HERE / "onnx", HERE / "engines"                   # = erc.ONNX_DIR / erc.ENGINE_DIR
 IN_SHAPE = (3, 224, 224)
-N_FEATS, N_CLASSES = 768, 6
+N_CLASSES = 6
 
 
 def engine_path(prec):
-    return ENGINE_DIR / f"enhanced_res_{prec}.engine"
+    return ENGINE_DIR / f"enhanced_res_full_{prec}.engine"
+
+
+def gpu_name():
+    """Name of CUDA device 0, or None if there is no usable NVIDIA GPU (cuda-python, no PyTorch)."""
+    from cuda.bindings import runtime as rt
+    err, n = rt.cudaGetDeviceCount()
+    if err != rt.cudaError_t.cudaSuccess or n == 0:
+        return None
+    err, prop = rt.cudaGetDeviceProperties(0)
+    return prop.name.decode(errors="replace").strip("\x00") if err == rt.cudaError_t.cudaSuccess else "NVIDIA GPU"
 
 
 def build(onnx_path, out_path, max_batch=4, workspace_gb=1.0):
@@ -32,7 +44,7 @@ def build(onnx_path, out_path, max_batch=4, workspace_gb=1.0):
     flags = 0 if int(trt.__version__.split(".")[0]) >= 11 else 1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED)
     network = builder.create_network(flags)
     parser = trt.OnnxParser(network, logger)
-    if not parser.parse(Path(onnx_path).read_bytes()):
+    if not parser.parse_from_file(str(onnx_path)):
         raise SystemExit("ONNX parse failed:\n" + "\n".join(str(parser.get_error(i)) for i in range(parser.num_errors)))
     config = builder.create_builder_config()
     config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, int(workspace_gb * (1 << 30)))
@@ -47,16 +59,16 @@ def build(onnx_path, out_path, max_batch=4, workspace_gb=1.0):
         raise SystemExit(f"TensorRT could not build {onnx_path}")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_bytes(bytes(data))
-    out_path.with_suffix(".txt").write_text(f"tensorrt {trt.__version__}\ngpu {torch.cuda.get_device_name(0)}\n"
-                                            f"max_batch {max_batch}\n")
+    out_path.with_suffix(".txt").write_text(f"tensorrt {trt.__version__}\ngpu {gpu_name()}\nmax_batch {max_batch}\n")
     print(f"  built {out_path.name} in {time.time() - t0:.0f}s ({out_path.stat().st_size / 1e6:.1f} MB)", flush=True)
 
 
-class TRTBackbone:
-    """Runs a built engine on torch CUDA tensors: x float32 [N,3,224,224] on the GPU -> (feats [N,768], logits [N,6])."""
+class TRTModel:
+    """Runs a built engine on torch CUDA tensors: x float32 [N,3,224,224] on the GPU -> probs [N,6]."""
 
     def __init__(self, path, stream):
         import tensorrt as trt
+        import torch
         self.logger = trt.Logger(trt.Logger.WARNING)
         self.engine = trt.Runtime(self.logger).deserialize_cuda_engine(Path(path).read_bytes())
         if self.engine is None:
@@ -69,8 +81,7 @@ class TRTBackbone:
             ctx = self.engine.create_execution_context()
             ctx.set_optimization_profile_async(prof, stream.cuda_stream)
             self.ctx[prof] = ctx
-            self.out[prof] = {"feats": torch.empty((n, N_FEATS), device="cuda"),
-                              "logits": torch.empty((n, N_CLASSES), device="cuda")}
+            self.out[prof] = torch.empty((n, N_CLASSES), device="cuda")
         stream.synchronize()
 
     def __call__(self, x):
@@ -79,11 +90,10 @@ class TRTBackbone:
         ctx, out = self.ctx[prof], self.out[prof]
         ctx.set_input_shape("input", tuple(x.shape))
         ctx.set_tensor_address("input", x.data_ptr())
-        for name, buf in out.items():
-            ctx.set_tensor_address(name, buf.data_ptr())  # first n rows are used (contiguous)
+        ctx.set_tensor_address("probs", out.data_ptr())  # first n rows are used (contiguous)
         if not ctx.execute_async_v3(self.stream.cuda_stream):
             raise RuntimeError("TensorRT execute_async_v3 failed")
-        return out["feats"][:n], out["logits"][:n]
+        return out[:n]
 
 
 def main():
@@ -93,17 +103,18 @@ def main():
     ap.add_argument("--workspace-gb", type=float, default=1.0)
     ap.add_argument("--rebuild", action="store_true")
     a = ap.parse_args()
-    if not torch.cuda.is_available():
-        raise SystemExit("No NVIDIA GPU visible to PyTorch.")
+    gpu = gpu_name()
+    if gpu is None:
+        raise SystemExit("No NVIDIA GPU visible (check the driver with nvidia-smi).")
     import tensorrt as trt
-    print(f"TensorRT {trt.__version__} on {torch.cuda.get_device_name(0)}")
+    print(f"TensorRT {trt.__version__} on {gpu}")
     for prec in a.precisions:
         out = engine_path(prec)
         if out.exists() and not a.rebuild:
             print(f"  {out.name} exists (use --rebuild)")
             continue
         print(f"building {prec.upper()} engine ...", flush=True)
-        build(ONNX_DIR / f"enhanced_res_{prec}.onnx", out, a.max_batch, a.workspace_gb)
+        build(ONNX_DIR / f"enhanced_res_full_{prec}.onnx", out, a.max_batch, a.workspace_gb)
 
 
 if __name__ == "__main__":

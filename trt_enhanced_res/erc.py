@@ -1,7 +1,8 @@
-"""Shared paths and the exportable enhanced_res backbone (8-view TTA done inside the graph).
+"""Shared paths and the exportable enhanced_res model: TTABackbone (backbone + 8-view TTA in the graph) and
+FullModel (the whole enhanced_res, what export_onnx.py exports).
 
-Lives outside git on purpose (PROJECT_HANDOFF rule: new experiments stay out of the repo). Reads the repo and the
-earlier TensorRT bundle without changing them.
+Used by export_onnx.py, trt_runner.py and benchmark.py (they need PyTorch); predict_trt.py does not import it.
+Reads 1_main_model_resnet18 and tensorrt_for_laptop/tensorrt/common.py without changing them.
 """
 import sys
 from pathlib import Path
@@ -10,7 +11,7 @@ import torch
 from torch import nn
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parent / "defect-inspection-sdp"
+REPO = HERE.parent                                           # this folder lives in the repo root
 MAIN = REPO / "1_main_model_resnet18"
 TRT_OLD = REPO / "tensorrt_for_laptop" / "tensorrt"          # normalize / timed / sync live here
 ONNX_DIR = HERE / "onnx"
@@ -56,6 +57,49 @@ class TTABackbone(nn.Module):
         f = er.feats(self.m, views).float().view(8, n, -1).mean(0)         # [N,768]
         logits = self.m.fc(f[:, 256:].to(self.m.fc.weight.dtype)).float()
         return f, logits
+
+
+class FullModel(nn.Module):
+    """x [N,3,224,224] float32 (ImageNet-normalised) -> probs [N,6]: the whole enhanced_res, exactly
+    EnhancedRes.__call__ (backbone + 8-view TTA, 5 MLPs averaged, blended with the 5-NN vote, optional prior).
+
+    The kNN uses a one-hot label table + gather instead of scatter_add, so it exports to ONNX/TensorRT.
+    half=True runs only the backbone in FP16; the head, the kNN bank and the probabilities stay FP32
+    (the top-5 neighbour search is sensitive to rounding)."""
+
+    def __init__(self, half=False):
+        super().__init__()
+        self.tta = TTABackbone(load_backbone_cpu()[0], half=half)
+        ck = torch.load(er.EWORK / er.HEAD_FILE, map_location="cpu")
+        assert ck["tta"], "the exported graph always does the 8-view TTA"
+        self.classes = ck["classes"]
+        self.heads = nn.ModuleList()
+        for st in ck["heads"]:
+            h = er.Head(ck["d_in"], len(self.classes))
+            h.load_state_dict(st)
+            self.heads.append(h.eval())
+        self.c0, self.c1 = ck["cols"]
+        self.alpha, self.tau, self.k = float(ck["alpha"]), float(ck["tau"]), 5
+        self.register_buffer("prior", ck["prior"].float())
+        if self.alpha > 0:
+            bank = ck["knn_bank"].float()
+            self.register_buffer("bank_t", (bank / bank.norm(dim=1, keepdim=True).clamp_min(1e-12)).T.contiguous())
+            self.register_buffer("onehot", torch.eye(len(self.classes))[ck["knn_labels"].long()])
+        self.eval()
+
+    def forward(self, x):
+        f = self.tta(x)[0][:, self.c0:self.c1]
+        p = torch.stack([h(f).softmax(1) for h in self.heads]).mean(0)
+        if self.alpha > 0:
+            q = f / f.norm(dim=1, keepdim=True).clamp_min(1e-12)
+            sim, idx = (q @ self.bank_t).topk(self.k, dim=1)
+            w = 1.0 / (1.0 - sim).clamp_min(1e-6)
+            knn = (self.onehot[idx] * w.unsqueeze(2)).sum(1)
+            p = (1 - self.alpha) * p + self.alpha * knn / knn.sum(1, keepdim=True)
+        if self.tau > 0:
+            p = p / self.prior ** self.tau
+            p = p / p.sum(1, keepdim=True)
+        return p
 
 
 def load_backbone_cpu():
