@@ -1,0 +1,159 @@
+{
+ "photo": {
+  "key": "train/aircraft_012512.jpg",
+  "w": 640,
+  "h": 640,
+  "group": 241,
+  "split": "test",
+  "sides": [
+   224
+  ]
+ },
+ "boxes": [
+  [
+   221.75,
+   259.0,
+   371.25,
+   304.0
+  ]
+ ],
+ "keep_out": [
+  [
+   147.0,
+   236.5,
+   446.0,
+   326.5
+  ]
+ ],
+ "candidates": [
+  {
+   "left": 149,
+   "top": 346,
+   "side": 224,
+   "p_skin": 0.779,
+   "p_damage": 0.635,
+   "p_clean": 0.063,
+   "clip": "a photo of the metal surface of an airplane wing",
+   "busy": 27.94,
+   "picked": false
+  },
+  {
+   "left": 393,
+   "top": 361,
+   "side": 224,
+   "p_skin": 0.902,
+   "p_damage": 0.035,
+   "p_clean": 0.813,
+   "clip": "a photo of the metal surface of an airplane wing",
+   "busy": 11.47,
+   "picked": true
+  },
+  {
+   "left": 340,
+   "top": 6,
+   "side": 224,
+   "p_skin": 0.0,
+   "p_damage": 0.058,
+   "p_clean": 0.108,
+   "clip": "a photo of grass, trees and bushes",
+   "busy": 49.31,
+   "picked": false
+  }
+ ],
+ "funnel": {
+  "candidates": 25413,
+  "photos": 9328,
+  "groups": 695,
+  "audit": 298,
+  "audit_share": {
+   "clean": 0.523,
+   "damage": 0.178,
+   "background": 0.185,
+   "other": 0.114
+  },
+  "auc": 0.788,
+  "clean_in_top": {
+   "10%": 0.897,
+   "20%": 0.847,
+   "30%": 0.798,
+   "50%": 0.752
+  },
+  "picked": 3000,
+  "picked_groups": 625,
+  "picked_split": {
+   "train": 1812,
+   "val": 621,
+   "test": 567
+  },
+  "bins": 5,
+  "per_bin": 600,
+  "kept": 3000
+ },
+ "gc7": {
+  "classes": {
+   "corrosion": {
+    "train": 1765,
+    "val": 379,
+    "test": 378
+   },
+   "crack": {
+    "train": 6111,
+    "val": 1307,
+    "test": 1311
+   },
+   "dent": {
+    "train": 8190,
+    "val": 1754,
+    "test": 1757
+   },
+   "missing-head": {
+    "train": 1971,
+    "val": 299,
+    "test": 344
+   },
+   "no-defect": {
+    "train": 2868,
+    "val": 615,
+    "test": 615
+   },
+   "paint-peel-off": {
+    "train": 1202,
+    "val": 263,
+    "test": 265
+   },
+   "scratch": {
+    "train": 940,
+    "val": 201,
+    "test": 200
+   }
+  },
+  "no_defect": {
+   "clean_cropper": {
+    "train": 1812,
+    "val": 369,
+    "test": 365
+   },
+   "healed": {
+    "train": 1056,
+    "val": 246,
+    "test": 250
+   }
+  },
+  "extra": 760
+ },
+ "decoys": {
+  "n": 301,
+  "called_no_defect": {
+   "decoy": 0.0465,
+   "original": 0.0299
+  },
+  "mean_p_no_defect": {
+   "decoy": 0.0615,
+   "original": 0.0463
+  },
+  "right_class": {
+   "decoy": 0.7542,
+   "original": 0.7674
+  }
+ }
+}

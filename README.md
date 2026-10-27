@@ -103,6 +103,7 @@ which defect it is. Everything here uses public datasets.
 | [`2_lama_healing/`](2_lama_healing/) | **healer, in use** | Removes defects from photos with **LaMa** (pretrained inpainting) and puts a real screw head back where one is missing (copied from the same photo or a donor bank). GUI + batch command line. **[`no_defect/`](2_lama_healing/no_defect/)**: heals one photo per group, filters and reviews the crops: 1,858 of d1_gc7's no-defect crops. Replaces the earlier healing experiment (U-Net inpainter, still in git history). |
 | [`3_clean_cropper/`](3_clean_cropper/) | **clean cropper, in use** | Cuts squares from the unboxed parts of D1 photos, scores them for background and unboxed damage (CLIP), learns "clean" from a hand-labelled audit and picks a varied set for a final review: 3,000 of d1_gc7's no-defect crops. |
 | [`4_early_classifiers_archive/`](4_early_classifiers_archive/) | archived | Our first models: plain CNN and SupCon ResNet-18, on smaller Roboflow datasets. |
+| [`5_dashboard/`](5_dashboard/) | **dashboard, in use** | A local web app for the main model: its test results and how it works (Model), how d1_gc7 was made (Data), and a test bench for one photo (Inspect) or a folder (Batch). `cd 5_dashboard && ./run.sh` opens it at http://127.0.0.1:8765. Setup for your computer: [`5_dashboard/README.md`](5_dashboard/README.md). |
 
 Each folder has its own README with the run order. Run scripts from inside their folder.
 
@@ -110,7 +111,7 @@ Each folder has its own README with the run order. Run scripts from inside their
 1_main_model_resnet18  ──(D1 photos + labels, d1_grouped split)──▶  2_lama_healing/no_defect ──(healed crops)──┐
                        ──(D1 photos + labels, d1_grouped split)──▶  3_clean_cropper ─────────(clean crops)───┤
 1_main_model_resnet18/d1_gc7  ◀──────────────────────────────────────────────────────────────────────────────┘
-        └──▶ enhanced_res gc7 (7 classes) + architecture A
+        └──▶ enhanced_res gc7 (7 classes) + architecture A ──▶ 5_dashboard (Model / Data / Inspect / Batch pages)
 ```
 
 ## Setup

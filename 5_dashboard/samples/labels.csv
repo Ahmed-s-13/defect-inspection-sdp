@@ -1,0 +1,6 @@
+file,cls,source,source_crop
+no-defect_01.jpg,no-defect,clean_cropper,data/work/crops/no_defect/clean/test/train__aircraft_014117__c2.jpg
+no-defect_02.jpg,no-defect,healed,data/work/crops/no_defect/healed/test/train__aircraft_002383__0.jpg
+no-defect_03.jpg,no-defect,clean_cropper,data/work/crops/no_defect/clean/test/train__aircraft_004111__c0.jpg
+no-defect_04.jpg,no-defect,clean_cropper,data/work/crops/no_defect/clean/test/train__aircraft_012218__c1.jpg
+no-defect_05.jpg,no-defect,clean_cropper,data/work/crops/no_defect/clean/test/train__aircraft_004901__c1.jpg

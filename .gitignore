@@ -67,3 +67,15 @@ graphify-out/
 # no-defect crops (data/work/crops/no_defect/) are d1_gc7_no_defect_crops.zip on the team Drive.
 2_lama_healing/no_defect/work/
 3_clean_cropper/work/
+
+# Dashboard (5_dashboard): build output, the computed report and features, and local design-tool notes
+5_dashboard/web/node_modules/
+5_dashboard/web/dist/
+5_dashboard/web/*.tsbuildinfo
+5_dashboard/cache/
+5_dashboard/.impeccable/
+5_dashboard/.taste-skill/
+5_dashboard/docs/
+5_dashboard/PRODUCT.md
+.pytest_cache/
+5_dashboard/web/.impeccable

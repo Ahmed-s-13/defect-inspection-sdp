@@ -1,0 +1,24 @@
+/* The Model page's title run: the stage sticks under the top bar while the sketch un-draws. */
+.title-run { position: relative; height: 175vh; margin: calc(-1 * var(--gap)) calc(-1 * var(--pad)) 0; }
+.title-stage {
+  position: sticky; top: var(--topbar); height: calc(100vh - var(--topbar)); overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; gap: 24px; padding: 0 5vw;
+}
+.title-stage .contours { position: absolute; inset: -10%; width: 120%; height: 120%; pointer-events: none; }
+.title-stage .contours path { fill: none; stroke: var(--rule); stroke-width: 1; }
+.title-stage .sketch { position: relative; width: 100%; height: auto; max-height: 82vh; overflow: visible; }
+.sketch .ink   { fill: none; stroke: var(--ink); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+.sketch .ghost { fill: none; stroke: var(--ink); stroke-width: 1; stroke-linecap: round; opacity: .38; }
+.sketch .hatch { fill: none; stroke: var(--ink); stroke-width: 1.1; stroke-linecap: round; opacity: .7; }
+.sketch .lens  { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.sketch .mark  { fill: none; stroke: var(--detected); stroke-width: 2.2; stroke-linecap: round; }
+.title-type { position: relative; will-change: transform, opacity; }
+.sdp { margin: 0; font: 700 clamp(88px, 13vw, 220px)/.86 var(--font-fig); letter-spacing: -.045em; }
+.sdp span { display: inline-block; }
+
+@media (max-width: 860px) {
+  .title-run { height: 150vh; }
+  .title-stage { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 8px; }
+  .title-stage .sketch { max-height: 50vh; }
+  .sdp { font-size: clamp(72px, 22vw, 140px); }
+}
