@@ -137,6 +137,11 @@ On 25 unseen test photos (+8 photos of other defects), 33 missing heads were big
 Another 149 missing heads were in distant shots (boxes of 2-8 px) and got LaMa only. All 98 other defects got
 LaMa. LaMa alone, on 10 mixed defects, healed 9 of 10 well enough that the damage is hard to spot.
 
+**The evidence is in [`docs/`](docs/):** the full write-up [`docs/framework_report.md`](docs/framework_report.md),
+every pasted test head close up ([`docs/runs/test_25/zoom_heads.jpg`](docs/runs/test_25/zoom_heads.jpg)) with
+the per-box log, why we chose LaMa ([`docs/lama_vs_cdgan/`](docs/lama_vs_cdgan/report.md): LaMa vs a CD-GAN we
+trained vs OpenCV), and the first hand-made screw-head fixes ([`docs/missing_head_by_hand/`](docs/missing_head_by_hand/report.md)).
+
 **Known limits.** The screw-head scorer was trained on only 16 heads, so it sometimes accepts paint chips or blobs
 as donors. Pasted heads can be slightly smaller or brighter than their neighbours. LaMa leaves out repeating detail
 (rivet rows) inside large fills. These are images that look right to a person: they have **not** been checked
@@ -168,5 +173,6 @@ numbering, so re-pick `--keep` after it.
 | `hcore.py` | box readers (YOLO, CSV), LaMa, the screw-head transplant |
 | `build_donor_bank.py` | builds the donor bank and trains the screw-head scorer |
 | `donor_bank/` | 16 heads (`heads/`, `bank.json`), the scorer (`head_scorer.npz`), the mined candidates |
+| `docs/` | results and reports (see section 5) |
 | `weights/` | `big-lama.pt` (from `lama_weights.zip`, not in git) |
 | `out/` | your runs (not in git) |
