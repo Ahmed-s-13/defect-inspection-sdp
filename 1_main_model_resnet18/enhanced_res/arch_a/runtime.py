@@ -14,7 +14,8 @@ Per crop, in this order:
 numpy + PIL only (no PyTorch, no OpenCV), so trt_enhanced_res/predict_trt.py can use it too.
 
   from enhanced_res.arch_a.runtime import ArchA
-  a = ArchA()                                   # loads calibration.json; alpha 0.10 by default
+  a = ArchA()                                   # loads calibration.json (v2); alpha 0.10 by default
+  a = ArchA(CALIBRATIONS["gc7"])                # the main model's (gc7, 7 classes)
   out = a.decide(probs, crops=pil_crops, knn_dist=d)   # list of Decision, one per crop
 """
 import json
@@ -23,7 +24,8 @@ from pathlib import Path
 
 import numpy as np
 
-CALIBRATION = Path(__file__).resolve().parent / "calibration.json"
+CALIBRATION = Path(__file__).resolve().parent / "calibration.json"             # v2 (6 classes; trt_enhanced_res uses it)
+CALIBRATIONS = {"v2": CALIBRATION, "gc7": CALIBRATION.with_name("calibration_gc7.json")}   # one per model version
 STATS = ("sharpness", "brightness", "clipped_hi", "clipped_lo")
 SIDES = {"sharpness": "low", "brightness": "both", "clipped_hi": "high", "clipped_lo": "high"}
 

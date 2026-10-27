@@ -6,15 +6,17 @@
   python predict.py samples/ --compare                 test samples, with the old model's answer next to it
   python predict.py photo.jpg --details                also print the gate p-values and the full ranking
   python predict.py photo.jpg --raw                    the model's raw top-2 ranking, no architecture A (--top N)
+  python predict.py photo.jpg --model v2               the earlier 6-class enhanced_res (no "no-defect" class)
   python predict.py photo.jpg --legacy                 the old ResNet-18 + MLP head instead (raw ranking)
 
-The model is enhanced_res (enhanced_res/README.md): a ResNet-18 trained on the leak-free d1_grouped split, whose
-layer3 + layer4 features, averaged over the crop's 8 flips/rotations, go to an MLP-ensemble + kNN head. Grouped
-D1-test accuracy 0.804 (macro-F1 0.738). Weights: data/work/enhanced_res/ (enhanced_res_model.zip, GitHub Release
-v2.0-enhanced-res).
+The model is enhanced_res gc7 (enhanced_res/README.md): a ResNet-18 trained on d1_gc7 (the leak-free d1_grouped split
++ a 7th class, no-defect), whose layer3 + layer4 features, averaged over the crop's 8 flips/rotations, go to an
+MLP-ensemble + kNN head. d1_gc7 test: 91% of clean crops called no-defect, 3.9% of defects called no-defect, defect
+accuracy 0.805 when it names a defect (v2: 0.804). Weights: data/work/enhanced_res/gc7/ (enhanced_res_gc7_model.zip,
+GitHub Release v3.0-gc7). --model v2: the 6-class enhanced_res (enhanced_res_model.zip, Release v2.0-enhanced-res).
 
 Architecture A (enhanced_res/arch_a/README.md) turns its probabilities into one of five answers, with numbers fitted
-on d1_grouped (enhanced_res/arch_a/calibration.json); the model itself is unchanged:
+on the model's own data (arch_a/calibration_gc7.json; calibration.json for v2); the model itself is unchanged:
   BAD IMAGE: re-take          quality gate: blurry, too dark / bright, glare (about 10% of normal photo families)
   CAN'T ASSESS: re-aim        unfamiliar-input gate: unlike any training crop (about 10% of normal families)
   CRACK 88.0%                 one class in the conformal set; the % is temperature-calibrated
@@ -24,7 +26,9 @@ The set contains the true class about 90% of the time on normal crops (alpha 0.1
 
 The model was trained on square crops around a defect (box + 25% margin, 224 px), so --box gives the most faithful
 result. Without it the centre square of the image is used, which works for crops and close-ups but not for wide
-shots. There is no "no damage" class: on a clean surface the answer means "if this is a defect, which one".
+shots. "NO-DEFECT 95.0%" means intact surface; a set holding no-defect next to a defect ("AMBIGUOUS: no-defect 60%
+crack 30%") is for the inspector to check. v2 has no such class: on a clean surface its answer means "if this is a
+defect, which one".
 
 If a folder contains labels.csv (file,cls), accuracy and how often the answer holds the true class are printed.
 """
@@ -41,8 +45,8 @@ import torch
 from PIL import Image, ImageOps
 
 from evaluate import load_model
-from enhanced_res.arch_a.runtime import ACTIONS, AMBIGUOUS, SHOW, ArchA
-from enhanced_res.model import BACKBONE_FILE, EWORK, HEAD_FILE as ENH_HEAD, EnhancedRes
+from enhanced_res.arch_a.runtime import ACTIONS, AMBIGUOUS, CALIBRATIONS, SHOW, ArchA
+from enhanced_res.model import BACKBONE_FILE, EWORK, HEAD_FILE as ENH_HEAD, MAIN_MODEL, EnhancedRes
 from klshift.common import CROP_SIZE, IMG_EXTS, embed_batch, eval_transform, pick_device, square_crop_box
 from klshift.mlp import HEAD_FILE, MLPClassifier, sync
 
@@ -93,6 +97,8 @@ def main():
     ap.add_argument("--box", type=float, nargs=4, metavar=("X1", "Y1", "X2", "Y2"),
                     help="defect box in pixels of the original image (single image only)")
     ap.add_argument("--work", default="data/work", help="folder with enhanced_res/ and the legacy model files")
+    ap.add_argument("--model", choices=["gc7", "v2"], default=MAIN_MODEL,
+                    help="enhanced_res version: gc7 (7 classes incl. no-defect, default) or v2 (the 6 defect classes)")
     ap.add_argument("--alpha", type=float, default=None,
                     help="architecture A error rate: 0.05, 0.10 (default) or 0.20; lower = larger sets, fewer misses")
     ap.add_argument("--no-gates", action="store_true", help="skip the quality and unfamiliar-input gates (CP set only)")
@@ -121,19 +127,25 @@ def main():
     work = Path(a.work)
     device = torch.device("cpu") if a.cpu else pick_device()
     ework = work / EWORK.name
+    version = a.model
+    if version == "gc7" and not (ework / "gc7" / BACKBONE_FILE).exists() and (ework / BACKBONE_FILE).exists():
+        print(f"note: {ework / 'gc7'} has no gc7 weights (enhanced_res_gc7_model.zip, Release v3.0-gc7), using v2")
+        version = "v2"
+    if version == "gc7":
+        ework = ework / "gc7"
     if a.legacy or a.resnet_only:
         model = Legacy(work, device, a.resnet_only)
         name = model.name
     elif (ework / BACKBONE_FILE).exists() and (ework / ENH_HEAD).exists():
-        model, name = EnhancedRes(ework, device), "enhanced_res"
+        model, name = EnhancedRes(ework, device), f"enhanced_res {version}"
     else:
-        print(f"note: {ework} has no enhanced_res weights (enhanced_res_model.zip), using the legacy model")
+        print(f"note: {ework} has no enhanced_res weights, using the legacy model")
         model = Legacy(work, device)
         name = model.name
     arch = None
-    if name == "enhanced_res" and not a.raw:
-        arch = ArchA(alpha=a.alpha)
-        assert arch.classes == model.classes, "calibration.json was made for another class order: re-run calibrate.py"
+    if model.__class__ is EnhancedRes and not a.raw:
+        arch = ArchA(CALIBRATIONS[version], alpha=a.alpha)
+        assert arch.classes == model.classes, f"{CALIBRATIONS[version].name} was made for another class order: re-run calibrate.py"
         name += (f" + architecture A (alpha {arch.alpha:.2f}"
                  + (", no gates)" if a.no_gates else f"; gates {arch.alpha_q} / {arch.alpha_ood})"))
     other = Legacy(work, device) if a.compare and model.__class__ is EnhancedRes else None

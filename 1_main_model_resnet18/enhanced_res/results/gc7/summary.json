@@ -1,0 +1,133 @@
+{
+ "model": "gc7",
+ "classes": [
+  "corrosion",
+  "crack",
+  "dent",
+  "missing-head",
+  "paint-peel-off",
+  "scratch",
+  "no-defect"
+ ],
+ "head": {
+  "knn_weight": 0.25,
+  "tau": 0.5
+ },
+ "backbone_epoch": 5,
+ "val": {
+  "accuracy": 0.7721,
+  "macro_f1": 0.703
+ },
+ "test": {
+  "accuracy": 0.7977,
+  "macro_f1": 0.7465,
+  "macro_f1_ci": [
+   0.7045,
+   0.7807
+  ],
+  "recall": {
+   "corrosion": 0.6217,
+   "crack": 0.7445,
+   "dent": 0.852,
+   "missing-head": 0.936,
+   "paint-peel-off": 0.717,
+   "scratch": 0.525,
+   "no-defect": 0.9106
+  }
+ },
+ "test_defects": {
+  "n": 4255,
+  "v2": {
+   "accuracy": 0.8045,
+   "macro_f1": 0.7376
+  },
+  "gc7_top_answer": {
+   "accuracy": 0.7814,
+   "macro_f1": 0.7376
+  },
+  "gc7_best_defect_class": {
+   "accuracy": 0.8047,
+   "macro_f1": 0.7423
+  },
+  "called_no_defect": 0.0385,
+  "called_no_defect_by_class": {
+   "corrosion": 0.0185,
+   "crack": 0.058,
+   "dent": 0.029,
+   "missing-head": 0.032,
+   "paint-peel-off": 0.0075,
+   "scratch": 0.085
+  }
+ },
+ "test_no_defect": {
+  "n": 615,
+  "recall": 0.9106,
+  "recall_by_source": {
+   "healed": 0.88,
+   "clean_cropper": 0.9315
+  },
+  "v2_calls": {
+   "corrosion": 0.0715,
+   "crack": 0.0699,
+   "dent": 0.535,
+   "missing-head": 0.0211,
+   "paint-peel-off": 0.0585,
+   "scratch": 0.2439
+  }
+ },
+ "extra_no_defect": {
+  "n": 760,
+  "recall": 0.8987,
+  "recall_by_source": {
+   "healed": 0.8791,
+   "clean_cropper": 0.9119
+  }
+ },
+ "dial": [
+  {
+   "val_miss_target": 0.01,
+   "cut": 0.8097,
+   "test_defects_missed": 0.0085,
+   "test_defect_accuracy": 0.8016,
+   "test_no_defect_recall": 0.8016,
+   "healed_recall": 0.736,
+   "clean_recall": 0.8466,
+   "extra_recall": 0.7961
+  },
+  {
+   "val_miss_target": 0.02,
+   "cut": 0.5517,
+   "test_defects_missed": 0.0244,
+   "test_defect_accuracy": 0.7913,
+   "test_no_defect_recall": 0.8797,
+   "healed_recall": 0.844,
+   "clean_recall": 0.9041,
+   "extra_recall": 0.8645
+  },
+  {
+   "val_miss_target": 0.05,
+   "cut": 0.2418,
+   "test_defects_missed": 0.0512,
+   "test_defect_accuracy": 0.7737,
+   "test_no_defect_recall": 0.9285,
+   "healed_recall": 0.896,
+   "clean_recall": 0.9507,
+   "extra_recall": 0.9342
+  }
+ ],
+ "decoys": {
+  "n": 301,
+  "called_no_defect": {
+   "decoy": 0.0465,
+   "original": 0.0299
+  },
+  "mean_p_no_defect": {
+   "decoy": 0.0615,
+   "original": 0.0463
+  },
+  "right_class": {
+   "decoy": 0.7542,
+   "original": 0.7674
+  }
+ }
+}

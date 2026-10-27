@@ -4,6 +4,10 @@
 [`groups.csv`](groups.csv): one row per D1 image with its source group and its split. Full numbers are in
 [`report.md`](report.md).
 
+> **The main model's dataset is now [`../d1_gc7`](../d1_gc7/README.md)**: this split's six defect classes plus a
+> 7th class, no-defect. d1_gc7 keeps this split exactly. Every no-defect crop is cut from a d1_grouped photo and
+> sits in that photo's group and split, so `groups.csv` remains the split for both.
+
 ## Why
 
 D1 is mostly copies. One photo appears flipped, rotated, cropped, recoloured or greyscaled many times, and D1's

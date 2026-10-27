@@ -1,4 +1,4 @@
-"""enhanced_res, step 1: train the ResNet-18 backbone on the leak-free D1 split (../d1_grouped).
+"""enhanced_res, step 1: train the ResNet-18 backbone on the leak-free D1 split (../d1_grouped), or on d1_gc7.
 
 Same ResNet-18, crops and augmentation as ../train.py. What can change, by flag:
   --sampler base         shuffle every train crop once per epoch, class-weighted loss (as ../train.py)
@@ -16,6 +16,12 @@ The three backbones build_head.py compares (run from 1_main_model_resnet18/, ~30
   python enhanced_res/train_backbone.py --sampler base       --recipe base     --out r0_plain
   python enhanced_res/train_backbone.py --sampler groupclass --recipe base     --out r1_sampler
   python enhanced_res/train_backbone.py --sampler groupclass --recipe enhanced --out r2_sampler_recipe   # enhanced_res
+
+The main model, gc7 (7 classes: the six defects + no-defect, data ../d1_gc7):
+  python enhanced_res/train_backbone.py --data d1_gc7 --out gc7          # ~25 min, best epoch 5 of 10
+  --data d1_gc7: classes = the six defects in alphabetical order, then "no-defect" (index 6); the same sampler weights
+  over all 7 classes (no-defect gets ~14% of the draws); len(D1 train) / 0.7 draws per epoch, so the six defect
+  classes get about as many draws as before; best epoch by val 7-class macro-F1. Then build_head_gc7.py.
 
 Output: data/work/enhanced_res/runs/<out>/backbone.pt (best epoch by val macro-F1) and history.csv.
 Test is not touched here.
@@ -61,6 +67,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--sampler", choices=["base", "groupclass"], default="groupclass")
     ap.add_argument("--recipe", choices=["base", "enhanced"], default="enhanced")
+    ap.add_argument("--data", choices=["d1_grouped", "d1_gc7"], default="d1_grouped")
     ap.add_argument("--out", required=True, help="run name under data/work/enhanced_res/runs/")
     ap.add_argument("--epochs", type=int, default=30)
     ap.add_argument("--patience", type=int, default=5)
@@ -78,8 +85,8 @@ def main():
     seed_everything(a.seed)
     device = pick_device()
 
-    crops = load_split()
-    classes = sorted(crops.cls.unique())
+    crops = load_split(a.data)
+    classes = sorted(set(crops.cls) - {"no-defect"}) + (["no-defect"] if a.data == "d1_gc7" else [])
     cidx = {c: i for i, c in enumerate(classes)}
     tr = crops[crops.split == "train"].reset_index(drop=True)
     va = crops[crops.split == "val"].reset_index(drop=True)
@@ -88,7 +95,8 @@ def main():
     ds_tr = CropDataset(tr.crop_path, ytr, train_transform())
     if a.sampler == "groupclass":
         w = sample_weights(tr)
-        sampler = WeightedRandomSampler(torch.as_tensor(w, dtype=torch.double), len(tr), replacement=True,
+        n_draw = len(tr) if a.data == "d1_grouped" else int(round((tr.cls != "no-defect").sum() / 0.7))
+        sampler = WeightedRandomSampler(torch.as_tensor(w, dtype=torch.double), n_draw, replacement=True,
                                         generator=torch.Generator().manual_seed(a.seed))
         dl_tr = DataLoader(ds_tr, sampler=sampler, drop_last=True, **kw)
         eff = pd.Series(w).groupby(tr.cls).sum() / w.sum()

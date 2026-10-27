@@ -1,22 +1,39 @@
 # Edge-AI Wearable for Visual Inspection of Aircraft Structures: model code
 
-## Main model — 24 October 2026
+## Main model — 28 October 2026: enhanced_res gc7, with a "no-defect" class
 
-**The defect classifier in use is [`enhanced_res`](1_main_model_resnet18/enhanced_res/README.md)**: a ResNet-18 +
-MLP head trained and tested on [`d1_grouped`](1_main_model_resnet18/d1_grouped/README.md), a leak-free re-split
-of D1 (no photo or copy of it in both train and test). Grouped D1-test accuracy **80.4%**, macro-F1 **0.738**,
-against 78.1% / 0.715 for the previous ResNet-18 + MLP recipe retrained on the same split. Run it with
-`python predict.py` in `1_main_model_resnet18/`; the weights are `enhanced_res_model.zip` on this repo's **Releases** page (`v2.0-enhanced-res`).
+**The defect classifier in use is [`enhanced_res` gc7](1_main_model_resnet18/enhanced_res/README.md)**: the same
+ResNet-18 + MLP head with **7 classes**, the six defects plus **no-defect**. It is trained and tested on
+**[`d1_gc7`](1_main_model_resnet18/d1_gc7/README.md)**, which is now our dataset. d1_gc7 takes
+[`d1_grouped`](1_main_model_resnet18/d1_grouped/README.md) (the leak-free re-split of D1) and adds 4,858
+hand-reviewed crops of intact surface. Every crop stays in its photo's d1_grouped split. The no-defect crops come
+from two modules:
+- [the healer](2_lama_healing/no_defect/README.md): photos with their defects removed;
+- [the clean cropper](5_clean_cropper/README.md): unboxed parts of photos, sorted for background and unboxed damage.
 
-**Main architecture, 27 October 2026: enhanced_res + [architecture A](1_main_model_resnet18/enhanced_res/arch_a/README.md).**
-The model is the same, with the same weights and nothing retrained. Its output now goes through a calibrated decision layer instead of the fixed top-2 list:
+**d1_gc7 test** (4,255 defect crops + 615 no-defect crops):
+- It calls **91%** of clean crops no-defect. The 6-class model called every one of them a defect.
+- It is as good as before on defects when it names a defect class: accuracy 0.805, macro-F1 0.742 (v2: 0.804 /
+  0.738).
+- It calls 3.9% of defects "no-defect". With a cut on p(no-defect) chosen on val, that drops to 0.9%.
+
+Run it with `python predict.py` in `1_main_model_resnet18/`. The weights are `enhanced_res_gc7_model.zip` on this
+repo's **Releases** page (`v3.0-gc7`). The 6-class model (**v2**, Release `v2.0-enhanced-res`) is kept: `--model v2`,
+`EnhancedRes()` in code, and `trt_enhanced_res`.
+
+**Main architecture: enhanced_res + [architecture A](1_main_model_resnet18/enhanced_res/arch_a/README.md)** (27 October; refitted for gc7 on 28 October).
+The model's output goes through a calibrated decision layer instead of the fixed top-2 list:
 - **Quality gate:** "BAD IMAGE: re-take" for blurry, dark, overexposed or glare-heavy crops.
 - **Unfamiliar-input gate:** "CAN'T ASSESS: re-aim" for crops unlike any training crop.
 - **Temperature scaling:** the shown % now matches how often the model is right (ECE 0.105 → 0.035).
 - **Conformal prediction set:** one class when the model is sure, "AMBIGUOUS: crack or dent" when it isn't. The set holds the true class 91.5% of the time at α = 0.10.
 
-On normal grouped-test crops, a single wrong class is shown without warning 6.2% of the time, against 20.9% before; 47.1% of crops are flagged for the inspector.
-The calibration (`calibration.json`) is in git, so no new download is needed.
+For v2 on normal grouped-test crops, a single wrong class is shown without warning 6.2% of the time, against 20.9%
+before, and 47.1% of crops are flagged for the inspector.
+
+**A 7th class doesn't break architecture A, but it has to be recalibrated** (`calibrate.py` does it, with nothing
+retrained). gc7 has its own calibration, `calibration_gc7.json`. v2's `calibration.json` is unchanged and still read
+by `trt_enhanced_res`. Both files are in git.
 
 ## Current D1 grouping work — 22 October 2026
 
@@ -82,15 +99,19 @@ which defect it is. Everything here uses public datasets.
 
 | folder | status | what it is |
 |---|---|---|
-| [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | **enhanced_res** ([`enhanced_res/`](1_main_model_resnet18/enhanced_res/)): ResNet-18 + MLP head for 6 defect classes, trained on the leak-free [`d1_grouped/`](1_main_model_resnet18/d1_grouped/) split (grouped D1-test accuracy 0.804). Its answers go through [architecture A](1_main_model_resnet18/enhanced_res/arch_a/) (quality and unfamiliar-input gates, temperature, conformal set). Also the legacy ResNet-18 + MLP head, the dataset-shift (KL divergence) analysis across 10 public datasets, and **the Cropper** for "no damage" patches. Most of our data and results live here. |
-| [`2_lama_healing/`](2_lama_healing/) | **healer, in use** | Removes defects from photos with **LaMa** (pretrained inpainting) and puts a real screw head back where one is missing (copied from the same photo or a donor bank). GUI + batch command line. Replaces the earlier healing experiment (U-Net inpainter, still in git history). |
+| [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | **enhanced_res gc7** ([`enhanced_res/`](1_main_model_resnet18/enhanced_res/)): ResNet-18 + MLP head for 6 defect classes + no-defect, trained on **[`d1_gc7/`](1_main_model_resnet18/d1_gc7/)** (the leak-free [`d1_grouped/`](1_main_model_resnet18/d1_grouped/) split + reviewed no-defect crops). Its answers go through [architecture A](1_main_model_resnet18/enhanced_res/arch_a/) (quality and unfamiliar-input gates, temperature, conformal set). Also the 6-class enhanced_res v2, the legacy ResNet-18 + MLP head, the dataset-shift (KL divergence) analysis across 10 public datasets, and the older Cropper for "no damage" patches. Most of our data and results live here. |
+| [`2_lama_healing/`](2_lama_healing/) | **healer, in use** | Removes defects from photos with **LaMa** (pretrained inpainting) and puts a real screw head back where one is missing (copied from the same photo or a donor bank). GUI + batch command line. **[`no_defect/`](2_lama_healing/no_defect/)**: heals one photo per group, filters and reviews the crops: 1,858 of d1_gc7's no-defect crops. Replaces the earlier healing experiment (U-Net inpainter, still in git history). |
 | [`3_teacher_student_msrd/`](3_teacher_student_msrd/) | support code | MSRD teacher–student anomaly model, used by the earlier healing experiment (now removed). |
 | [`4_early_classifiers_archive/`](4_early_classifiers_archive/) | archived | Our first models: plain CNN and SupCon ResNet-18, on smaller Roboflow datasets. |
+| [`5_clean_cropper/`](5_clean_cropper/) | **clean cropper, in use** | Cuts squares from the unboxed parts of D1 photos, scores them for background and unboxed damage (CLIP), learns "clean" from a hand-labelled audit and picks a varied set for a final review: 3,000 of d1_gc7's no-defect crops. |
 
 Each folder has its own README with the run order. Run scripts from inside their folder.
 
 ```
-1_main_model_resnet18  ──(enhanced_res backbone, D1 photos + labels)──▶  2_lama_healing
+1_main_model_resnet18  ──(D1 photos + labels, d1_grouped split)──▶  2_lama_healing/no_defect ──(healed crops)──┐
+                       ──(D1 photos + labels, d1_grouped split)──▶  5_clean_cropper ─────────(clean crops)───┤
+1_main_model_resnet18/d1_gc7  ◀──────────────────────────────────────────────────────────────────────────────┘
+        └──▶ enhanced_res gc7 (7 classes) + architecture A
 ```
 
 ## Setup
@@ -114,7 +135,9 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 
 | file | size | where to download | what it gives you |
 |---|---|---|---|
-| `enhanced_res_model.zip` | 136 MB | this repo's **Releases** page (`v2.0-enhanced-res`) | **the main model**: `data/work/enhanced_res/` (backbone + MLP head) |
+| `enhanced_res_gc7_model.zip` | 133 MB | this repo's **Releases** page (`v3.0-gc7`) | **the main model, gc7**: `data/work/enhanced_res/gc7/` (backbone + MLP head) |
+| `enhanced_res_model.zip` | 136 MB | this repo's **Releases** page (`v2.0-enhanced-res`) | the 6-class enhanced_res v2: `data/work/enhanced_res/` (backbone + MLP head); still used by `trt_enhanced_res` and the healer's screw-head scorer |
+| `d1_gc7_no_defect_crops.zip` | 42 MB | team shared Google Drive | d1_gc7's 4,858 no-defect crops: `data/work/crops/no_defect/` (needed to test or retrain gc7, not to run it) |
 | `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the legacy ResNet-18 (`model_best.pt`), the MSRD teacher–student and the checkpoints of the earlier (removed) healing experiment |
 | `lama_weights.zip` | 206 MB | team shared Google Drive | the healer's LaMa model: `2_lama_healing/weights/big-lama.pt` |
 | `main_model_data_work.zip` | 2.8 GB | team shared Google Drive (ask a team member for access) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed and run KL |
@@ -129,7 +152,9 @@ it can't scan it for viruses.
 git clone https://github.com/Ahmed-s-13/defect-inspection-sdp.git
 cd defect-inspection-sdp
 # put the downloaded zips in this folder, then:
+unzip enhanced_res_gc7_model.zip
 unzip enhanced_res_model.zip
+unzip d1_gc7_no_defect_crops.zip
 unzip trained_models.zip
 unzip main_model_data_work.zip
 unzip D1_raw.zip
@@ -140,7 +165,8 @@ Then check that everything works:
 
 ```bash
 cd 1_main_model_resnet18
-python enhanced_res/evaluate.py      # main model; should end with "OK: results match the original enhanced_res run."
+python enhanced_res/evaluate.py             # main model gc7; should end with "OK: results match the original enhanced_res gc7 run ..."
+python enhanced_res/evaluate.py --model v2  # the 6-class v2; should end with "OK: results match the original enhanced_res v2 run ..."
 python predict.py samples/ --compare
 ```
 

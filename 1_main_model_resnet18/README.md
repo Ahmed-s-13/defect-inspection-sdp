@@ -1,22 +1,34 @@
 # 1. Main model: ResNet-18 on D1 (+ dataset shift analysis + the Cropper)
 
-> **The model the project uses is [`enhanced_res/`](enhanced_res/README.md)**: a ResNet-18 + MLP head trained and
-> tested on [`d1_grouped/`](d1_grouped/README.md), a leak-free re-split of D1 in which no photo (or any of its
-> flipped, rotated, cropped or recoloured copies) is in both training and test.
+> **The model the project uses is [`enhanced_res/`](enhanced_res/README.md) gc7**: a ResNet-18 + MLP head with 7
+> classes (the six defects + **no-defect**), trained and tested on **[`d1_gc7/`](d1_gc7/README.md)**. d1_gc7 is
+> [`d1_grouped/`](d1_grouped/README.md), a leak-free re-split of D1 in which no photo (or any of its flipped,
+> rotated, cropped or recoloured copies) is in both training and test, plus reviewed no-defect crops from
+> `../2_lama_healing/no_defect` and `../5_clean_cropper`, each in its photo's split.
 > Its answers go through **[architecture A](enhanced_res/arch_a/README.md)**, the calibrated decision layer
 > (quality gate → unfamiliar-input gate → temperature → conformal set). It replaced the fixed top-2 display, and the
 > model is unchanged.
 > Everything else in the repo either builds on this folder (`2_lama_healing`) or came before it
 > (`4_early_classifiers_archive`).
 
-## Headline results (grouped D1 test: 4,255 crops from 175 source groups)
+## Headline results
+
+d1_gc7 test (4,255 defect crops + 615 no-defect crops from 175 source groups):
+
+| model | clean crops called no-defect | defects called no-defect | defect accuracy / macro-F1 (naming a defect) | 7-class macro-F1 |
+|---|---|---|---|---|
+| enhanced_res v2 (6 classes) | 0% | n/a | 0.804 / 0.738 | n/a |
+| **enhanced_res gc7 (in use)** | **91.1%** | 3.9% (0.9% with a cut on p(no-defect) set on val) | **0.805 / 0.742** | **0.747** |
+
+Grouped D1 test, six defect classes only (4,255 crops):
 
 | model | accuracy | macro-F1 | balanced accuracy |
 |---|---|---|---|
 | ResNet-18 + MLP head (the recipe below), retrained on d1_grouped | 0.781 | 0.715 | 0.711 |
-| **enhanced_res (in use)** | **0.804** | **0.738** | **0.737** |
+| enhanced_res v2 | 0.804 | 0.738 | 0.737 |
 
-What enhanced_res changes, the D5 outside test, and how to run or retrain it: [`enhanced_res/README.md`](enhanced_res/README.md).
+What enhanced_res changes, gc7, the D5 outside test, and how to run or retrain it: [`enhanced_res/README.md`](enhanced_res/README.md).
+What d1_gc7 is made of: [`d1_gc7/README.md`](d1_gc7/README.md).
 How the leak-free split was built (fingerprint → confirm → group → check): [`d1_grouped/README.md`](d1_grouped/README.md).
 
 Teammates' parallel grouping with an SSCD copy detector is in
@@ -25,10 +37,13 @@ Teammates' parallel grouping with an SSCD copy detector is in
 
 ## Quick check: use the trained model without training
 
-After unzipping `main_model_data_work.zip` and `enhanced_res_model.zip` (see the top-level README):
+After unzipping `main_model_data_work.zip`, `enhanced_res_gc7_model.zip`, `d1_gc7_no_defect_crops.zip` and
+`enhanced_res_model.zip` (see the top-level README):
 
 ```bash
-python enhanced_res/evaluate.py                      # re-tests enhanced_res on grouped test + val (+ D5) and architecture A
+python enhanced_res/evaluate.py                      # re-tests gc7 on d1_gc7 test + val (+ D5) and architecture A
+python enhanced_res/evaluate.py --model v2           # the same for the 6-class v2 on grouped test + val
+python predict.py photo.jpg --model v2               # the 6-class v2 instead of gc7
 python predict.py samples/ --compare                 # 30 held-out grouped-test crops, with the legacy answer next to it
 python predict.py photo.jpg --box 375 326 486 411   # defect box in pixels, cut exactly like training
 python predict.py photo.jpg                          # no box: uses the centre square of the image
@@ -38,7 +53,7 @@ python predict.py photo.jpg --raw                    # the raw top-2 ranking, wi
 python predict.py photo.jpg --legacy                 # the legacy ResNet-18 + MLP head (original D1 split)
 ```
 
-Output is one of `crack_01.jpg:  CRACK 88.0%`, `AMBIGUOUS: crack 52.1%   dent 33.0%`, `BAD IMAGE: re-take (blurry)`,
+Output is one of `crack_01.jpg:  CRACK 88.0%`, `NO-DEFECT 92.9%`, `AMBIGUOUS: crack 52.1%   dent 33.0%`, `BAD IMAGE: re-take (blurry)`,
 `CAN'T ASSESS: re-aim (unlike any training crop)` or `UNCLEAR: re-inspect`
 (see [`enhanced_res/arch_a/README.md`](enhanced_res/arch_a/README.md)).
 `samples/` holds 5 grouped-test crops per class plus `labels.csv` (one per source group, never trained on).
@@ -47,8 +62,9 @@ photos in its training set.
 Two things to keep in mind:
 - The model was trained on square crops around a defect. With `--box` the input matches
   training; without it, a wide shot of a whole panel will give unreliable answers.
-- There is **no "no damage" class yet**. The model always names one of the 6 defects,
-  even for a clean surface. Read the answer as "if this is a defect, which one".
+- gc7 has a **no-defect** class. A set holding no-defect next to a defect ("AMBIGUOUS: no-defect 60%
+  crack 30%") is for the inspector to check. v2 (`--model v2`) has no such class: it always names one of the 6
+  defects, even for a clean surface.
 
 ## The legacy model and the dataset-shift analysis
 
@@ -91,14 +107,15 @@ python evaluate_mlp.py  # a few seconds: re-tests the MLP head on D1-test and D1
 | `download.py` | step 0: download D1–D10 (Kaggle / Roboflow / direct) |
 | `prepare.py` | step 1: cut one square crop per box (box + 25%, 224 px) for every dataset |
 | `overlap.py` | step 2: perceptual-hash duplicate check between datasets |
-| **`d1_grouped/`** | **the leak-free D1 split the main model uses** (`groups.csv`), its code and audit sheets |
-| **`enhanced_res/`** | **the main model**: training, MLP head, D5 outside test, evaluation, results |
-| **`enhanced_res/arch_a/`** | **the main architecture's decision layer**: gates, temperature, conformal set; `calibration.json`, the study behind it |
+| **`d1_gc7/`** | **the main model's dataset**: d1_grouped + the no-defect class (`no_defect.csv`), how it is built |
+| **`d1_grouped/`** | **the leak-free D1 split** (`groups.csv`) d1_gc7 builds on, its code and audit sheets |
+| **`enhanced_res/`** | **the main model** (gc7, and the 6-class v2): training, MLP head, D5 outside test, evaluation, results |
+| **`enhanced_res/arch_a/`** | **the main architecture's decision layer**: gates, temperature, conformal set; `calibration_gc7.json` (gc7) and `calibration.json` (v2), the study behind it |
 | `train.py` | step 3+4: D1 split by phash groups and training of the legacy ResNet-18 |
 | `embed.py` | step 5: 512-d embeddings for every dataset |
 | `shift.py` | step 6: KL divergence (Gaussian + k-NN), figures, `summary.md` |
 | `evaluate.py` | re-test the legacy model on D1-test, no training needed |
-| **`predict.py`** | **classify the defect in any image with the main architecture (enhanced_res + architecture A; `--raw` without A, `--legacy` for the old model)** |
+| **`predict.py`** | **classify the defect in any image with the main architecture (enhanced_res gc7 + architecture A; `--model v2` for the 6-class model, `--raw` without A, `--legacy` for the old model)** |
 | `klshift/mlp.py` | the legacy MLP head: MLP ensemble + kNN on the 512-d embeddings |
 | `train_mlp.py` | step 7: trains the legacy MLP head on the D1 embeddings |
 | `evaluate_mlp.py` | re-test the legacy MLP head on D1-test, no training needed |
@@ -187,9 +204,10 @@ data/
 ├── src/                 large source archives for D6, D9, D10 (11 GB)
 ├── d1_grouped/dataset/  the d1_grouped split as a YOLO dataset (team Google Drive, or d1_grouped/split.py)
 └── work/                everything derived (3 GB)
-    ├── crops/           224-px crops per dataset + one CSV each
-    ├── enhanced_res/    ← the main model: enhanced_res_backbone.pt (45 MB) + enhanced_res_head.pt (91 MB),
-    │                      plus training runs and caches
+    ├── crops/           224-px crops per dataset + one CSV each; no_defect/ = d1_gc7's no-defect crops
+    ├── enhanced_res/    ← enhanced_res v2: enhanced_res_backbone.pt (45 MB) + enhanced_res_head.pt (91 MB),
+    │   │                  plus training runs and caches
+    │   └── gc7/         ← the main model, gc7: enhanced_res_backbone.pt (45 MB) + enhanced_res_head.pt (100 MB)
     ├── d1_grouped_cache/  fingerprints and SIFT keypoints from d1_grouped/group.py (2.3 GB, only for rebuilding)
     ├── d1_split.csv     the legacy D1 split by phash groups (used by the healing experiment)
     ├── model_best.pt    ← the legacy ResNet-18 (45 MB)
@@ -197,8 +215,10 @@ data/
 ```
 
 The weights, `data/work/` and `results/embeddings.npz` are shared as zip files outside git
-(`enhanced_res_model.zip` holds `data/work/enhanced_res/`). See "Getting the data and trained models" in the
-top-level README. The d1_grouped split itself (`d1_grouped/groups.csv`) is in git.
+(`enhanced_res_gc7_model.zip` holds `data/work/enhanced_res/gc7/`, `enhanced_res_model.zip` holds
+`data/work/enhanced_res/`, `d1_gc7_no_defect_crops.zip` holds `data/work/crops/no_defect/`). See "Getting the data
+and trained models" in the top-level README. The splits themselves (`d1_grouped/groups.csv`, `d1_gc7/no_defect.csv`)
+are in git.
 
 ## Setup
 

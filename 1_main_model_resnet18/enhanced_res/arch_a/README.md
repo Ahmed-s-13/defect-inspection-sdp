@@ -1,10 +1,13 @@
 # Architecture A: the calibrated decision layer of enhanced_res
 
 > **This is how the project turns enhanced_res's output into an answer.** It replaces the fixed "top 2 classes with
-> their softmax %" display. **It is not a new model:** the enhanced_res weights (Release `v2.0-enhanced-res`) are
-> unchanged and nothing is retrained. Architecture A adds two checks before the model's answer and a calibrated,
-> conformal way of choosing how many classes to show. All of its numbers are fitted on d1_grouped and live in
-> [`calibration.json`](calibration.json) (in git, about 0.4 MB).
+> their softmax %" display. **It is not a new model:** nothing is retrained. Architecture A adds two checks before
+> the model's answer and a calibrated, conformal way of choosing how many classes to show. Its numbers are fitted
+> per model version and live in git:
+> - [`calibration_gc7.json`](calibration_gc7.json): **the main model, gc7** (7 classes incl. no-defect), fitted on d1_gc7;
+> - [`calibration.json`](calibration.json): the 6-class v2, fitted on d1_grouped. `trt_enhanced_res` reads this one.
+>
+> The study and the results below were done on v2. What changes with gc7 is in **"gc7: a 7th class"**.
 
 `predict.py` and `trt_enhanced_res/predict_trt.py` use it by default (`--raw` gives the old top-2 output).
 
@@ -22,7 +25,51 @@
 - **The set:** on normal crops like d1_grouped's, it contains the true class about 90% of the time (α = 0.10).
 - **Each gate:** it flags about α of normal photo families (10% each).
 - **Not guaranteed:** coverage per class, on new data sources, or on bad images that get through the gates.
-- **No "no damage" class:** architecture A can't say a crop is undamaged. That needs a Good class (architectures B/C).
+- **"No damage":** with v2, architecture A can't say a crop is undamaged. gc7 adds that as a 7th class, and
+  architecture A treats it like any other class (next section).
+
+## gc7: a 7th class (no-defect)
+
+**Adding a class doesn't break architecture A.** `runtime.py` reads the class list from the calibration file,
+and split conformal prediction works for any number of classes. What changes are the fitted numbers, so a new model
+needs `calibrate.py` (`python enhanced_res/arch_a/calibrate.py` for gc7, `--model v2` for v2). For gc7:
+- **Temperature** is fitted on d1_gc7 val, including its no-defect crops.
+- **The cal/test halves** are cal_split.csv's: each no-defect crop goes to its photo family's half.
+- **The unfamiliar-input gate** uses gc7's kNN bank, which holds the no-defect train crops.
+- **The quality gate's reference** is d1_gc7 val.
+
+Test half: 2,752 crops in 87 families, 335 of them no-defect. α = 0.10.
+
+| | v2 | **gc7** |
+|---|---|---|
+| T | 1.34 | 1.06 |
+| CP coverage per crop / per family (target 90%) | 91.5% / 91.7% | **92.0% / 92.2%** |
+| mean set size / single-class answers | 1.65 / 65% | **1.70 / 65%** |
+| single wrong class shown without warning | 6.2% | **5.3%** |
+| inspector needed (re-take, re-aim, ambiguous) | 47.1% | **46.3%** |
+| no-defect coverage | n/a | 98% |
+| defects shown as a single "no-defect" (a silent miss) | n/a | **0.3%** |
+
+Gates on the test half, by crop source:
+
+| | re-take (quality) | re-aim (unfamiliar) |
+|---|---|---|
+| defects | 14.1% | 3.9% |
+| healed no-defect | 6.8% | 6.8% |
+| clean no-defect | **21.8%** | 4.0% |
+
+**What the study found** (`../results/gc7/conformal_study.json`):
+- **Keeping v2's numbers for gc7 is not unsafe, but it is wasteful.** The old T over-softens gc7: coverage is
+  94%, sets triple to 3.3 classes, and only 19% of answers name one class.
+- **v2's unfamiliar-input bank would block clean surface.** It holds no clean crops, so it sends 30–44% of them to
+  "re-aim". gc7's bank flags 4–7%.
+- **Over 100 random cal/test splits,** coverage at α = 0.10 averages 91.3% (5th–95th percentile 87–94%).
+  Scratch and corrosion stay below 90% (79% and 84%), as they did with v2.
+
+**Known limit: plain panels look "blurry".** The quality gate flags 22% of clean-cropper crops, most of them for low
+sharpness: a featureless panel has a low Laplacian variance, the same signal as a blurred photo. Including no-defect
+crops in the reference didn't fix this. Options: a sharpness test that compares edges with texture, or a separate
+reference for crops the model calls no-defect.
 
 ## Results (d1_grouped, test half: 2,417 crops, 87 photo families; α = 0.10)
 
@@ -66,26 +113,29 @@ Calibration uses the other half of d1_grouped's test split (1,838 crops, 88 fami
 From `1_main_model_resnet18/`:
 
 ```bash
-python predict.py samples/                       # architecture A answers (+ accuracy and actions: samples/ has labels)
+python predict.py samples/                       # gc7 + architecture A answers (+ accuracy and actions: samples/ has labels)
+python predict.py samples/ --model v2            # the 6-class v2 with calibration.json
 python predict.py photo.jpg --box 375 326 486 411 --details    # also the gate p-values and the full ranking
 python predict.py photo.jpg --alpha 0.05         # larger sets, fewer misses (0.05 / 0.10 / 0.20 are calibrated)
 python predict.py photo.jpg --raw                # the old top-2 output, no architecture A
-python enhanced_res/evaluate.py --split test     # model check + architecture A check on the test half
+python enhanced_res/evaluate.py --split test     # gc7 check + architecture A check on the test half (--model v2 for v2)
 ```
 
 In code:
 
 ```python
-from enhanced_res.model import EnhancedRes
-from enhanced_res.arch_a.runtime import ArchA
-model, arch = EnhancedRes(), ArchA()                       # ArchA(alpha=0.05) for another calibrated alpha
+from enhanced_res.model import EnhancedRes, MODELS
+from enhanced_res.arch_a.runtime import CALIBRATIONS, ArchA
+model, arch = EnhancedRes(MODELS["gc7"]), ArchA(CALIBRATIONS["gc7"])   # v2: EnhancedRes(), ArchA()
+                                                           # ArchA(..., alpha=0.05) for another calibrated alpha
 f = model.features(x)                                      # x: (N, 3, 224, 224) normalised crops
 dec = arch.decide(model.proba_from_features(f).cpu().numpy(), crops=pil_crops,
                   knn_dist=model.knn_distance(f).cpu().numpy())
 print(dec[0].text(), dec[0].action, dec[0].classes, dec[0].scores)
 ```
 
-**TensorRT** (`trt_enhanced_res/predict_trt.py`): it runs the quality gate, temperature and the conformal set; `runtime.py` needs only numpy and PIL. The engine outputs `probs` only, so the OOD gate is skipped there. Enabling it needs a `features` output added to the ONNX export (owned by the `trt_enhanced_res/` team). `--grouped-test` also checks the CP coverage and set size against PyTorch.
+**TensorRT** (`trt_enhanced_res/predict_trt.py`) still runs **v2** with `calibration.json`; moving it to gc7 needs a
+new ONNX export of the gc7 weights (7 outputs) and `ArchA(CALIBRATIONS["gc7"])`. It runs the quality gate, temperature and the conformal set; `runtime.py` needs only numpy and PIL. The engine outputs `probs` only, so the OOD gate is skipped there. Enabling it needs a `features` output added to the ONNX export (owned by the `trt_enhanced_res/` team). `--grouped-test` also checks the CP coverage and set size against PyTorch.
 
 **Re-calibrate** whenever the model weights, the labels or the split change. It retrains nothing:
 
@@ -98,9 +148,10 @@ python enhanced_res/arch_a/calibrate.py          # ~10 min the first time; write
 | file | what it is |
 |---|---|
 | `runtime.py` | the decision layer: gates, temperature, CP set, `ArchA.decide()` (numpy + PIL only) |
-| `calibrate.py` | fits T, the CP thresholds and the gates' calibration scores; writes `calibration.json` with the expected test-half numbers |
-| `calibration.json` | everything `runtime.py` needs, fitted on d1_grouped |
-| `cal_split.csv` | which d1_grouped test crops are the calibration half (88 families) vs the test half (87); seed 0, balanced by class |
+| `calibrate.py` | fits T, the CP thresholds and the gates' calibration scores; writes `calibration_gc7.json` (default) or `calibration.json` (`--model v2`) with the expected test-half numbers |
+| `calibration_gc7.json` | everything `runtime.py` needs for gc7, fitted on d1_gc7 (`ArchA(CALIBRATIONS["gc7"])`) |
+| `calibration.json` | everything `runtime.py` needs for v2, fitted on d1_grouped (`ArchA()`, `trt_enhanced_res`) |
+| `cal_split.csv` | which d1_grouped test crops are the calibration half (88 families) vs the test half (87); seed 0, balanced by class. gc7's no-defect crops follow their family |
 | `experiments/` | the study behind every choice (run from `1_main_model_resnet18/`, results cached in `data/work/enhanced_res/calibration/`) |
 | `results/` | the reports of those runs |
 

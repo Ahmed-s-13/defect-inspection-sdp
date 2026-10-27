@@ -5,11 +5,15 @@ The model is a ResNet-18 backbone (trained by train_backbone.py) followed by an 
             8 flips/90-degree rotations (test-time augmentation)
   head      5 MLPs (softmax averaged), blended with a 5-nearest-neighbour vote over the train crops' features,
             then an optional class-prior correction p(c) / prior(c)^tau
-Weights live in data/work/enhanced_res/ (git-ignored; enhanced_res_model.zip on the GitHub Releases page): enhanced_res_backbone.pt and
-enhanced_res_head.pt.
+Two trained versions, same architecture and file names (git-ignored, GitHub Releases):
+  gc7  the main model since 28 Oct 2026: 7 classes (the six defects + no-defect), trained on d1_gc7.
+       data/work/enhanced_res/gc7/ (enhanced_res_gc7_model.zip, Release v3.0-gc7)
+  v2   the 6-class model on d1_grouped: data/work/enhanced_res/ (enhanced_res_model.zip, Release v2.0-enhanced-res).
+       EnhancedRes() with no argument still loads it, so code built on the 6 classes (trt_enhanced_res, the healer's
+       screw-head scorer, arch_a/experiments) is unchanged.
 
-  from enhanced_res.model import EnhancedRes
-  m = EnhancedRes()                       # loads both files, picks CUDA / MPS / CPU
+  from enhanced_res.model import EnhancedRes, MODELS
+  m = EnhancedRes(MODELS["gc7"])          # the main model; EnhancedRes() = v2. Picks CUDA / MPS / CPU
   probs = m(x)                            # x: (N, 3, 224, 224) crops, eval_transform() normalised
 """
 import sys
@@ -31,12 +35,23 @@ from klshift.mlp import knn_proba, l2n                 # noqa: E402
 WORK = MAIN / "data/work"
 EWORK = WORK / "enhanced_res"                          # weights, runs, caches (git-ignored)
 GROUPS = MAIN / "d1_grouped/groups.csv"                # the leak-free split (in git)
+NO_DEFECT = MAIN / "d1_gc7/no_defect.csv"              # d1_gc7's 7th class (in git; crops in data/work/crops/no_defect/)
 RESULTS = HERE / "results"
 BACKBONE_FILE, HEAD_FILE = "enhanced_res_backbone.pt", "enhanced_res_head.pt"
+MODELS = {"gc7": EWORK / "gc7", "v2": EWORK}           # weights folder of each trained version
+MAIN_MODEL = "gc7"
 
 
-def load_split():
-    """Every D1 crop with its source group and its split in d1_grouped (a crop follows its source image)."""
+def load_split(data="d1_grouped"):
+    """Every crop with its source group and its split (a crop follows its source image).
+    d1_grouped: the D1 defect crops. d1_gc7: the same + the no-defect crops (d1_gc7/no_defect.csv), class
+    "no-defect"; a "source" column says d1 / healed / clean_cropper."""
+    if data == "d1_gc7":
+        c = load_split("d1_grouped").assign(source="d1")
+        nd = pd.read_csv(NO_DEFECT)
+        nd["crop_path"] = [str(MAIN / p) for p in nd.crop_path]
+        return pd.concat([c, nd[c.columns]], ignore_index=True)
+    assert data == "d1_grouped", data
     f = EWORK / "split.csv"
     if not f.exists():
         c = pd.read_csv(WORK / "crops/D1.csv")
@@ -102,8 +117,9 @@ class EnhancedRes:
         work = Path(work)
         for f in (work / BACKBONE_FILE, work / HEAD_FILE):
             if not f.exists():
-                raise SystemExit(f"missing {f}: unzip enhanced_res_model.zip in the repo root, or train it "
-                                 "(enhanced_res/README.md)")
+                zipname = "enhanced_res_gc7_model.zip (Release v3.0-gc7)" if work.name == "gc7" else \
+                    "enhanced_res_model.zip (Release v2.0-enhanced-res)"
+                raise SystemExit(f"missing {f}: unzip {zipname} in the repo root, or train it (enhanced_res/README.md)")
         self.device = device or pick_device()
         ck = torch.load(work / HEAD_FILE, map_location="cpu")
         self.backbone, classes = load_backbone(work / BACKBONE_FILE, self.device)

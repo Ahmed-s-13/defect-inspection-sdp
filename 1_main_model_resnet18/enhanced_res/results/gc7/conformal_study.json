@@ -1,0 +1,166 @@
+{
+ "test_half": {
+  "crops": 2752,
+  "families": 87,
+  "no_defect": 335
+ },
+ "cal_half": {
+  "crops": 2118,
+  "families": 88,
+  "no_defect": 280
+ },
+ "A_as_shipped": {
+  "0.05": {
+   "coverage": 0.9782,
+   "coverage_per_family": 0.9833,
+   "set_size": 5.6246,
+   "single_class": 0.0254,
+   "empty": 0.0,
+   "coverage_by_class": {
+    "corrosion": 0.9883,
+    "crack": 0.9654,
+    "dent": 0.9743,
+    "missing-head": 0.9924,
+    "paint-peel-off": 1.0,
+    "scratch": 0.9669,
+    "no-defect": 0.997
+   },
+   "defects_shown_as_only_no_defect": 0.0,
+   "defects_with_no_defect_in_set": 0.7873,
+   "no_defect_shown_alone": 0.0
+  },
+  "0.10": {
+   "coverage": 0.9433,
+   "coverage_per_family": 0.9549,
+   "set_size": 3.3012,
+   "single_class": 0.1893,
+   "empty": 0.0,
+   "coverage_by_class": {
+    "corrosion": 0.9027,
+    "crack": 0.9072,
+    "dent": 0.961,
+    "missing-head": 0.9697,
+    "paint-peel-off": 0.9437,
+    "scratch": 0.8843,
+    "no-defect": 0.994
+   },
+   "defects_shown_as_only_no_defect": 0.0008,
+   "defects_with_no_defect_in_set": 0.2114,
+   "no_defect_shown_alone": 0.5433
+  },
+  "0.20": {
+   "coverage": 0.8517,
+   "coverage_per_family": 0.8257,
+   "set_size": 1.1784,
+   "single_class": 0.8372,
+   "empty": 0.0004,
+   "coverage_by_class": {
+    "corrosion": 0.7121,
+    "crack": 0.783,
+    "dent": 0.9088,
+    "missing-head": 0.9545,
+    "paint-peel-off": 0.7746,
+    "scratch": 0.686,
+    "no-defect": 0.9493
+   },
+   "defects_shown_as_only_no_defect": 0.0116,
+   "defects_with_no_defect_in_set": 0.0534,
+   "no_defect_shown_alone": 0.8328
+  },
+  "T": 1.3419414410915158
+ },
+ "B_recalibrated": {
+  "T": 1.0589,
+  "0.05": {
+   "q": 0.9824,
+   "coverage": 0.9564,
+   "coverage_per_family": 0.9708,
+   "set_size": 4.411,
+   "single_class": 0.1504,
+   "empty": 0.0,
+   "coverage_by_class": {
+    "corrosion": 0.9455,
+    "crack": 0.9214,
+    "dent": 0.9681,
+    "missing-head": 0.9848,
+    "paint-peel-off": 0.9577,
+    "scratch": 0.9091,
+    "no-defect": 0.997
+   },
+   "defects_shown_as_only_no_defect": 0.0008,
+   "defects_with_no_defect_in_set": 0.3645,
+   "no_defect_shown_alone": 0.3134
+  },
+  "0.10": {
+   "q": 0.9544,
+   "coverage": 0.9197,
+   "coverage_per_family": 0.9223,
+   "set_size": 1.6955,
+   "single_class": 0.6475,
+   "empty": 0.0,
+   "coverage_by_class": {
+    "corrosion": 0.8405,
+    "crack": 0.8821,
+    "dent": 0.9531,
+    "missing-head": 0.9697,
+    "paint-peel-off": 0.8803,
+    "scratch": 0.7934,
+    "no-defect": 0.9821
+   },
+   "defects_shown_as_only_no_defect": 0.0033,
+   "defects_with_no_defect_in_set": 0.1154,
+   "no_defect_shown_alone": 0.6776
+  },
+  "0.20": {
+   "q": 0.7617,
+   "coverage": 0.8321,
+   "coverage_per_family": 0.806,
+   "set_size": 1.1043,
+   "single_class": 0.8964,
+   "empty": 0.0004,
+   "coverage_by_class": {
+    "corrosion": 0.6887,
+    "crack": 0.7531,
+    "dent": 0.8981,
+    "missing-head": 0.9394,
+    "paint-peel-off": 0.7535,
+    "scratch": 0.6446,
+    "no-defect": 0.9284
+   },
+   "defects_shown_as_only_no_defect": 0.0186,
+   "defects_with_no_defect_in_set": 0.0459,
+   "no_defect_shown_alone": 0.8746
+  },
+  "resplits_0.10": {
+   "coverage_mean": 0.9128,
+   "coverage_5_95": [
+    0.8721,
+    0.9408
+   ],
+   "no_defect_coverage_mean": 0.9797
+  }
+ },
+ "C_quality_gate_flags": {
+  "defects": 0.1283,
+  "healed": 0.068,
+  "clean_cropper": 0.2247
+ },
+ "C_quality_gate_reason_no_defect": {
+  "sharpness": 88,
+  "brightness": 5,
+  "clipped_hi": 3,
+  "clipped_lo": 3
+ },
+ "C_ood_gate_flags": {
+  "old_bank_shipped_cal": {
+   "defects": 0.0637,
+   "healed": 0.3,
+   "clean_cropper": 0.4411
+  },
+  "new_bank_recalibrated_test_half": {
+   "defects": 0.0476,
+   "healed": 0.0677,
+   "clean_cropper": 0.0396
+  }
+ }
+}
