@@ -64,7 +64,8 @@ class App:
         c0.bind("<ButtonPress-1>", self.drag_start)
         c0.bind("<B1-Motion>", self.drag_move)
         c0.bind("<ButtonRelease-1>", self.drag_end)
-        c0.bind("<Button-3>", self.delete_box)
+        c0.bind("<Button-2>" if root.tk.call("tk", "windowingsystem") == "aqua" else "<Button-3>",
+                self.delete_box)                                   # right-click is Button-2 on macOS
 
         ttk.Label(root, text="Log", padding=(8, 4, 0, 0)).pack(anchor="w")
         self.log = tk.Text(root, height=9, font=("Consolas", 9))
