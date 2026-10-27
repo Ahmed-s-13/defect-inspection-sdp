@@ -1,5 +1,0 @@
-{
-  "reencode_only_vs_clean_finetuned_val_AUROC": 0.5140857122154828,
-  "reencode_only_vs_clean_finetuned_test_AUROC": 0.5016513552143792,
-  "epochs": 2
-}

@@ -1,0 +1,11 @@
+# Python 3.13. Versions used for the results in README.md (RTX 2050, Windows 11).
+# Install torch with CUDA first (NVIDIA driver 580+); without an NVIDIA GPU, plain `pip install torch torchvision`
+# works too (CPU, slower):
+#   pip install torch==2.14.0 torchvision==0.29.0 --index-url https://download.pytorch.org/whl/cu130
+torch==2.14.0
+torchvision==0.29.0
+numpy==2.5.3
+pandas==3.0.6
+pillow==12.3.0
+opencv-python-headless==5.0.0
+scikit-learn==1.9.1

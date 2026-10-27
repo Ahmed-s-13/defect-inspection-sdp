@@ -73,15 +73,14 @@ which defect it is. Everything here uses public datasets.
 | folder | status | what it is |
 |---|---|---|
 | [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | **enhanced_res** ([`enhanced_res/`](1_main_model_resnet18/enhanced_res/)): ResNet-18 + MLP head for 6 defect classes, trained on the leak-free [`d1_grouped/`](1_main_model_resnet18/d1_grouped/) split (grouped D1-test accuracy 0.804). Also the legacy ResNet-18 + MLP head, the dataset-shift (KL divergence) analysis across 10 public datasets, and **the Cropper** for "no damage" patches. Most of our data and results live here. |
-| [`2_healing_experiment/`](2_healing_experiment/) | experiment, in progress | "Heal" defect crops by inpainting to create non-defective training patches. Builds on folders 1 and 3. |
-| [`3_teacher_student_msrd/`](3_teacher_student_msrd/) | support code | MSRD teacher–student anomaly model, used by the healing experiment. |
+| [`2_lama_healing/`](2_lama_healing/) | **healer, in use** | Removes defects from photos with **LaMa** (pretrained inpainting) and puts a real screw head back where one is missing (copied from the same photo or a donor bank). GUI + batch command line. Replaces the earlier healing experiment (U-Net inpainter, still in git history). |
+| [`3_teacher_student_msrd/`](3_teacher_student_msrd/) | support code | MSRD teacher–student anomaly model, used by the earlier healing experiment (now removed). |
 | [`4_early_classifiers_archive/`](4_early_classifiers_archive/) | archived | Our first models: plain CNN and SupCon ResNet-18, on smaller Roboflow datasets. |
 
 Each folder has its own README with the run order. Run scripts from inside their folder.
 
 ```
-1_main_model_resnet18  ──(D1 crops, split, trained model, KL code)──▶  2_healing_experiment
-3_teacher_student_msrd ──(MSRD model)─────────────────────────────────▶  2_healing_experiment
+1_main_model_resnet18  ──(enhanced_res backbone, D1 photos + labels)──▶  2_lama_healing
 ```
 
 ## Setup
@@ -106,9 +105,10 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 | file | size | where to download | what it gives you |
 |---|---|---|---|
 | `enhanced_res_model.zip` | 136 MB | this repo's **Releases** page (`v2.0-enhanced-res`) | **the main model**: `data/work/enhanced_res/` (backbone + MLP head) |
-| `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the legacy ResNet-18 (`model_best.pt`), the MSRD teacher–student and the healer checkpoints |
-| `main_model_data_work.zip` | 2.8 GB | team shared Google Drive (ask a team member for access) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed, run KL and healing steps 2–4 |
-| `D1_raw.zip` | 756 MB | team shared Google Drive | the original D1 photos + labels: needed for the Cropper, healing step 1 and rebuilding d1_grouped |
+| `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the legacy ResNet-18 (`model_best.pt`), the MSRD teacher–student and the checkpoints of the earlier (removed) healing experiment |
+| `lama_weights.zip` | 206 MB | team shared Google Drive | the healer's LaMa model: `2_lama_healing/weights/big-lama.pt` |
+| `main_model_data_work.zip` | 2.8 GB | team shared Google Drive (ask a team member for access) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed and run KL |
+| `D1_raw.zip` | 756 MB | team shared Google Drive | the original D1 photos + labels: needed for the Cropper, the healer's `--d1` mode and rebuilding d1_grouped |
 | `d1_grouped` folder | ~850 MB | team shared Google Drive | the d1_grouped split as a ready YOLO dataset; put its `dataset/` in `1_main_model_resnet18/data/d1_grouped/`. Not needed for the ResNet: the split itself (`d1_grouped/groups.csv`) is in git |
 
 Google Drive tips: download each zip on its own rather than the whole folder (Drive would
@@ -134,7 +134,7 @@ python enhanced_res/evaluate.py      # main model; should end with "OK: results 
 python predict.py samples/ --compare
 ```
 
-The legacy model (still used by the healing experiment) is checked the same way; its small MLP head is built
+The legacy model is checked the same way; its small MLP head is built
 locally (about 40 s):
 
 ```bash
@@ -145,8 +145,7 @@ python evaluate_mlp.py          # should end with "OK: results match the origina
 
 The other raw datasets (D2–D10, ~17 GB) are only needed to re-run `prepare.py` from
 scratch. Download them yourself with `1_main_model_resnet18/download.py` and your own
-free Kaggle/Roboflow keys (see that folder's README). The healing experiment's
-`work/` files (~1.4 GB) are not shared; re-create them by running its steps 1–3.
+free Kaggle/Roboflow keys (see that folder's README).
 
 ## API keys
 

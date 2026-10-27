@@ -4,8 +4,9 @@
 Soft Computing* 2025), built on Reverse Distillation (Deng & Li, CVPR 2022). It is
 trained on defect-free images only and outputs a pixel anomaly map plus an image score.
 
-It is kept here because **`2_healing_experiment` imports it** (`ts.py`, `healer.py`).
-The architecture is used unchanged there.
+It was written for the earlier healing experiment (`2_healing_experiment`, which imported it in `ts.py` and
+`healer.py`). That experiment has been replaced by [`2_lama_healing`](../2_lama_healing/) and removed from the
+repo (it is still in git history); this folder is kept as a standalone anomaly model.
 
 ## Standalone use (MVTec AD)
 

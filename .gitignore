@@ -2,7 +2,6 @@
 1_main_model_resnet18/data/
 1_main_model_resnet18/synthetic/
 4_early_classifiers_archive/data/
-2_healing_experiment/work/
 4_early_classifiers_archive/runs/
 
 # ---- Trained weights and large arrays: shared outside git (see README "Data and trained models")
@@ -58,3 +57,9 @@ graphify-out/
 
 # Mac handoff package (local only)
 handoffs/
+
+# Healer (2_lama_healing): LaMa weights are on the team Drive (lama_weights.zip, see its README); run outputs are
+# local. The small trained screw-head scorer IS committed, despite the *.npz rule above.
+2_lama_healing/weights/
+2_lama_healing/out/
+!2_lama_healing/donor_bank/head_scorer.npz

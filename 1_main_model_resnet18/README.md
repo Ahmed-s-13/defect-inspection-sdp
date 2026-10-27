@@ -3,7 +3,7 @@
 > **The model the project uses is [`enhanced_res/`](enhanced_res/README.md)**: a ResNet-18 + MLP head trained and
 > tested on [`d1_grouped/`](d1_grouped/README.md), a leak-free re-split of D1 in which no photo (or any of its
 > flipped, rotated, cropped or recoloured copies) is in both training and test.
-> Everything else in the repo either builds on this folder (`2_healing_experiment`) or came before it
+> Everything else in the repo either builds on this folder (`2_lama_healing`) or came before it
 > (`4_early_classifiers_archive`).
 
 ## Headline results (grouped D1 test: 4,255 crops from 175 source groups)
