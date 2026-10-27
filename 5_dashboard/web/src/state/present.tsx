@@ -17,9 +17,10 @@ export function PresentProvider({ children }: { children: ReactNode }) {
 export const usePresent = () => useContext(Ctx);
 
 /** Brings a presentation step into view. A step marked `data-step-at` sits in a pinned scroll scene (its parent
- *  holds the sticky stage): it scrolls to that fraction of the way through the scene. */
+ *  holds the sticky stage: a `.scene`, or the title's `.title-stage`): it scrolls to that fraction of the way
+ *  through the scene. */
 export function scrollToStep(el: HTMLElement) {
-  const at = el.dataset.stepAt, run = el.parentElement, stage = run?.querySelector<HTMLElement>(".scene");
+  const at = el.dataset.stepAt, run = el.parentElement, stage = run?.querySelector<HTMLElement>(".scene, .title-stage");
   if (at === undefined || !run || !stage) { el.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
   const stick = parseFloat(getComputedStyle(stage).top) || 0;
   const top = run.getBoundingClientRect().top + scrollY - stick + Number(at) * (run.offsetHeight - stage.offsetHeight);

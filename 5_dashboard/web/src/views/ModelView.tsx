@@ -12,7 +12,7 @@ import { RuleDraw } from "../components/RuleDraw";
 import { ANATOMY_STEPS, ModelAnatomy } from "../components/ModelAnatomy";
 import { SQUARE_AT, SquareScene } from "../components/SquareScene";
 import { StateGlyph } from "../components/StateBadge";
-import { useReveal } from "../lib/useReveal";
+import { useReveal, type Reveal } from "../lib/useReveal";
 import { cap, className, int, pct } from "../lib/format";
 import { usePresent } from "../state/present";
 import "../styles/model.css";
@@ -40,12 +40,13 @@ export function ModelView() {
     ["Evidence", <Evidence rep={rep} />],
   ];
   const sizes = sections.map(([name]) => (name === "Square" ? SQUARE_AT.length : name === "Anatomy" ? ANATOMY_STEPS : 1));
-  const firsts = sizes.map((_, i) => sizes.slice(0, i).reduce((a, b) => a + b, 0));
-  const total = sizes.reduce((a, b) => a + b, 0);
+  // step 0 is the title slide; the sections follow
+  const firsts = sizes.map((_, i) => 1 + sizes.slice(0, i).reduce((a, b) => a + b, 0));
+  const total = 1 + sizes.reduce((a, b) => a + b, 0);
   const dimAt = (step: number) => present.on && present.step !== step;
   return (
     <div className="model">
-      <HelmetTitle />
+      <HelmetTitle step={0} />
       {sections.map(([name, node], i) => (name === "Square" ? <section key={name} className="model-section"><SquareScene first={firsts[i]} dimAt={dimAt} /></section>
         : name === "Anatomy" ? <section key={name} className="model-section"><ModelAnatomy first={firsts[i]} dimAt={dimAt} /></section>
         : <motion.section key={name} data-step={firsts[i]} className="model-section" animate={{ opacity: dimAt(firsts[i]) ? 0.25 : 1 }} transition={{ duration: 0.3 }}>
@@ -111,62 +112,72 @@ function Classes({ rep }: { rep: Report }) {
   );
 }
 
-/** What the 7th class adds: clean crops recognised (by source), and how often a defect is called "no defect". */
+/** What the 7th class adds, as a 2 x 2 sheet: clean crops recognised | defects called no defect, then the LaMa
+ *  check | the validation-chosen cut. Each cell is a heading, a line and four to six bars or rows. */
 function NoDefectSection({ rep, nd }: { rep: Report; nd: NoDefect }) {
-  const seen = useReveal<HTMLDivElement>(0.8), miss = useReveal<HTMLDivElement>(0.8);
-  const recog: { label: string; v: number; n: number; muted?: boolean }[] = [
-    { label: "Healed: damage painted out", v: nd.recall_by_source.healed, n: nd.n_by_source.healed },
-    { label: "Clean: unlabelled areas", v: nd.recall_by_source.clean_cropper, n: nd.n_by_source.clean_cropper },
-    ...(nd.extra ? [{ label: "Spare crops, never trained on", v: nd.extra.recall, n: nd.extra.n }] : []),
-    { label: "6-class model, same crops", v: 0, n: nd.n, muted: true },
+  const rv = useReveal<HTMLDivElement>(0.8);
+  const recog: Bar[] = [
+    { label: "Healed: damage painted out", n: nd.n_by_source.healed, v: nd.recall_by_source.healed },
+    { label: "Clean: unlabelled areas", n: nd.n_by_source.clean_cropper, v: nd.recall_by_source.clean_cropper },
+    ...(nd.extra ? [{ label: "Spare crops, never trained on", n: nd.extra.n, v: nd.extra.recall }] : []),
+    { label: "6-class model, same crops", n: nd.n, v: 0, muted: true },
   ];
-  const byClass = Object.entries(nd.defects_called_clear_by_class).sort((a, b) => b[1] - a[1]);
-  const served = rep.arch_a.by_alpha[rep.arch_a.alpha.toFixed(2)];
+  const missed: Bar[] = Object.entries(nd.defects_called_clear_by_class).sort((a, b) => b[1] - a[1])
+    .map(([c, v]) => ({ label: className(c), v, scale: 0.1 }));
   const dec = nd.decoys;
+  const lama: Bar[] = dec ? [
+    { label: "Painted patch: called no defect", v: dec.called_no_defect.decoy, scale: 0.1, tone: "miss" },
+    { label: "Untouched: called no defect", v: dec.called_no_defect.original, scale: 0.1, tone: "miss", muted: true },
+    { label: "Painted patch: right class", v: dec.right_class.decoy },
+    { label: "Untouched: right class", v: dec.right_class.original, muted: true },
+  ] : [];
+  const served = rep.arch_a.by_alpha[rep.arch_a.alpha.toFixed(2)];
   return (
-    <div className="pair is-centred">
-      <div className="panel" ref={seen.ref} data-shown={seen.shown}>
+    <div className="nd" ref={rv.ref} data-shown={rv.shown}>
+      <div className="panel nd-head">
         <RuleDraw />
         <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>A 7th class: no defect</h2>
-        <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>D1 has no photos of undamaged skin, so the 6-class model named a defect on every clean panel. We made {int(nd.train.train + nd.train.val + nd.train.test)} no-defect crops from D1's own photos (the Data page shows how) and retrained. Share of no-defect crops it calls no defect:</p>
-        <ol className="gate-bars nd-bars rv" style={{ "--i": 2 } as React.CSSProperties} aria-label="Share of no-defect crops called no defect">
-          {recog.map((x, i) => (
-            <li key={x.label} className={x.muted ? "is-normal" : undefined}>
-              <span>{x.label} <small className="nd-n">{int(x.n)}</small></span>
-              <span className="gate-track"><motion.span className="gate-fill nd-fill" initial={false} animate={{ scaleX: seen.shown ? x.v : 0 }}
-                transition={{ duration: seen.t(0.7), delay: seen.t(0.08) * i, ease }} /></span>
-              <span className="fig">{pct(x.v, 0)}</span>
-            </li>
-          ))}
-        </ol>
-        {dec && <p className="coverage-ref rv" style={{ "--i": 3 } as React.CSSProperties}>Is it just spotting LaMa's paint? We painted a clean patch into {int(dec.n)} defect crops: it called {pct(dec.called_no_defect.decoy)} of them no defect, against {pct(dec.called_no_defect.original)} untouched. Healed crops are also recognised less often than clean ones, so it did not learn &ldquo;painted = intact&rdquo;.</p>}
+        <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>D1 has no photos of undamaged skin, so the 6-class model named a defect on every clean panel. We made {int(nd.train.train + nd.train.val + nd.train.test)} no-defect crops from D1&rsquo;s own photos (the Data page shows how) and retrained. What that bought, and what it costs:</p>
       </div>
-      <div className="panel" ref={miss.ref} data-shown={miss.shown}>
-        <RuleDraw />
-        <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>The costly mistake: a missed defect</h2>
-        <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>Its top answer is no defect for {pct(nd.defects_called_clear)} of the {int(nd.n_defects)} defect test crops, mostly faint scratches and cracks (bars run to 10%):</p>
-        <ol className="gate-bars nd-bars rv" style={{ "--i": 2 } as React.CSSProperties} aria-label="Share of each defect called no defect">
-          {byClass.map(([c, v], i) => (
-            <li key={c}>
-              <span>{className(c)}</span>
-              <span className="gate-track"><motion.span className="gate-fill nd-miss" initial={false} animate={{ scaleX: miss.shown ? v / Math.max(byClass[0][1], 0.1) : 0 }}
-                transition={{ duration: miss.t(0.7), delay: miss.t(0.06) * i, ease }} /></span>
-              <span className="fig">{pct(v)}</span>
-            </li>
-          ))}
-        </ol>
+      <div className="nd-grid">
+        <NdCell i={2} rv={rv} title="Intact surface it recognises" sub={`Share of the ${int(nd.n)} no-defect test crops it calls no defect, by where they came from.`} bars={recog} tone="clear" />
+        <NdCell i={2} rv={rv} title="Defects it calls no defect" sub={`${pct(nd.defects_called_clear)} of the ${int(nd.n_defects)} defect test crops, mostly faint scratches and cracks. Bars run to 10%.`} bars={missed} tone="miss" />
+        {dec && <NdCell i={3} rv={rv} title="Is it just spotting LaMa's paint?" sub={`We painted a clean patch into ${int(dec.n)} defect crops. Barely more are called no defect, and the class stays right: it did not learn "painted = intact".`} bars={lama} tone="clear" />}
         {nd.dial && (
-          <table className="nd-dial rv" style={{ "--i": 3 } as React.CSSProperties}>
-            <caption>Say no defect only above a cut on p(no defect), chosen on validation</caption>
-            <thead><tr><th scope="col">Cut set to miss, on validation</th><th scope="col">Defects missed, test</th><th scope="col">Clean crops caught</th></tr></thead>
-            <tbody>
-              {nd.dial.map((d) => <tr key={d.val_miss_target}><th scope="row">{pct(d.val_miss_target, 0)}</th><td className="fig">{pct(d.test_defects_missed)}</td><td className="fig">{pct(d.test_no_defect_recall, 0)}</td></tr>)}
-              <tr className="is-top"><th scope="row">No cut (top answer)</th><td className="fig">{pct(nd.defects_called_clear)}</td><td className="fig">{pct(nd.recall, 0)}</td></tr>
-            </tbody>
-          </table>
+          <div className="nd-cell rv" style={{ "--i": 3 } as React.CSSProperties}>
+            <h3 className="nd-h3">Fewer misses, chosen on validation</h3>
+            <p className="nd-sub">Say no defect only when p(no defect) passes a cut set on validation.{served?.defect_called_clear != null ? <> Through architecture A, only {pct(served.defect_called_clear)} of defects are shown as a single <b>No defect</b>.</> : null}</p>
+            <table className="nd-dial">
+              <thead><tr><th scope="col">Cut set to miss, val</th><th scope="col">Defects missed, test</th><th scope="col">Clean crops caught</th></tr></thead>
+              <tbody>
+                {nd.dial.map((d) => <tr key={d.val_miss_target}><th scope="row">{pct(d.val_miss_target, 0)}</th><td className="fig">{pct(d.test_defects_missed)}</td><td className="fig">{pct(d.test_no_defect_recall, 0)}</td></tr>)}
+              </tbody>
+            </table>
+          </div>
         )}
-        {served?.defect_called_clear != null && <p className="coverage-ref rv" style={{ "--i": 4 } as React.CSSProperties}>Through architecture A most of these become <b>Ambiguous</b>, with no defect kept next to the defect: only {pct(served.defect_called_clear)} of defect crops are shown as a single <b>No defect</b>.</p>}
       </div>
+    </div>
+  );
+}
+
+interface Bar { label: string; v: number; n?: number; scale?: number; tone?: "clear" | "miss"; muted?: boolean }
+
+/** One cell of the no-defect sheet: a heading, a line, and bars (each scaled to `scale`, 1 by default). */
+function NdCell({ i, rv, title, sub, bars, tone }: { i: number; rv: Reveal; title: string; sub: string; bars: Bar[]; tone: "clear" | "miss" }) {
+  return (
+    <div className="nd-cell rv" style={{ "--i": i } as React.CSSProperties}>
+      <h3 className="nd-h3">{title}</h3>
+      <p className="nd-sub">{sub}</p>
+      <ol className="gate-bars nd-bars">
+        {bars.map((x, k) => (
+          <li key={x.label} className={x.muted ? "is-muted" : undefined}>
+            <span>{x.label}{x.n != null && <small className="nd-n">{int(x.n)}</small>}</span>
+            <span className="gate-track"><motion.span className={`gate-fill nd-${x.tone ?? tone}`} initial={false}
+              animate={{ scaleX: rv.shown ? Math.min(1, x.v / (x.scale ?? 1)) : 0 }} transition={{ duration: rv.t(0.7), delay: rv.t(0.06) * k + rv.t(0.2), ease }} /></span>
+            <span className="fig">{pct(x.v, x.scale ? 1 : 0)}</span>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

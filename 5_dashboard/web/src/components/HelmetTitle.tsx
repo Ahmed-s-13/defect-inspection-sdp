@@ -2,8 +2,9 @@ import { useEffect, useRef } from "react";
 import "../styles/title.css";
 
 /** The Model page's title: a hand-drawn sketch of the team's helmet beside SDP'26. The sketch draws itself
- *  on arrival; scrolling down un-draws it (details first, the shell last) and scrolling back up redraws it. */
-export function HelmetTitle() {
+ *  on arrival; scrolling down un-draws it (details first, the shell last) and scrolling back up redraws it.
+ *  With `step`, it is that presentation step (the first slide), shown fully drawn at the top of its run. */
+export function HelmetTitle({ step }: { step?: number }) {
   const run = useRef<HTMLDivElement>(null);
   const strokes = useRef<SVGGElement>(null);
   const type = useRef<HTMLDivElement>(null);
@@ -114,6 +115,7 @@ export function HelmetTitle() {
           <h1 className="sdp">SDP<span>’26</span></h1>
         </div>
       </div>
+      {step != null && <i hidden data-step={step} data-step-at={0} />}
     </div>
   );
 }

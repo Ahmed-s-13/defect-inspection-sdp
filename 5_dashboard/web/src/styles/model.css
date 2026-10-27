@@ -240,15 +240,22 @@
   .ladder li, .an-votes li { grid-template-columns: minmax(0, 1fr) 1fr 3.5em; }
 }
 
-/* the 7th class */
-.nd-bars { margin-top: 14px; }
-.nd-n { color: var(--ink-3); font: 400 var(--t-micro) var(--font-fig); margin-left: 4px; }
-.gate-fill.nd-fill { background: var(--clear); }
+/* the 7th class: a heading over a 2 x 2 sheet of equal cells */
+.nd-head .panel-sub { max-width: 90ch; margin-bottom: 0; }
+.nd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px calc(var(--gap) * 2); margin-top: 24px; }
+.nd-cell { display: flex; flex-direction: column; padding-top: 16px; border-top: 1px solid var(--rule); }
+.nd-h3 { margin: 0; font-size: var(--t-body); font-weight: 700; }
+.nd-sub { margin: 4px 0 14px; min-height: 3em; color: var(--ink-3); font-size: var(--t-small); max-width: 62ch; } /* two lines in every cell, so the bars line up across */
+.nd-bars { flex: 1; align-content: space-between; gap: 8px; } /* fewer rows spread to the height of the cell beside */
+.nd-bars li { grid-template-columns: minmax(0, 15em) 1fr 3.4em; }
+.nd-bars li.is-muted { color: var(--ink-3); }
+.nd-bars li.is-muted .gate-fill { opacity: .45; }
+.nd-n { color: var(--ink-3); font: 400 var(--t-micro) var(--font-fig); margin-left: 6px; }
+.gate-fill.nd-clear { background: var(--clear); }
 .gate-fill.nd-miss { background: var(--detected); }
-.nd-dial { width: 100%; margin: 20px 0 0; border-collapse: collapse; font-size: var(--t-small); }
-.nd-dial caption { text-align: left; color: var(--ink-3); padding-bottom: 6px; }
-.nd-dial th, .nd-dial td { padding: 6px 8px 6px 0; border-bottom: 1px solid var(--rule); text-align: left; font-weight: 400; }
+.nd-dial { width: 100%; margin: 0; flex: 1; border-collapse: collapse; font-size: var(--t-small); }
+.nd-dial th, .nd-dial td { padding: 5px 8px 5px 0; border-bottom: 1px solid var(--rule); text-align: left; font-weight: 400; }
 .nd-dial thead th { color: var(--ink-3); font-size: var(--t-micro); }
 .nd-dial tbody th { color: var(--ink-2); }
-.nd-dial tr.is-top th, .nd-dial tr.is-top td { color: var(--ink-3); }
+@media (max-width: 900px) { .nd-grid { grid-template-columns: minmax(0, 1fr); } .nd-sub { min-height: 0; } }
 .ladder li.is-seven { padding-top: 8px; border-top: 1px dashed var(--rule-strong); } /* taste-skill-ignore: marks the row scored over 7 classes */

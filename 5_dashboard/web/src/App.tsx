@@ -64,7 +64,12 @@ function Shell() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (typing(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key === "p" || e.key === "P") present.toggle();
+      if (e.key === "p" || e.key === "P") {
+        present.toggle();
+        // starting a presentation opens on its first slide (the Model page's title)
+        const first = !present.on && document.querySelector<HTMLElement>('[data-step="0"]');
+        if (first) requestAnimationFrame(() => scrollToStep(first));
+      }
       const n = Number(e.key);
       if (n >= 1 && n <= TABS.length) setTab(TABS[n - 1].id);
       const total = document.querySelectorAll("[data-step]").length; // the Model and Data pages mark their steps

@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import type { ModelsInfo } from "../api/client";
-import { usePresent } from "../state/present";
+import { scrollToStep, usePresent } from "../state/present";
 import { Mark } from "./Mark";
 import { ModelChip } from "./ModelChip";
 
@@ -29,7 +29,11 @@ export function TopBar({ tab, onTab, models, modelsError, onModel }: {
       </nav>
       <div className="topbar-right">
         <ModelChip info={models} error={modelsError} onSelect={onModel} />
-        <button className="present-btn" aria-pressed={present.on} onClick={present.toggle}>
+        <button className="present-btn" aria-pressed={present.on} onClick={() => {
+          present.toggle();
+          const first = !present.on && document.querySelector<HTMLElement>('[data-step="0"]'); // open on the first slide
+          if (first) requestAnimationFrame(() => scrollToStep(first));
+        }}>
           <span className="label">Presentation</span><span className="key" aria-hidden="true">P</span>
         </button>
       </div>
