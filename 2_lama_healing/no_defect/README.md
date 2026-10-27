@@ -3,7 +3,7 @@
 The healer removes every labelled defect from one D1 photo per d1_grouped group. The healed photo is cut at exactly the
 squares of the real defect crops, the bad crops are filtered out and the rest are reviewed by hand. The result,
 `no_defect_healed.csv` (**1,858 crops**), is half of the 7th class of [`d1_gc7`](../../1_main_model_resnet18/d1_gc7/README.md),
-which trains the main model (enhanced_res gc7). The other half comes from [`5_clean_cropper`](../../5_clean_cropper/README.md).
+which trains the main model (enhanced_res gc7). The other half comes from [`3_clean_cropper`](../../3_clean_cropper/README.md).
 
 No trained model chooses which crops are kept. enhanced_res is not used, because these crops were made to train it. The
 filter uses the healer's own log, image statistics and a person's review.

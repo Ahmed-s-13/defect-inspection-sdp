@@ -1,4 +1,0 @@
-split,images,estimated_source_families,estimated_excess_copies,estimated_excess_copy_percent,strict_initial_families
-train,10330,1238,9092,88.02,1241
-val,2216,241,1975,89.12,247
-test,2214,212,2002,90.42,213

@@ -6,7 +6,7 @@ The six defect classes are d1_grouped's D1 crops, unchanged (enhanced_res.model.
 from two modules, both reviewed by hand:
   healed   ../2_lama_healing/no_defect/no_defect_healed.csv   one photo per group with its labelled defects removed by
                                                               the healer, cut at the defect crop squares (1,858)
-  clean    ../5_clean_cropper/no_defect_clean.csv             squares from the unboxed parts of the photos, sorted for
+  clean    ../3_clean_cropper/no_defect_clean.csv             squares from the unboxed parts of the photos, sorted for
                                                               background and unboxed damage (3,000)
 Each no-defect crop is cut from a d1_grouped photo, so it takes that photo's group and split. This script checks every
 one against d1_grouped/groups.csv and fails on any mismatch, so no source photo reaches two splits.
@@ -33,7 +33,7 @@ from model import GROUPS, load_split  # noqa: E402
 
 REPO = MAIN.parent
 SOURCES = {"healed": REPO / "2_lama_healing/no_defect/no_defect_healed.csv",
-           "clean_cropper": REPO / "5_clean_cropper/no_defect_clean.csv"}
+           "clean_cropper": REPO / "3_clean_cropper/no_defect_clean.csv"}
 COLS = ["crop_path", "cls", "image", "key", "src_group", "split", "source"]
 
 

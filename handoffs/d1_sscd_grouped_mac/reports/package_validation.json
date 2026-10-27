@@ -1,9 +1,0 @@
-{
-  "status": "PASS",
-  "raw_images_sha256_verified": 14760,
-  "split_assignments_unchanged": true,
-  "real_files_no_symlinks": true,
-  "relocated_model_smoke_check": "PASS using sender environment; recipient must install dependencies",
-  "portable_manifests_restored": true,
-  "trained_checkpoint_included": false
-}

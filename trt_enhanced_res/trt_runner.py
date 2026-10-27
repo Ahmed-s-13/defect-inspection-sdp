@@ -1,4 +1,4 @@
-"""Step 2: build TensorRT engines for the WHOLE enhanced_res (adapted from tensorrt_for_laptop/tensorrt/trt_engine.py,
+"""Step 2: build TensorRT engines for the WHOLE enhanced_res (adapted from the earlier laptop test's trt_engine.py,
 which hard-codes the legacy model's output names and sizes).
 
   python trt_runner.py                 builds engines/enhanced_res_full_fp32.engine and _fp16.engine from onnx/*.onnx

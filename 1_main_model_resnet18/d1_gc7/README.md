@@ -22,7 +22,7 @@ modules, both reviewed by hand, and are all cut from d1_grouped photos:
 | source | module | what | crops |
 |---|---|---|---|
 | healed | [`2_lama_healing/no_defect`](../../2_lama_healing/no_defect/README.md) | one photo per group with its labelled defects removed by the healer, cut at the defect crop squares (the same spot as a real defect, at the same scale) | 1,858 |
-| clean | [`5_clean_cropper`](../../5_clean_cropper/README.md) | squares from the unboxed parts of the photos, sorted for background and unboxed damage | 3,000 |
+| clean | [`3_clean_cropper`](../../3_clean_cropper/README.md) | squares from the unboxed parts of the photos, sorted for background and unboxed damage | 3,000 |
 
 ## Files
 

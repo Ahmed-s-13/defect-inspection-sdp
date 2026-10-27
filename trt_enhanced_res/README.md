@@ -60,7 +60,7 @@ pip install -r requirements.txt
 ```
 
 If PowerShell says "running scripts is disabled", run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
-and activate again. The `tensorrt_for_laptop/tensorrt/README.md` has more help for driver and install problems.
+and activate again.
 Check: `python -c "import tensorrt; print(tensorrt.__version__)"` prints `11.4.0.106`.
 
 ## 3. Build the TensorRT engines on your machine (once, ~2 min)

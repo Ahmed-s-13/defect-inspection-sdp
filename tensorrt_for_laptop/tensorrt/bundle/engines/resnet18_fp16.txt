@@ -1,3 +1,0 @@
-tensorrt 11.4.0.106
-gpu NVIDIA GeForce RTX 2050
-max_batch 32

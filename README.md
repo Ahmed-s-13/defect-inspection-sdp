@@ -9,7 +9,7 @@ ResNet-18 + MLP head with **7 classes**, the six defects plus **no-defect**. It 
 hand-reviewed crops of intact surface. Every crop stays in its photo's d1_grouped split. The no-defect crops come
 from two modules:
 - [the healer](2_lama_healing/no_defect/README.md): photos with their defects removed;
-- [the clean cropper](5_clean_cropper/README.md): unboxed parts of photos, sorted for background and unboxed damage.
+- [the clean cropper](3_clean_cropper/README.md): unboxed parts of photos, sorted for background and unboxed damage.
 
 **d1_gc7 test** (4,255 defect crops + 615 no-defect crops):
 - It calls **91%** of clean crops no-defect. The 6-class model called every one of them a defect.
@@ -101,15 +101,14 @@ which defect it is. Everything here uses public datasets.
 |---|---|---|
 | [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | **enhanced_res gc7** ([`enhanced_res/`](1_main_model_resnet18/enhanced_res/)): ResNet-18 + MLP head for 6 defect classes + no-defect, trained on **[`d1_gc7/`](1_main_model_resnet18/d1_gc7/)** (the leak-free [`d1_grouped/`](1_main_model_resnet18/d1_grouped/) split + reviewed no-defect crops). Its answers go through [architecture A](1_main_model_resnet18/enhanced_res/arch_a/) (quality and unfamiliar-input gates, temperature, conformal set). Also the 6-class enhanced_res v2, the legacy ResNet-18 + MLP head, the dataset-shift (KL divergence) analysis across 10 public datasets, and the older Cropper for "no damage" patches. Most of our data and results live here. |
 | [`2_lama_healing/`](2_lama_healing/) | **healer, in use** | Removes defects from photos with **LaMa** (pretrained inpainting) and puts a real screw head back where one is missing (copied from the same photo or a donor bank). GUI + batch command line. **[`no_defect/`](2_lama_healing/no_defect/)**: heals one photo per group, filters and reviews the crops: 1,858 of d1_gc7's no-defect crops. Replaces the earlier healing experiment (U-Net inpainter, still in git history). |
-| [`3_teacher_student_msrd/`](3_teacher_student_msrd/) | support code | MSRD teacher–student anomaly model, used by the earlier healing experiment (now removed). |
+| [`3_clean_cropper/`](3_clean_cropper/) | **clean cropper, in use** | Cuts squares from the unboxed parts of D1 photos, scores them for background and unboxed damage (CLIP), learns "clean" from a hand-labelled audit and picks a varied set for a final review: 3,000 of d1_gc7's no-defect crops. |
 | [`4_early_classifiers_archive/`](4_early_classifiers_archive/) | archived | Our first models: plain CNN and SupCon ResNet-18, on smaller Roboflow datasets. |
-| [`5_clean_cropper/`](5_clean_cropper/) | **clean cropper, in use** | Cuts squares from the unboxed parts of D1 photos, scores them for background and unboxed damage (CLIP), learns "clean" from a hand-labelled audit and picks a varied set for a final review: 3,000 of d1_gc7's no-defect crops. |
 
 Each folder has its own README with the run order. Run scripts from inside their folder.
 
 ```
 1_main_model_resnet18  ──(D1 photos + labels, d1_grouped split)──▶  2_lama_healing/no_defect ──(healed crops)──┐
-                       ──(D1 photos + labels, d1_grouped split)──▶  5_clean_cropper ─────────(clean crops)───┤
+                       ──(D1 photos + labels, d1_grouped split)──▶  3_clean_cropper ─────────(clean crops)───┤
 1_main_model_resnet18/d1_gc7  ◀──────────────────────────────────────────────────────────────────────────────┘
         └──▶ enhanced_res gc7 (7 classes) + architecture A
 ```
@@ -138,7 +137,7 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 | `enhanced_res_gc7_model.zip` | 133 MB | this repo's **Releases** page (`v3.0-gc7`) | **the main model, gc7**: `data/work/enhanced_res/gc7/` (backbone + MLP head) |
 | `enhanced_res_model.zip` | 136 MB | this repo's **Releases** page (`v2.0-enhanced-res`) | the 6-class enhanced_res v2: `data/work/enhanced_res/` (backbone + MLP head); still used by `trt_enhanced_res` and the healer's screw-head scorer |
 | `d1_gc7_no_defect_crops.zip` | 42 MB | team shared Google Drive | d1_gc7's 4,858 no-defect crops: `data/work/crops/no_defect/` (needed to test or retrain gc7, not to run it) |
-| `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the legacy ResNet-18 (`model_best.pt`), the MSRD teacher–student and the checkpoints of the earlier (removed) healing experiment |
+| `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the legacy ResNet-18 (`model_best.pt`), the MSRD teacher–student and the checkpoints of the earlier healing experiment (both removed from the repo; their code is in git history) |
 | `lama_weights.zip` | 206 MB | team shared Google Drive | the healer's LaMa model: `2_lama_healing/weights/big-lama.pt` |
 | `main_model_data_work.zip` | 2.8 GB | team shared Google Drive (ask a team member for access) | all crops, the D1 split, hashes, embeddings: enough to evaluate, embed and run KL |
 | `D1_raw.zip` | 756 MB | team shared Google Drive | the original D1 photos + labels: needed for the Cropper, the healer's `--d1` mode and rebuilding d1_grouped |
@@ -194,7 +193,3 @@ git-ignored. Never paste a key into a script, notebook or README.
 
 D1 (Kaggle Aircraft_dataset) has an unknown license and is assembled from other
 sources. Some result figures show crops from it. Check this before making the repo public.
-
-## Portable Mac handoff
-
-[Mac handoff instructions](handoffs/d1_sscd_grouped_mac/README.md): a self-contained fresh-training package with real images, frozen split, model code and Mac setup. A local ZIP is available at `handoffs/d1_sscd_grouped_mac.zip`. It excludes the ongoing run’s checkpoint.

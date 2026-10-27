@@ -4,11 +4,11 @@
 > classes (the six defects + **no-defect**), trained and tested on **[`d1_gc7/`](d1_gc7/README.md)**. d1_gc7 is
 > [`d1_grouped/`](d1_grouped/README.md), a leak-free re-split of D1 in which no photo (or any of its flipped,
 > rotated, cropped or recoloured copies) is in both training and test, plus reviewed no-defect crops from
-> `../2_lama_healing/no_defect` and `../5_clean_cropper`, each in its photo's split.
+> `../2_lama_healing/no_defect` and `../3_clean_cropper`, each in its photo's split.
 > Its answers go through **[architecture A](enhanced_res/arch_a/README.md)**, the calibrated decision layer
 > (quality gate → unfamiliar-input gate → temperature → conformal set). It replaced the fixed top-2 display, and the
 > model is unchanged.
-> Everything else in the repo either builds on this folder (`2_lama_healing`) or came before it
+> Everything else in the repo either builds on this folder (`2_lama_healing`, `3_clean_cropper`, `trt_enhanced_res`) or came before it
 > (`4_early_classifiers_archive`).
 
 ## Headline results
@@ -120,8 +120,8 @@ python evaluate_mlp.py  # a few seconds: re-tests the MLP head on D1-test and D1
 | `train_mlp.py` | step 7: trains the legacy MLP head on the D1 embeddings |
 | `evaluate_mlp.py` | re-test the legacy MLP head on D1-test, no training needed |
 | `make_samples.py`, `samples/` | 30 held-out grouped-test crops (d1_grouped) for a quick `predict.py` try |
-| **`klshift/cropper.py`** | **the Cropper**: cuts "no damage" patches out of defect photos |
-| **`run_cropper.py`** + **`cropper.yaml`** | runs the Cropper; all its settings are in the YAML |
+| `klshift/cropper.py` | the Cropper (superseded by `../3_clean_cropper`): cuts "no damage" patches out of defect photos |
+| `run_cropper.py` + `cropper.yaml` | runs the Cropper; all its settings are in the YAML |
 | `make_synthetic.py` | tiny fake D1–D5 for a 2-minute pipeline check |
 | `findings.md` | hand-written interpretation, inserted into `results/summary.md` on every run |
 | `results/` | reports, CSV tables and figures from the last real run |
@@ -164,10 +164,14 @@ the kNN search all stay on the GPU. `train_mlp.py` takes about 40 s on an M-seri
 forces the CPU. `data/work/mlp_head.pt` (63 MB, includes the kNN bank) is git-ignored like
 `model_best.pt`. Rebuild it with `python train_mlp.py`.
 
-The MLP head works alongside the Cropper: like the ResNet `fc`, it only says *which* defect. The Cropper's
-`D1nc` patches are already in `embeddings.npz`, so a 7th "no damage" class could be added to the head.
+The MLP head works alongside the Cropper: like the ResNet `fc`, it only says *which* defect. (The 7th "no damage"
+class now exists in the main model, enhanced_res gc7: see `d1_gc7/`.)
 
-## The Cropper (no-damage patches)
+## The Cropper (no-damage patches): superseded
+
+> **Superseded by [`../3_clean_cropper`](../3_clean_cropper/README.md)** (and the healer's
+> [`no_defect/`](../2_lama_healing/no_defect/README.md)), which make the no-defect class of `d1_gc7`. The Cropper is
+> kept because its `D1nc` patches are part of the dataset-shift (KL) analysis below.
 
 None of the defect datasets has a "no damage" class. The Cropper makes one by cutting
 patches out of the defect photos themselves, away from every annotated defect:

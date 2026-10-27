@@ -2,18 +2,19 @@
 FullModel (the whole enhanced_res, what export_onnx.py exports).
 
 Used by export_onnx.py, trt_runner.py and benchmark.py (they need PyTorch); predict_trt.py does not import it.
-Reads 1_main_model_resnet18 and tensorrt_for_laptop/tensorrt/common.py without changing them.
+Reads 1_main_model_resnet18 without changing it.
 """
 import sys
+import time
 from pathlib import Path
 
+import numpy as np
 import torch
 from torch import nn
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent                                           # this folder lives in the repo root
 MAIN = REPO / "1_main_model_resnet18"
-TRT_OLD = REPO / "tensorrt_for_laptop" / "tensorrt"          # normalize / timed / sync live here
 ONNX_DIR = HERE / "onnx"
 ENGINE_DIR = HERE / "engines"
 RESULTS = HERE / "results"
@@ -24,13 +25,38 @@ for p in (MAIN / "enhanced_res", MAIN):
 
 # the repo's own code: EnhancedRes, feats, dihedral_t, load_split (model.py also puts MAIN on sys.path)
 import model as er                                            # noqa: E402  (enhanced_res/model.py)
-import importlib.util as _ilu                                 # noqa: E402
 
-# the old bundle's common.py (normalize / timed / sync), loaded by path so it can't clash with other "common" modules
-_spec = _ilu.spec_from_file_location("old_trt_common", TRT_OLD / "common.py")
-old = _ilu.module_from_spec(_spec)
-_spec.loader.exec_module(old)
-normalize, timed, sync = old.normalize, old.timed, old.sync
+# ImageNet normalisation and timing helpers (from the earlier laptop TensorRT test's common.py, now removed)
+MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+
+
+def sync(device):
+    if device.type == "cuda":
+        torch.cuda.synchronize()
+    elif device.type == "mps":
+        torch.mps.synchronize()
+
+
+def normalize(x_uint8):
+    """uint8 NCHW tensor (any device) -> float32, ImageNet-normalised, same as the training eval_transform."""
+    mean = torch.as_tensor(MEAN, device=x_uint8.device).view(1, 3, 1, 1)
+    std = torch.as_tensor(STD, device=x_uint8.device).view(1, 3, 1, 1)
+    return (x_uint8.float() / 255.0 - mean) / std
+
+
+def timed(fn, device, warmup, iters):
+    """Latency of fn() in ms per call: list of `iters` timings after `warmup` untimed calls."""
+    for _ in range(warmup):
+        fn()
+    sync(device)
+    out = []
+    for _ in range(iters):
+        t0 = time.perf_counter()
+        fn()
+        sync(device)
+        out.append((time.perf_counter() - t0) * 1000)
+    return np.array(out)
 
 
 class TTABackbone(nn.Module):

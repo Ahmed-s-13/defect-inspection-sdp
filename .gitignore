@@ -40,9 +40,6 @@ CLAUDE.md
 1_main_model_resnet18/experiments/d1_sscd_grouped/reports/*.npy
 1_main_model_resnet18/experiments/d1_sscd_grouped/reports/neighbors.csv
 
-# Portable local dataset handoff (bulk files)
-handoffs/d1_sscd_grouped_mac/data/
-handoffs/d1_sscd_grouped_mac/models/
 
 # enhanced_res on TensorRT: ONNX files are over GitHub's 100 MB limit (enhanced_res_onnx.zip on the team Drive,
 # see trt_enhanced_res/README.md); engines only run on the GPU that built them (each machine runs trt_runner.py)
@@ -58,8 +55,6 @@ graphify-out/
 .graphify*
 **/.graphify*
 
-# Mac handoff package (local only)
-handoffs/
 
 # Healer (2_lama_healing): LaMa weights are on the team Drive (lama_weights.zip, see its README); run outputs are
 # local. The small trained screw-head scorer IS committed, despite the *.npz rule above.
@@ -67,8 +62,8 @@ handoffs/
 2_lama_healing/out/
 !2_lama_healing/donor_bank/head_scorer.npz
 
-# Healer no-defect pipeline (2_lama_healing/no_defect) and the clean cropper (5_clean_cropper): generated images,
+# Healer no-defect pipeline (2_lama_healing/no_defect) and the clean cropper (3_clean_cropper): generated images,
 # feature caches and review thumbnails are local; the CSV lists, review decisions and reports are in git. The final
 # no-defect crops (data/work/crops/no_defect/) are d1_gc7_no_defect_crops.zip on the team Drive.
 2_lama_healing/no_defect/work/
-5_clean_cropper/work/
+3_clean_cropper/work/
