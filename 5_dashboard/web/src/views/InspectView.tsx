@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getSamples, sampleFile, type ModelsInfo, type Sample, type Square } from "../api/client";
+import { getInspectSamples, getSamples, sampleFile, type ModelsInfo, type Sample, type Square } from "../api/client";
 import { ImageWell } from "../components/ImageWell";
 import { Readout } from "../components/Readout";
 import { StateGlyph } from "../components/StateBadge";
@@ -27,7 +27,10 @@ export function InspectView({ classes, models, onBackToBatch }: { classes: strin
   const item = state.inspectId ? state.items[state.inspectId] : null;
   const [samples, setSamples] = useState<Sample[]>([]);
   const [pending, setPending] = useState<{ id: string; sq: Square } | null>(null);
-  useEffect(() => { getSamples().then(setSamples).catch(() => setSamples([])); }, []);
+  // the clear one-per-class picks; the random Batch samples if those are missing (e.g. the legacy model's classes)
+  useEffect(() => {
+    getInspectSamples().then((s) => (s.length ? s : getSamples())).then(setSamples).catch(() => setSamples([]));
+  }, [models?.active]);
 
   const square = (pending && pending.id === item?.id ? pending.sq : null) ?? item?.detail?.square ?? null;
   const preview = useCropPreview(item?.url, square ?? undefined);

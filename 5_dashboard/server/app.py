@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from server import registry as regmod
-from server.paths import EXTRA_SAMPLES, SAMPLES, WEB_DIST
+from server.paths import EXTRA_SAMPLES, INSPECT_SAMPLES, SAMPLES, WEB_DIST
 from server.preprocess import ImageError, crop, default_square, jpeg_data_url, open_image, parse_square, to_batch, \
     view_thumbs
 from server.registry import ModelUnavailable
@@ -141,17 +141,16 @@ def report():
     return rep
 
 
-def _samples():
-    """The repo's 30 defect samples, then the dashboard's no-defect ones; each with the folder it is in."""
+def _samples(dirs=(SAMPLES, EXTRA_SAMPLES)):
+    """Batch's random samples: the repo's 30 defect crops, then the dashboard's 5 no-defect ones (or, with
+    dirs=(INSPECT_SAMPLES,), Inspect's one clear crop per class); each with the folder it is in."""
     frames = [pd.read_csv(d / "labels.csv")[["file", "cls"]].assign(dir=str(d))
-              for d in (SAMPLES, EXTRA_SAMPLES) if (d / "labels.csv").exists()]
-    return pd.concat(frames, ignore_index=True)
+              for d in dirs if (d / "labels.csv").exists()]
+    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["file", "cls", "dir"])
 
 
-@app.get("/api/samples")
-def samples():
+def _known(s):
     """Only the samples whose class the active model knows (the legacy model has no no-defect class)."""
-    s = _samples()
     try:
         s = s[s.cls.isin(registry.active().classes)]
     except ModelUnavailable:
@@ -159,9 +158,21 @@ def samples():
     return s[["file", "cls"]].to_dict("records")
 
 
+@app.get("/api/samples")
+def samples():
+    return _known(_samples())
+
+
+@app.get("/api/inspect-samples")
+def inspect_samples():
+    """One test crop per class that the main model answers clearly, for trying Inspect. Picked for clarity, not
+    at random: Batch's samples are the random ones."""
+    return _known(_samples((INSPECT_SAMPLES,)))
+
+
 @app.get("/api/samples/{name}")
 def sample(name: str):
-    s = _samples()
+    s = _samples((SAMPLES, EXTRA_SAMPLES, INSPECT_SAMPLES))
     hit = s[s.file == name]
     if hit.empty:
         raise HTTPException(404, "no such sample")

@@ -1,0 +1,8 @@
+file,cls,source_crop
+corrosion.jpg,corrosion,data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_012716__0.jpg
+crack.jpg,crack,data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_004016__1.jpg
+dent.jpg,dent,data/work/crops/D1/content__Aircraft_dataset__images__test__aircraft_005101__0.jpg
+missing-head.jpg,missing-head,data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_007551__0.jpg
+paint-peel-off.jpg,paint-peel-off,data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_014600__4.jpg
+scratch.jpg,scratch,data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_011208__4.jpg
+no-defect.jpg,no-defect,data/work/crops/no_defect/clean/test/train__aircraft_004805__c2.jpg

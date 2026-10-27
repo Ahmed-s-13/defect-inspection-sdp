@@ -145,6 +145,8 @@ export const getReport = (fresh = false) => {
   return reportPromise;
 };
 export const getSamples = () => fetch("/api/samples").then((r) => json<Sample[]>(r));
+/** Inspect's one clear test crop per class (picked for clarity; Batch's samples are the random ones). */
+export const getInspectSamples = () => fetch("/api/inspect-samples").then((r) => json<Sample[]>(r));
 export async function sampleFile(name: string): Promise<File> {
   const r = await fetch(`/api/samples/${encodeURIComponent(name)}`);
   if (!r.ok) throw new ApiError(r.status, `sample ${name} not found`);

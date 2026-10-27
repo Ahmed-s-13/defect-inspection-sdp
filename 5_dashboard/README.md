@@ -70,6 +70,10 @@ numbers.) The model runs on CUDA, Apple MPS or the CPU, whichever is there.
 The top-right chip shows the model and its state (green: ready). If it is red, click it: it says which file is
 missing and which zip gives it.
 
+**The sample photos.** Inspect offers one test crop per class, picked because the model answers each one clearly,
+so a demo shows every class working. They say nothing about accuracy. Batch's 35 samples are random test crops (one per
+photo group), so its accuracy figure is honest. All of them come from the test split and were never trained on.
+
 ## Check that it works
 
 - Batch → **Run the 35 samples**: 35 held-out test crops (5 per class, `no-defect_*` included). The top class is right
@@ -109,7 +113,8 @@ cd web && npm test               # 39 tests: labels, metrics, geometry, format, 
 │   ├── states.py     architecture A's answer -> what the page shows (Defect detected, No defect, Ambiguous, ...)
 │   └── preprocess.py the 224 px crop, exactly as predict.py cuts it
 ├── web/              the page: React + Vite + Motion (web/src), its pictures (web/public)
-├── samples/          5 no-defect test crops (the 30 defect samples come from 1_main_model_resnet18/samples/)
+├── samples/          Batch: 5 no-defect test crops (the 30 defect ones come from 1_main_model_resnet18/samples/);
+│                     samples/inspect/: Inspect's one clear test crop per class
 ├── scripts/          make the Data and Model pages' pictures and numbers (web/public, web/src/data)
 ├── tests/            pytest
 ├── DESIGN.md         colours, type and the rules the page follows
@@ -133,6 +138,7 @@ cd web && npm test               # 39 tests: labels, metrics, geometry, format, 
 | `python scripts/sweep_crops.py` | Model → the sliding square | `D1_raw.zip` |
 | `python scripts/healer_samples.py` | Data → the healer slider | `D1_raw.zip`, the healer's `no_defect/work/healed/` |
 | `python scripts/clean_cropper_samples.py` | Data → the clean cropper and d1_gc7 | `D1_raw.zip`, `3_clean_cropper/work/` |
-| `python scripts/no_defect_samples.py` | `samples/no-defect_*.jpg` | the no-defect crops |
+| `python scripts/no_defect_samples.py` | `samples/no-defect_*.jpg` (Batch, random) | the no-defect crops |
+| `python scripts/inspect_samples.py` | `samples/inspect/` (Inspect's chips, picked for clarity) | the D1 and no-defect crops |
 
 Run them from `5_dashboard/`, then `REBUILD=1 ./run.sh`.

@@ -7,6 +7,7 @@ REPO = DASH.parent                                  # the Project Code repo
 REPO_MAIN = REPO / "1_main_model_resnet18"
 SAMPLES = REPO_MAIN / "samples"
 EXTRA_SAMPLES = DASH / "samples"  # no-defect test crops of d1_gc7 (scripts/no_defect_samples.py)
+INSPECT_SAMPLES = DASH / "samples/inspect"  # one clear test crop per class for the Inspect page (scripts/inspect_samples.py)
 CACHE = DASH / "cache"
 WEB_DIST = DASH / "web" / "dist"
 
