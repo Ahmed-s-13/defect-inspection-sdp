@@ -3,6 +3,11 @@
 > **This is the defect classifier the project uses.** A ResNet-18 + MLP head, trained and tested on the leak-free
 > [`d1_grouped`](../d1_grouped/README.md) split. The earlier model (`../train.py` + `../train_mlp.py`) is kept as
 > the legacy baseline.
+>
+> **Its output goes through [architecture A](arch_a/README.md)** (`arch_a/`): a quality gate, an unfamiliar-input
+> gate, temperature scaling and a conformal prediction set, fitted on d1_grouped without retraining. `predict.py`
+> shows its answer ("CRACK 88.0%", "AMBIGUOUS: crack 52% dent 31%", "BAD IMAGE: re-take", ...) instead of the
+> old top-2 list.
 
 ## Results (grouped D1 test: 4,255 crops from 175 source groups)
 
@@ -52,12 +57,13 @@ The weights are not in git (like all `*.pt` files). Download `enhanced_res_model
 From `1_main_model_resnet18/`:
 
 ```bash
-python enhanced_res/evaluate.py        # grouped test + val (+ D5 if its crops exist); ends with "OK: results match ..."
+python enhanced_res/evaluate.py        # grouped test + val (+ D5 if its crops exist) + architecture A; ends with "OK: results match ..."
 python predict.py samples/ --compare   # 30 grouped-test crops, with the legacy model's answer next to it
 python predict.py photo.jpg --box 375 326 486 411
 ```
 
-`predict.py` uses enhanced_res by default (`--legacy` for the earlier model). In code:
+`predict.py` uses enhanced_res + architecture A by default (`--raw` for the plain ranking, `--legacy` for the
+earlier model). In code (architecture A in code: [`arch_a/README.md`](arch_a/README.md)):
 
 ```python
 from enhanced_res.model import EnhancedRes
@@ -86,5 +92,6 @@ Each backbone takes 30-60 min on an M-series Mac; `build_head.py` takes about an
 | `train_backbone.py` | step 1: trains a ResNet-18 backbone with or without the sampler / recipe |
 | `build_head.py` | step 2: features + MLP heads, ablation, final-model choice on val, report |
 | `external_d5.py` | the D5 outside test set: D5 photos not copied from D1 (87% of D5 is) |
-| `evaluate.py` | re-tests the saved model without training |
+| `evaluate.py` | re-tests the saved model without training, and checks architecture A on the test half |
+| **`arch_a/`** | **architecture A**: `runtime.py` (the decision layer), `calibrate.py`, `calibration.json`, the study (`experiments/`, `results/`) |
 | `results/` | report, ablation table, summary, confusion matrix, D5 test set (`d5/`) |

@@ -5,17 +5,24 @@
   python predict_trt.py ../1_main_model_resnet18/samples/  every image in a folder (+ accuracy if it has labels.csv)
   python predict_trt.py --grouped-test                     all 4,255 grouped D1-test crops: accuracy / macro-F1
   python predict_trt.py photo.jpg --precision fp16         the FP16 engine (faster)
+  python predict_trt.py photo.jpg --raw                    the raw top-2 ranking, no architecture A (--top N)
 
-Same steps and output as 1_main_model_resnet18/predict.py (enhanced_res): EXIF orientation, square crop
-(box + 25% margin, shifted inside the image), 224 px BICUBIC, ImageNet normalisation, then the model, then the
-2 most likely classes (--top N for more). The model (backbone + 8-view TTA + MLP heads + 5-NN) runs entirely inside
-the TensorRT engine (engines/enhanced_res_full_<precision>.engine, built by trt_runner.py from export_onnx.py).
-GPU memory and copies use cuda-python. Needs: tensorrt, cuda-python, numpy, pillow, pandas.
+Same steps and output as 1_main_model_resnet18/predict.py (enhanced_res + architecture A): EXIF orientation, square
+crop (box + 25% margin, shifted inside the image), 224 px BICUBIC, ImageNet normalisation, then the model, then
+architecture A (1_main_model_resnet18/enhanced_res/arch_a/: quality gate, temperature, conformal set; numpy only).
+The model (backbone + 8-view TTA + MLP heads + 5-NN) runs entirely inside the TensorRT engine
+(engines/enhanced_res_full_<precision>.engine, built by trt_runner.py from export_onnx.py). GPU memory and copies use
+cuda-python. Needs: tensorrt, cuda-python, numpy, pillow, pandas.
+
+Architecture A's unfamiliar-input (OOD) gate needs the model's 768-d features, which the current ONNX/engine does
+not output ("probs" only), so it is skipped here; everything else matches predict.py. Adding a "features" output to
+the export would enable it (runtime.knn_distance takes the features and the kNN bank).
 
 The model has no "no damage" class: it always names one of the 6 defect types, even for a clean surface.
 """
 import argparse
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -27,6 +34,8 @@ from PIL import Image, ImageOps
 
 HERE = Path(__file__).resolve().parent
 MAIN = HERE.parent / "1_main_model_resnet18"
+sys.path.insert(0, str(MAIN))
+from enhanced_res.arch_a.runtime import ACTIONS, ArchA  # noqa: E402  (numpy + PIL only)
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff"}      # = klshift.common
 CROP_SIZE, MARGIN = 224, 0.25                                               # = klshift.common
 MEAN = np.array([0.485, 0.456, 0.406], np.float32).reshape(3, 1, 1)
@@ -110,7 +119,7 @@ class TRTEngine:
         rt.cudaStreamDestroy(self.stream)
 
 
-def grouped_test(model, classes, batch):
+def grouped_test(model, classes, batch, arch=None):
     """All grouped D1-test crops (d1_grouped split, same list as the repo's evaluate.py), vs the PyTorch results."""
     f = MAIN / "data/work/enhanced_res/split.csv"
     if not f.exists():
@@ -121,8 +130,9 @@ def grouped_test(model, classes, batch):
     P, t0 = [], time.time()
     paths = [MAIN / p for p in d.crop_path]
     for i in range(0, len(paths), batch):
-        P.append(model(np.stack([to_input(Image.open(p).convert("RGB")) for p in paths[i:i + batch]])).argmax(1))
-    p = np.concatenate(P)
+        P.append(model(np.stack([to_input(Image.open(p).convert("RGB")) for p in paths[i:i + batch]])))
+    prob = np.concatenate(P)
+    p = prob.argmax(1)
     cm = np.zeros((6, 6), int)
     np.add.at(cm, (y, p), 1)
     tp = np.diag(cm).astype(float)
@@ -136,6 +146,17 @@ def grouped_test(model, classes, batch):
         print(f"  {k:20s} {v:.4f}   PyTorch {EXPECTED[k]:.4f}   {'match' if same else 'DIFFERENT'}")
     print("  per-class recall: " + ", ".join(f"{c} {r:.3f}" for c, r in zip(classes, tp / cm.sum(1))))
     print("\nOK: TensorRT matches the PyTorch enhanced_res results." if ok else "\nWARNING: differs from PyTorch.")
+    if arch is not None:   # architecture A's CP set on the test half (no gates), vs calibration.json
+        sp = pd.read_csv(MAIN / "enhanced_res/arch_a/cal_split.csv")
+        half = d.merge(sp[["crop_path", "split"]].rename(columns={"split": "half"}), on="crop_path", how="left").half
+        t = (half == "test").to_numpy()
+        _, S = arch.sets(prob[t])
+        exp = arch.cal.get("expected_test_half", {})
+        cov, size = S[np.arange(t.sum()), y[t]].mean(), S.sum(1).mean()
+        print(f"\narchitecture A, alpha {arch.alpha:.2f}, test half ({t.sum()} crops):")
+        for k, v, e in [("CP coverage", cov, exp.get("cp_coverage")), ("mean set size", size, exp.get("cp_mean_set_size"))]:
+            print(f"  {k:20s} {v:.4f}   PyTorch {e:.4f}   {'match' if abs(v - e) <= 0.005 else 'DIFFERENT'}"
+                  if e is not None else f"  {k:20s} {v:.4f}")
     return p
 
 
@@ -144,7 +165,10 @@ def main():
     ap.add_argument("images", nargs="*", help="image files or folders")
     ap.add_argument("--box", type=float, nargs=4, metavar=("X1", "Y1", "X2", "Y2"),
                     help="defect box in pixels of the original image (single image only)")
-    ap.add_argument("--top", type=int, default=2, help="how many classes to list per image, with their softmax probability")
+    ap.add_argument("--alpha", type=float, default=None, help="architecture A error rate: 0.05, 0.10 (default) or 0.20")
+    ap.add_argument("--no-gates", action="store_true", help="skip the quality gate (CP set only)")
+    ap.add_argument("--raw", action="store_true", help="the model's raw ranking instead of architecture A")
+    ap.add_argument("--top", type=int, default=2, help="with --raw: how many classes to list")
     ap.add_argument("--precision", choices=["fp32", "fp16"], default="fp32")
     ap.add_argument("--engine", help="engine file (default: engines/enhanced_res_full_<precision>.engine)")
     ap.add_argument("--grouped-test", action="store_true", help="evaluate on all grouped D1-test crops instead")
@@ -156,9 +180,14 @@ def main():
     classes = json.loads((HERE / "onnx/classes.json").read_text())
     model = TRTEngine(engine)
     name = f"enhanced_res (TensorRT {trt.__version__}, {a.precision.upper()} engine)"
+    arch = None if a.raw else ArchA(alpha=a.alpha)
+    if arch is not None:
+        assert arch.classes == classes, "calibration.json and onnx/classes.json have different class orders"
+        name += f" + architecture A (alpha {arch.alpha:.2f}" + (", no gates)" if a.no_gates else
+                                                                 f"; quality gate {arch.alpha_q}, no OOD gate)")
     if a.grouped_test:
         print(f"classifier: {name}\n")
-        grouped_test(model, classes, a.batch)
+        grouped_test(model, classes, a.batch, arch)
         return
 
     paths, labels = [], {}
@@ -177,26 +206,41 @@ def main():
     print(f"device: cuda  |  classifier: {name}  |  {len(paths)} image(s)\n")
 
     right = n_lab = 0
+    acts = []
     t0 = time.time()
     for i in range(0, len(paths), a.batch):
         chunk = paths[i:i + a.batch]
-        prob = model(np.stack([to_input(to_crop(p, a.box)) for p in chunk]))
+        crops = [to_crop(p, a.box) for p in chunk]
+        prob = model(np.stack([to_input(c) for c in crops]))
+        dec = arch.decide(prob, crops=None if a.no_gates else crops) if arch else None
         for j, p in enumerate(chunk):
             top = prob[j].argsort()[::-1][:a.top].tolist()
             best = top[0]
-            ranked = "   ".join(f"{r}. {classes[k].upper() if r == 1 else classes[k]} {prob[j, k] * 100:.1f}%"
-                                for r, k in enumerate(top, 1))
-            line = f"{p.name}:  {ranked}"
+            if arch:
+                line = f"{p.name}:  {dec[j].text()}"
+            else:
+                ranked = "   ".join(f"{r}. {classes[k].upper() if r == 1 else classes[k]} {prob[j, k] * 100:.1f}%"
+                                    for r, k in enumerate(top, 1))
+                line = f"{p.name}:  {ranked}"
             truth = labels.get(str(p))
             if truth is not None:
                 n_lab += 1
                 right += classes[best] == truth
-                line += f"   [true: {truth}{'' if classes[best] == truth else '  <- wrong'}]"
+                if arch:
+                    acts.append(dec[j].action)
+                    miss = dec[j].classes and truth not in dec[j].classes
+                    line += f"   [true: {truth}{'  <- not in the answer' if miss else ''}]"
+                else:
+                    line += f"   [true: {truth}{'' if classes[best] == truth else '  <- wrong'}]"
             print(line)
     if len(paths) > 1:
         print(f"\n{len(paths)} images in {time.time() - t0:.1f}s on cuda (TensorRT)")
     if n_lab:
-        print(f"enhanced_res accuracy on the {n_lab} labelled images: {right / n_lab:.3f}")
+        print(f"enhanced_res top-1 accuracy on the {n_lab} labelled images: {right / n_lab:.3f}")
+        if acts:
+            acts = np.array(acts)
+            print("architecture A: " + ", ".join(f"{k} {(acts == k).mean() * 100:.0f}%" for k in ACTIONS
+                                                 if (acts == k).any()))
     model.close()
 
 

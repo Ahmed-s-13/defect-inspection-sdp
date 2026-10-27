@@ -8,6 +8,16 @@ of D1 (no photo or copy of it in both train and test). Grouped D1-test accuracy 
 against 78.1% / 0.715 for the previous ResNet-18 + MLP recipe retrained on the same split. Run it with
 `python predict.py` in `1_main_model_resnet18/`; the weights are `enhanced_res_model.zip` on this repo's **Releases** page (`v2.0-enhanced-res`).
 
+**Main architecture, 27 October 2026: enhanced_res + [architecture A](1_main_model_resnet18/enhanced_res/arch_a/README.md).**
+The model is the same, with the same weights and nothing retrained. Its output now goes through a calibrated decision layer instead of the fixed top-2 list:
+- **Quality gate:** "BAD IMAGE: re-take" for blurry, dark, overexposed or glare-heavy crops.
+- **Unfamiliar-input gate:** "CAN'T ASSESS: re-aim" for crops unlike any training crop.
+- **Temperature scaling:** the shown % now matches how often the model is right (ECE 0.105 → 0.035).
+- **Conformal prediction set:** one class when the model is sure, "AMBIGUOUS: crack or dent" when it isn't. The set holds the true class 91.5% of the time at α = 0.10.
+
+On normal grouped-test crops, a single wrong class is shown without warning 6.2% of the time, against 20.9% before; 47.1% of crops are flagged for the inspector.
+The calibration (`calibration.json`) is in git, so no new download is needed.
+
 ## Current D1 grouping work — 22 October 2026
 
 <!-- SSCD_RESNET_RUN_START -->
@@ -72,7 +82,7 @@ which defect it is. Everything here uses public datasets.
 
 | folder | status | what it is |
 |---|---|---|
-| [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | **enhanced_res** ([`enhanced_res/`](1_main_model_resnet18/enhanced_res/)): ResNet-18 + MLP head for 6 defect classes, trained on the leak-free [`d1_grouped/`](1_main_model_resnet18/d1_grouped/) split (grouped D1-test accuracy 0.804). Also the legacy ResNet-18 + MLP head, the dataset-shift (KL divergence) analysis across 10 public datasets, and **the Cropper** for "no damage" patches. Most of our data and results live here. |
+| [`1_main_model_resnet18/`](1_main_model_resnet18/) | **MAIN MODEL, in use** | **enhanced_res** ([`enhanced_res/`](1_main_model_resnet18/enhanced_res/)): ResNet-18 + MLP head for 6 defect classes, trained on the leak-free [`d1_grouped/`](1_main_model_resnet18/d1_grouped/) split (grouped D1-test accuracy 0.804). Its answers go through [architecture A](1_main_model_resnet18/enhanced_res/arch_a/) (quality and unfamiliar-input gates, temperature, conformal set). Also the legacy ResNet-18 + MLP head, the dataset-shift (KL divergence) analysis across 10 public datasets, and **the Cropper** for "no damage" patches. Most of our data and results live here. |
 | [`2_lama_healing/`](2_lama_healing/) | **healer, in use** | Removes defects from photos with **LaMa** (pretrained inpainting) and puts a real screw head back where one is missing (copied from the same photo or a donor bank). GUI + batch command line. Replaces the earlier healing experiment (U-Net inpainter, still in git history). |
 | [`3_teacher_student_msrd/`](3_teacher_student_msrd/) | support code | MSRD teacher–student anomaly model, used by the earlier healing experiment (now removed). |
 | [`4_early_classifiers_archive/`](4_early_classifiers_archive/) | archived | Our first models: plain CNN and SupCon ResNet-18, on smaller Roboflow datasets. |

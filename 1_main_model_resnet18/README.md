@@ -3,6 +3,9 @@
 > **The model the project uses is [`enhanced_res/`](enhanced_res/README.md)**: a ResNet-18 + MLP head trained and
 > tested on [`d1_grouped/`](d1_grouped/README.md), a leak-free re-split of D1 in which no photo (or any of its
 > flipped, rotated, cropped or recoloured copies) is in both training and test.
+> Its answers go through **[architecture A](enhanced_res/arch_a/README.md)**, the calibrated decision layer
+> (quality gate → unfamiliar-input gate → temperature → conformal set). It replaced the fixed top-2 display, and the
+> model is unchanged.
 > Everything else in the repo either builds on this folder (`2_lama_healing`) or came before it
 > (`4_early_classifiers_archive`).
 
@@ -25,15 +28,19 @@ Teammates' parallel grouping with an SSCD copy detector is in
 After unzipping `main_model_data_work.zip` and `enhanced_res_model.zip` (see the top-level README):
 
 ```bash
-python enhanced_res/evaluate.py                      # re-tests enhanced_res on grouped test + val (+ D5)
+python enhanced_res/evaluate.py                      # re-tests enhanced_res on grouped test + val (+ D5) and architecture A
 python predict.py samples/ --compare                 # 30 held-out grouped-test crops, with the legacy answer next to it
 python predict.py photo.jpg --box 375 326 486 411   # defect box in pixels, cut exactly like training
 python predict.py photo.jpg                          # no box: uses the centre square of the image
 python predict.py data/work/crops/D1/                # every image in a folder
+python predict.py photo.jpg --details                # also the gate p-values and the full calibrated ranking
+python predict.py photo.jpg --raw                    # the raw top-2 ranking, without architecture A
 python predict.py photo.jpg --legacy                 # the legacy ResNet-18 + MLP head (original D1 split)
 ```
 
-Output looks like `aircraft_000933.jpg: CRACK  59.8%   (corrosion 40.2%, dent 0.0%)`.
+Output is one of `crack_01.jpg:  CRACK 88.0%`, `AMBIGUOUS: crack 52.1%   dent 33.0%`, `BAD IMAGE: re-take (blurry)`,
+`CAN'T ASSESS: re-aim (unlike any training crop)` or `UNCLEAR: re-inspect`
+(see [`enhanced_res/arch_a/README.md`](enhanced_res/arch_a/README.md)).
 `samples/` holds 5 grouped-test crops per class plus `labels.csv` (one per source group, never trained on).
 The legacy model scores higher on them (0.97 vs 0.80) only because D1's original split put copies of these
 photos in its training set.
@@ -86,11 +93,12 @@ python evaluate_mlp.py  # a few seconds: re-tests the MLP head on D1-test and D1
 | `overlap.py` | step 2: perceptual-hash duplicate check between datasets |
 | **`d1_grouped/`** | **the leak-free D1 split the main model uses** (`groups.csv`), its code and audit sheets |
 | **`enhanced_res/`** | **the main model**: training, MLP head, D5 outside test, evaluation, results |
+| **`enhanced_res/arch_a/`** | **the main architecture's decision layer**: gates, temperature, conformal set; `calibration.json`, the study behind it |
 | `train.py` | step 3+4: D1 split by phash groups and training of the legacy ResNet-18 |
 | `embed.py` | step 5: 512-d embeddings for every dataset |
 | `shift.py` | step 6: KL divergence (Gaussian + k-NN), figures, `summary.md` |
 | `evaluate.py` | re-test the legacy model on D1-test, no training needed |
-| **`predict.py`** | **classify the defect in any image with the main model (enhanced_res; `--legacy` for the old one)** |
+| **`predict.py`** | **classify the defect in any image with the main architecture (enhanced_res + architecture A; `--raw` without A, `--legacy` for the old model)** |
 | `klshift/mlp.py` | the legacy MLP head: MLP ensemble + kNN on the 512-d embeddings |
 | `train_mlp.py` | step 7: trains the legacy MLP head on the D1 embeddings |
 | `evaluate_mlp.py` | re-test the legacy MLP head on D1-test, no training needed |

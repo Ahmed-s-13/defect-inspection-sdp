@@ -138,6 +138,11 @@ class EnhancedRes:
         return p
 
     @torch.no_grad()
+    def knn_distance(self, f, k=5):
+        """1 - mean cosine similarity to the k nearest train features: architecture A's unfamiliar-input score."""
+        return 1 - (l2n(f) @ self.bank.T).topk(k, dim=1).values.mean(1)
+
+    @torch.no_grad()
     def __call__(self, x):
         return self.proba_from_features(self.features(x))
 

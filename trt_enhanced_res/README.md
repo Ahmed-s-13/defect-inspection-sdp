@@ -85,11 +85,16 @@ python predict_trt.py ..\1_main_model_resnet18\samples\                      # 3
 python predict_trt.py photo.jpg --box 120 80 260 190                        # defect box in pixels: cut exactly like training
 python predict_trt.py photo.jpg                                             # no box: centre square of the photo
 python predict_trt.py photo.jpg --precision fp16                            # the faster FP16 engine
-python predict_trt.py photo.jpg --top 3                                     # more than 2 classes
+python predict_trt.py photo.jpg --raw --top 3                               # raw ranking without architecture A
 python predict_trt.py --grouped-test                                        # all 4,255 test crops; must end "OK: TensorRT matches ..."
 ```
 
-Output is the same as `predict.py`, e.g. `crack_01.jpg:  1. CRACK 47.9%   2. dent 46.1%   [true: crack]`.
+Output is the same as `predict.py`: [architecture A](../1_main_model_resnet18/enhanced_res/arch_a/README.md)'s answer,
+e.g. `crack_01.jpg:  AMBIGUOUS: crack 52.1%   dent 44.0%   [true: crack]`. It uses `runtime.py` from the main folder,
+which needs only numpy and PIL. Its quality gate, temperature and conformal set run here. The unfamiliar-input (OOD) gate
+needs the model's 768-d features, which the engine doesn't output (`probs` only), so it is skipped. Adding a
+`features` output to `export_onnx.py` would enable it. `--grouped-test` also checks architecture A's CP coverage and
+set size against PyTorch.
 `--grouped-test` also needs `1_main_model_resnet18/data/work/` (main_model_data_work.zip) and the file
 `data/work/enhanced_res/split.csv` (written the first time the repo's `enhanced_res/evaluate.py` runs).
 
@@ -107,7 +112,8 @@ python benchmark.py        # PyTorch FP32/FP16 vs TensorRT FP32/FP16 on the 4,25
 ```
 
 Only a change to the **model** (new weights, model code, preprocessing) needs a new ONNX. Changes to how results are
-printed (like `predict.py`'s top-2 output) only need the same change in `predict_trt.py`.
+printed (like architecture A's decision layer) only need the same change in `predict_trt.py`. Re-running
+`1_main_model_resnet18/enhanced_res/arch_a/calibrate.py` (new labels or split) needs no new ONNX either.
 
 ## Files
 

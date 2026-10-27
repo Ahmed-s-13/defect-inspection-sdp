@@ -1,0 +1,61 @@
+option,set,false reject (per crop),false reject (per family),false accept (passes both gates)
+"previous (quality 0.10, OOD 0.025)","normal crops (all 2,417)",0.15846090194455936,0.11259643613032977,
+"previous (quality 0.10, OOD 0.025)",off-target,,,0.405
+"previous (quality 0.10, OOD 0.025)",noise s2,,,0.20433996383363473
+"previous (quality 0.10, OOD 0.025)",jpeg s2,,,0.12658227848101267
+"previous (quality 0.10, OOD 0.025)",colour static,,,0.0
+"previous (quality 0.10, OOD 0.025)",grey static,,,0.0
+"previous (quality 0.10, OOD 0.025)",gaussian static,,,0.0
+"previous (quality 0.10, OOD 0.025)",salt & pepper,,,0.0
+"previous (quality 0.10, OOD 0.025)",blocky static,,,0.0
+"previous (quality 0.10, OOD 0.025)",smooth noise blobs,,,0.0
+"previous (quality 0.10, OOD 0.025)",solid colour,,,0.0
+"previous (quality 0.10, OOD 0.025)",gradient,,,0.0
+OOD 0.05,"normal crops (all 2,417)",0.16549441456350847,0.11951191365385946,
+OOD 0.05,off-target,,,0.31000000000000005
+OOD 0.05,noise s2,,,0.12115732368896925
+OOD 0.05,jpeg s2,,,0.0922242314647378
+OOD 0.05,colour static,,,0.0
+OOD 0.05,grey static,,,0.0
+OOD 0.05,gaussian static,,,0.0
+OOD 0.05,salt & pepper,,,0.0
+OOD 0.05,blocky static,,,0.0
+OOD 0.05,smooth noise blobs,,,0.0
+OOD 0.05,solid colour,,,0.0
+OOD 0.05,gradient,,,0.0
+OOD 0.10 (default since 2026-10-27),"normal crops (all 2,417)",0.20024824162184526,0.1783332813247464,
+OOD 0.10 (default since 2026-10-27),off-target,,,0.17500000000000004
+OOD 0.10 (default since 2026-10-27),noise s2,,,0.061482820976491825
+OOD 0.10 (default since 2026-10-27),jpeg s2,,,0.06690777576853524
+OOD 0.10 (default since 2026-10-27),colour static,,,0.0
+OOD 0.10 (default since 2026-10-27),grey static,,,0.0
+OOD 0.10 (default since 2026-10-27),gaussian static,,,0.0
+OOD 0.10 (default since 2026-10-27),salt & pepper,,,0.0
+OOD 0.10 (default since 2026-10-27),blocky static,,,0.0
+OOD 0.10 (default since 2026-10-27),smooth noise blobs,,,0.0
+OOD 0.10 (default since 2026-10-27),solid colour,,,0.0
+OOD 0.10 (default since 2026-10-27),gradient,,,0.0
+sharpness both sides,"normal crops (all 2,417)",0.18700868845676458,0.12794957235649468,
+sharpness both sides,off-target,,,0.365
+sharpness both sides,noise s2,,,0.0
+sharpness both sides,jpeg s2,,,0.11934900542495475
+sharpness both sides,colour static,,,0.0
+sharpness both sides,grey static,,,0.0
+sharpness both sides,gaussian static,,,0.0
+sharpness both sides,salt & pepper,,,0.0
+sharpness both sides,blocky static,,,0.0
+sharpness both sides,smooth noise blobs,,,0.0
+sharpness both sides,solid colour,,,0.0
+sharpness both sides,gradient,,,0.0
+sharpness both sides + OOD 0.05,"normal crops (all 2,417)",0.19362846503930492,0.1342600892024684,
+sharpness both sides + OOD 0.05,off-target,,,0.28
+sharpness both sides + OOD 0.05,noise s2,,,0.0
+sharpness both sides + OOD 0.05,jpeg s2,,,0.08860759493670889
+sharpness both sides + OOD 0.05,colour static,,,0.0
+sharpness both sides + OOD 0.05,grey static,,,0.0
+sharpness both sides + OOD 0.05,gaussian static,,,0.0
+sharpness both sides + OOD 0.05,salt & pepper,,,0.0
+sharpness both sides + OOD 0.05,blocky static,,,0.0
+sharpness both sides + OOD 0.05,smooth noise blobs,,,0.0
+sharpness both sides + OOD 0.05,solid colour,,,0.0
+sharpness both sides + OOD 0.05,gradient,,,0.0
