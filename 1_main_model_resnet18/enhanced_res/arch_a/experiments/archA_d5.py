@@ -10,10 +10,11 @@ photo), restricted to crops whose current crop file and class agree with that li
 boxes). D5 has only two of our six classes: Dent -> dent, Fastener Damage -> missing-head. Near-duplicate groups inside
 D5 (enhanced_res/results/d5/d5_images.csv, d5_group) are the "families" for family-level numbers.
 
-Everything is calibrated on D1 only (exactly as before: T on val, CP thresholds and gates on the cal half) and then
+Everything is calibrated on D1 only (calibration.json: T on val, CP thresholds and the OOD gate on val + cal half, the quality gate on cal half + train) and then
 applied unchanged to D5. Nothing is refitted on D5: the point is whether the guarantees survive a new source.
   architecture 0   model as shipped, crop-weighted LAC
-  architecture A   quality gate (alpha 0.10) -> OOD gate (0.10) -> prob-T + family-weighted global LAC
+  architecture A   the deployed calibration.json: quality gate (0.10, sharpness both sides) -> OOD gate (kNN +
+                   AoN, 0.08) -> prob-T + family-weighted global LAC
 Writes enhanced_res/arch_a/results/archA/d5/.
 """
 import sys
@@ -90,21 +91,17 @@ def main():
 
     # gates on D5, calibrated on D1
     imgs = [Image.open(p).convert("RGB") for p in d.crop_path]
-    pq, why = G.quality_pvalue(D["q_ref"], D["q_cal"], D["g_cal"], G.quality_stats(imgs))
-    sc = G.scores(D["bank"], fd, Ld, pA)
-    pood = G.pvalue(D["s_cal"]["kNN distance"], D["g_cal"], sc["kNN distance"])
+    pq, why, pood, _, _, _ = G.deployed(D, imgs, fd)
     # same gates on the D1 test half, for comparison
     tm = ~is_cal
     imgs1 = [Image.open(p).convert("RGB") for p in te.crop_path[tm]]
-    pq1, _ = G.quality_pvalue(D["q_ref"], D["q_cal"], D["g_cal"], G.quality_stats(imgs1))
-    pood1 = G.pvalue(D["s_cal"]["kNN distance"], D["g_cal"],
-                     G.scores(D["bank"], D["ft"][tm], D["Lt"][:, tm], P[tm])["kNN distance"])
+    pq1, _, pood1, _, _, _ = G.deployed(D, imgs1, D["ft"][tm])
 
     pct = lambda v: "-" if pd.isna(v) else f"{v * 100:.1f}%"
     rows, act_rows = [], []
     for a in ALPHAS:
         q0 = A0.lac_threshold(P0[is_cal], y[is_cal], a)
-        qA = A1.family_threshold(P[is_cal], y[is_cal], g[is_cal], a)
+        qA = G.deployed_q(a)
         for arch, p_d5, p_d1, q in [("architecture 0", p0, P0[tm], q0), ("architecture A (CP only)", pA, P[tm], qA)]:
             for setname, pp, yy, gg in [("D1 test half", p_d1, y[tm], g[tm]), ("D5 outside test", p_d5, yd, gd)]:
                 S = A0.lac_sets(pp, q)
@@ -131,7 +128,7 @@ def main():
           f"{len(d)} D5 crops whose photo is not a copy of a D1 photo (the team's list of {n_ext}; {n_ext - len(d)} "
           "dropped because their crop numbering moved), from "
           f"{d.d5_group.nunique()} near-duplicate groups: {d.cls.value_counts().to_dict()}. D5 only has two of the six "
-          "classes. Everything is calibrated on D1 (T on val, thresholds and gates on the cal half) and applied "
+          "classes. Everything is calibrated on D1 (calibration.json: T on val, thresholds and gates on val + cal half / train) and applied "
           "unchanged. No retraining, nothing refitted on D5.", "",
           "## Model and calibration under shift (prob-T probabilities)", "",
           "| set | accuracy | mean stated confidence | ECE |", "|---|---:|---:|---:|"]
@@ -156,7 +153,7 @@ def main():
                   f"{pct(r['ambiguous: review'])} | {pct(r['ambiguous holds truth'])} | {pct(r['bad image: re-take'])} | "
                   f"{pct(r[V.ACTIONS[4]])} | {pct(r['human attention'])} |")
     md += ["", f"Quality-gate reasons on D5 (flagged crops): "
-                f"{pd.Series(why[pq <= G.ALPHA_Q]).value_counts().to_dict()}", ""]
+                f"{pd.Series(why[pq <= G.arch().alpha_q]).value_counts().to_dict()}", ""]
     (OUT / "README.md").write_text("\n".join(md))
     cov.to_csv(OUT / "coverage.csv", index=False)
     acts.to_csv(OUT / "visor_actions.csv", index=False)

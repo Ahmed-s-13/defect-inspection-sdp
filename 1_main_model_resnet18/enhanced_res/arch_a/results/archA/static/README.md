@@ -1,5 +1,8 @@
 # Random static and other nonsense images vs architecture A's gates
 
+> **Earlier study, kept for the record.** Architecture A's final gate is different: kNN distance + AoN (Bonferroni), α 0.08, sharpness on both sides, in parallel with the quality gate (`calibration.json`; [README](../../../README.md)).
+
+
 40 images of each kind (224 px, seeded). Every option is recalibrated on the clean cal half. False reject = normal test-half crops stopped; false accept = nonsense that passes both gates and is shown as a defect or an ambiguous set.
 
 ## False rejects on normal crops (the cost)
@@ -8,13 +11,13 @@
 |---|---:|---:|
 | previous (quality 0.10, OOD 0.025) | 15.8% | 11.3% |
 | OOD 0.05 | 16.5% | 12.0% |
-| OOD 0.10 (default since 2026-10-27) | 20.0% | 17.8% |
+| OOD 0.10, kNN only (superseded) | 20.0% | 17.8% |
 | sharpness both sides | 18.7% | 12.8% |
 | sharpness both sides + OOD 0.05 | 19.4% | 13.4% |
 
 ## False accepts (passes both gates)
 
-| set | previous (quality 0.10, OOD 0.025) | OOD 0.05 | OOD 0.10 (default since 2026-10-27) | sharpness both sides | sharpness both sides + OOD 0.05 |
+| set | previous (quality 0.10, OOD 0.025) | OOD 0.05 | OOD 0.10, kNN only (superseded) | sharpness both sides | sharpness both sides + OOD 0.05 |
 |---|---:|---:|---:|---:|---:|
 | off-target | 40.5% | 31.0% | 17.5% | 36.5% | 28.0% |
 | noise s2 | 20.4% | 12.1% | 6.1% | 0.0% | 0.0% |

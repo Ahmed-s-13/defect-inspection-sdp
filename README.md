@@ -21,19 +21,20 @@ Run it with `python predict.py` in `1_main_model_resnet18/`. The weights are `en
 repo's **Releases** page (`v3.0-gc7`). The 6-class model (**v2**, Release `v2.0-enhanced-res`) is kept: `--model v2`,
 `EnhancedRes()` in code, and `trt_enhanced_res`.
 
-**Main architecture: enhanced_res + [architecture A](1_main_model_resnet18/enhanced_res/arch_a/README.md)** (27 October; refitted for gc7 on 28 October).
+**Main architecture: enhanced_res + [architecture A](1_main_model_resnet18/enhanced_res/arch_a/README.md)** (27 October; refitted for gc7 on 28 October, still with the earlier kNN-only unfamiliar-input gate until gc7 is recalibrated).
+The two gates run in parallel; the numbers below are for v2, the model the final gates were built on.
 The model's output goes through a calibrated decision layer instead of the fixed top-2 list:
-- **Quality gate:** "BAD IMAGE: re-take" for blurry, dark, overexposed or glare-heavy crops.
-- **Unfamiliar-input gate:** "CAN'T ASSESS: re-aim" for crops unlike any training crop.
+- **Quality gate:** "BAD IMAGE: re-take" for blurry, noisy, dark, overexposed or glare-heavy crops.
+- **Unfamiliar-input gate:** "CAN'T ASSESS: re-aim" for crops that aren't aircraft skin (people, hands, helmets, hangars: about 6% of photos it never trained on get through; runways 16%) or are unlike any training crop.
 - **Temperature scaling:** the shown % now matches how often the model is right (ECE 0.105 → 0.035).
 - **Conformal prediction set:** one class when the model is sure, "AMBIGUOUS: crack or dent" when it isn't. The set holds the true class 91.5% of the time at α = 0.10.
 
-For v2 on normal grouped-test crops, a single wrong class is shown without warning 6.2% of the time, against 20.9%
-before, and 47.1% of crops are flagged for the inspector.
+For v2 on normal grouped-test crops, a single wrong class is shown without warning 6.7% of the time, against 20.9%
+before, and 38.5% of crops are flagged for the inspector.
 
 **A 7th class doesn't break architecture A, but it has to be recalibrated** (`calibrate.py` does it, with nothing
-retrained). gc7 has its own calibration, `calibration_gc7.json`. v2's `calibration.json` is unchanged and still read
-by `trt_enhanced_res`. Both files are in git.
+retrained). gc7 has its own calibration, `calibration_gc7.json`. v2's `calibration.json` holds the final gates (kNN + AoN at α 0.08) and is
+read by `trt_enhanced_res`. Both files are in git.
 
 ## Current D1 grouping work — 22 October 2026
 

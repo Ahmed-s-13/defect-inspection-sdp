@@ -7,7 +7,8 @@
 > `EnhancedRes()`. The earlier model (`../train.py` + `../train_mlp.py`) is kept as the legacy baseline.
 >
 > **Its output goes through [architecture A](arch_a/README.md)** (`arch_a/`): a quality gate, an unfamiliar-input
-> gate, temperature scaling and a conformal prediction set, refitted for gc7 (`arch_a/calibration_gc7.json`).
+> gate, temperature scaling and a conformal prediction set, refitted for gc7 (`arch_a/calibration_gc7.json`; still on the earlier kNN-only gate until it is recalibrated
+> with the final gate).
 > `predict.py` shows its answer ("NO-DEFECT 92.9%", "CRACK 88.0%", "AMBIGUOUS: crack 52% dent 31%", "BAD IMAGE:
 > re-take", ...).
 

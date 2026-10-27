@@ -17,8 +17,9 @@ GitHub Release v3.0-gc7). --model v2: the 6-class enhanced_res (enhanced_res_mod
 
 Architecture A (enhanced_res/arch_a/README.md) turns its probabilities into one of five answers, with numbers fitted
 on the model's own data (arch_a/calibration_gc7.json; calibration.json for v2); the model itself is unchanged:
-  BAD IMAGE: re-take          quality gate: blurry, too dark / bright, glare (about 10% of normal photo families)
-  CAN'T ASSESS: re-aim        unfamiliar-input gate: unlike any training crop (about 10% of normal families)
+  BAD IMAGE: re-take          quality gate: blurry, noisy, too dark / bright, glare
+  CAN'T ASSESS: re-aim        unfamiliar-input gate: not aircraft skin, or unlike any training crop
+                              (the two gates stop about 7% of normal photo families together)
   CRACK 88.0%                 one class in the conformal set; the % is temperature-calibrated
   AMBIGUOUS: crack 52% dent 31%   2+ classes in the set: inspector reviews
   UNCLEAR: re-inspect         empty set
@@ -165,7 +166,8 @@ def main():
                 f = model.features(x)
                 prob = model.proba_from_features(f).cpu().numpy()
                 dec = arch.decide(prob, crops=None if a.no_gates else crops,
-                                  knn_dist=None if a.no_gates else model.knn_distance(f).cpu().numpy())
+                                  knn_dist=None if a.no_gates else model.knn_distance(f).cpu().numpy(),
+                                  feats=None if a.no_gates else f.cpu().numpy())
             else:
                 prob = model(x).cpu().numpy()
             prob_o = other(x).cpu().numpy() if other else None

@@ -1,6 +1,6 @@
 # Distribution shift: the D5 outside test
 
-1008 D5 crops whose photo is not a copy of a D1 photo (the team's list of 1040; 32 dropped because their crop numbering moved), from 276 near-duplicate groups: {'missing-head': 828, 'dent': 180}. D5 only has two of the six classes. Everything is calibrated on D1 (T on val, thresholds and gates on the cal half) and applied unchanged. No retraining, nothing refitted on D5.
+1008 D5 crops whose photo is not a copy of a D1 photo (the team's list of 1040; 32 dropped because their crop numbering moved), from 276 near-duplicate groups: {'missing-head': 828, 'dent': 180}. D5 only has two of the six classes. Everything is calibrated on D1 (calibration.json: T on val, thresholds and gates on val + cal half / train) and applied unchanged. No retraining, nothing refitted on D5.
 
 ## Model and calibration under shift (prob-T probabilities)
 
@@ -37,11 +37,11 @@ What the model predicts on D5 (rows: true class):
 
 | alpha | set | single class right | single class wrong (no warning) | ambiguous | ambiguous holds truth | re-take | re-aim | human attention |
 |---:|---|---:|---:|---:|---:|---:|---:|---:|
-| 0.05 | D1 test half | 33.6% | 2.9% | 43.5% | 97.9% | 15.1% | 4.9% | 63.5% |
-| 0.05 | D5 outside test | 43.8% | 0.3% | 32.4% | 98.2% | 20.7% | 2.8% | 56.0% |
-| 0.10 | D1 test half | 46.8% | 6.2% | 27.1% | 96.2% | 15.1% | 4.9% | 47.1% |
-| 0.10 | D5 outside test | 54.3% | 1.6% | 20.6% | 97.1% | 20.7% | 2.8% | 44.1% |
-| 0.20 | D1 test half | 58.2% | 10.6% | 11.2% | 88.9% | 15.1% | 4.9% | 31.2% |
-| 0.20 | D5 outside test | 64.1% | 3.5% | 8.9% | 84.4% | 20.7% | 2.8% | 32.4% |
+| 0.05 | D1 test half | 40.2% | 3.1% | 50.1% | 97.9% | 4.3% | 2.4% | 56.7% |
+| 0.05 | D5 outside test | 50.1% | 0.5% | 42.8% | 97.2% | 5.2% | 1.5% | 49.4% |
+| 0.10 | D1 test half | 54.8% | 6.7% | 31.9% | 96.1% | 4.3% | 2.4% | 38.5% |
+| 0.10 | D5 outside test | 62.5% | 2.2% | 28.7% | 93.4% | 5.2% | 1.5% | 35.3% |
+| 0.20 | D1 test half | 67.3% | 12.1% | 13.9% | 87.2% | 4.3% | 2.4% | 20.6% |
+| 0.20 | D5 outside test | 75.0% | 6.0% | 12.4% | 79.2% | 5.2% | 1.5% | 19.0% |
 
-Quality-gate reasons on D5 (flagged crops): {'sharpness': 192, 'clipped_lo': 15, 'brightness': 2}
+Quality-gate reasons on D5 (flagged crops): {'sharpness': 51, 'clipped_lo': 10, 'brightness': 1}

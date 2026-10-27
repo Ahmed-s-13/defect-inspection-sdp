@@ -1,6 +1,6 @@
 # Architecture A, step 4: from prediction set to visor action
 
-Quality gate alpha 0.1, unfamiliar-input gate alpha 0.1, then prob-T + family-weighted global LAC. Thresholds from the cal half; everything below on the test half. No retraining.
+Quality gate alpha 0.05, unfamiliar-input gate alpha 0.08, then prob-T + family-weighted global LAC. Thresholds from calibration.json (val + cal half); everything below on the test half. No retraining.
 
 ## The action table
 
@@ -18,52 +18,52 @@ Human attention = everything except a single shown class. The costly case is a s
 
 | CP alpha | single class shown | ...right | ...wrong (no warning) | ambiguous | ambiguous holds truth | unclear | re-take | re-aim | **human attention** |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 0.05 | 36.5% | 33.6% | 2.9% | 43.5% | 97.9% | 0.0% | 15.1% | 4.9% | **63.5%** |
-| 0.10 | 52.9% | 46.8% | 6.2% | 27.1% | 96.2% | 0.0% | 15.1% | 4.9% | **47.1%** |
-| 0.20 | 68.8% | 58.2% | 10.6% | 11.2% | 88.9% | 0.0% | 15.1% | 4.9% | **31.2%** |
+| 0.05 | 43.3% | 40.2% | 3.1% | 50.1% | 97.9% | 0.0% | 4.3% | 2.4% | **56.7%** |
+| 0.10 | 61.5% | 54.8% | 6.7% | 31.9% | 96.1% | 0.0% | 4.3% | 2.4% | **38.5%** |
+| 0.20 | 79.4% | 67.3% | 12.1% | 13.9% | 87.2% | 0.0% | 4.3% | 2.4% | **20.6%** |
 
 ## Every test set at CP alpha 0.10
 
 | set | single class: right | single class: wrong | ambiguous | unclear | re-take | re-aim | human attention |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| clean (all 2,417 test-half crops) | 46.8% | 6.2% | 27.1% | 0.0% | 15.1% | 4.9% | 47.1% |
-| clean | 44.3% | 6.9% | 33.5% | 0.0% | 8.1% | 7.2% | 48.8% |
-| blur s1 | 32.5% | 4.9% | 28.9% | 0.0% | 19.2% | 14.5% | 62.6% |
-| blur s2 | 28.0% | 7.4% | 26.0% | 0.0% | 23.1% | 15.4% | 64.6% |
-| motion blur s1 | 36.2% | 5.6% | 31.5% | 0.0% | 10.8% | 15.9% | 58.2% |
-| motion blur s2 | 26.2% | 9.8% | 25.5% | 0.0% | 14.8% | 23.7% | 64.0% |
-| dark s1 | 16.1% | 2.4% | 10.8% | 0.0% | 61.8% | 8.9% | 81.6% |
-| dark s2 | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 100.0% |
-| overexposed s1 | 13.6% | 1.4% | 9.8% | 0.0% | 73.6% | 1.6% | 85.0% |
-| overexposed s2 | 1.4% | 0.4% | 1.4% | 0.0% | 96.6% | 0.2% | 98.2% |
-| glare s1 | 12.7% | 3.6% | 10.3% | 0.0% | 66.5% | 6.9% | 83.7% |
-| glare s2 | 1.3% | 0.0% | 0.7% | 0.0% | 97.1% | 0.9% | 98.7% |
-| noise s1 | 20.4% | 5.6% | 28.9% | 0.0% | 4.5% | 40.5% | 74.0% |
-| noise s2 | 4.5% | 0.2% | 1.4% | 0.0% | 2.2% | 91.7% | 95.3% |
-| jpeg s1 | 19.7% | 1.1% | 13.9% | 0.0% | 5.8% | 59.5% | 79.2% |
-| jpeg s2 | 3.8% | 0.0% | 2.9% | 0.0% | 9.8% | 83.5% | 96.2% |
-| off-target | - | 9.8% | 7.8% | 0.0% | 32.0% | 50.5% | 90.2% |
+| clean (all 2,417 test-half crops) | 54.8% | 6.7% | 31.9% | 0.0% | 4.3% | 2.4% | 38.5% |
+| clean | 47.2% | 7.6% | 40.0% | 0.0% | 3.1% | 2.2% | 45.2% |
+| blur s1 | 41.6% | 6.3% | 41.8% | 0.0% | 4.0% | 6.3% | 52.1% |
+| blur s2 | 36.5% | 8.0% | 43.0% | 0.0% | 4.2% | 8.3% | 55.5% |
+| motion blur s1 | 42.1% | 6.5% | 41.8% | 0.0% | 2.7% | 6.9% | 51.4% |
+| motion blur s2 | 32.5% | 10.5% | 38.5% | 0.0% | 3.1% | 15.4% | 57.0% |
+| dark s1 | 33.5% | 5.1% | 30.2% | 0.0% | 15.7% | 15.6% | 61.5% |
+| dark s2 | 0.0% | 0.0% | 0.0% | 0.0% | 19.5% | 80.5% | 100.0% |
+| overexposed s1 | 20.6% | 1.6% | 18.4% | 0.0% | 37.3% | 22.1% | 77.8% |
+| overexposed s2 | 3.8% | 0.5% | 4.3% | 0.0% | 46.7% | 44.7% | 95.7% |
+| glare s1 | 30.9% | 11.8% | 35.1% | 0.0% | 10.8% | 11.4% | 57.3% |
+| glare s2 | 21.3% | 12.7% | 25.0% | 0.0% | 29.8% | 11.2% | 66.0% |
+| noise s1 | 0.0% | 0.4% | 0.9% | 0.0% | 72.2% | 26.6% | 99.6% |
+| noise s2 | 0.0% | 0.0% | 0.0% | 0.0% | 13.6% | 86.4% | 100.0% |
+| jpeg s1 | 23.1% | 1.6% | 29.7% | 0.0% | 1.1% | 44.5% | 75.2% |
+| jpeg s2 | 4.9% | 0.0% | 6.0% | 0.0% | 0.0% | 89.2% | 95.1% |
+| off-target | - | 7.8% | 7.5% | 0.0% | 2.8% | 82.0% | 92.2% |
 
 ## Human attention on every set, by CP alpha
 
 | set | alpha 0.05 | alpha 0.10 | alpha 0.20 |
 |---|---:|---:|---:|
-| clean (all 2,417 test-half crops) | 63.5% | 47.1% | 31.2% |
-| clean | 66.7% | 48.8% | 30.4% |
-| blur s1 | 74.5% | 62.6% | 45.0% |
-| blur s2 | 79.4% | 64.6% | 50.3% |
-| motion blur s1 | 73.1% | 58.2% | 40.3% |
-| motion blur s2 | 77.9% | 64.0% | 48.3% |
-| dark s1 | 88.4% | 81.6% | 75.0% |
+| clean (all 2,417 test-half crops) | 56.7% | 38.5% | 20.6% |
+| clean | 64.4% | 45.2% | 25.0% |
+| blur s1 | 67.6% | 52.1% | 28.8% |
+| blur s2 | 74.0% | 55.5% | 35.3% |
+| motion blur s1 | 68.5% | 51.4% | 28.9% |
+| motion blur s2 | 74.3% | 57.0% | 35.3% |
+| dark s1 | 76.5% | 61.5% | 43.2% |
 | dark s2 | 100.0% | 100.0% | 100.0% |
-| overexposed s1 | 89.3% | 85.0% | 80.5% |
-| overexposed s2 | 99.5% | 98.2% | 97.1% |
-| glare s1 | 91.1% | 83.7% | 76.5% |
-| glare s2 | 98.7% | 98.7% | 98.2% |
-| noise s1 | 89.5% | 74.0% | 60.4% |
-| noise s2 | 98.7% | 95.3% | 93.9% |
-| jpeg s1 | 85.7% | 79.2% | 70.2% |
-| jpeg s2 | 98.9% | 96.2% | 94.0% |
-| off-target | 94.8% | 90.2% | 85.0% |
+| overexposed s1 | 83.5% | 77.8% | 68.4% |
+| overexposed s2 | 98.2% | 95.7% | 93.1% |
+| glare s1 | 75.6% | 57.3% | 35.1% |
+| glare s2 | 78.3% | 66.0% | 51.5% |
+| noise s1 | 100.0% | 99.6% | 99.1% |
+| noise s2 | 100.0% | 100.0% | 100.0% |
+| jpeg s1 | 84.3% | 75.2% | 57.3% |
+| jpeg s2 | 98.2% | 95.1% | 91.9% |
+| off-target | 96.5% | 92.2% | 88.5% |
 
 ![workload](workload.png)

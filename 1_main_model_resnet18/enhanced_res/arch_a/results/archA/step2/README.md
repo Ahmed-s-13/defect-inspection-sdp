@@ -1,5 +1,8 @@
 # Architecture A, step 2: quality gate + unfamiliar-input gate
 
+> **Earlier study, kept for the record.** Architecture A's final gate is different: kNN distance + AoN (Bonferroni), α 0.08, sharpness on both sides, in parallel with the quality gate (`calibration.json`; [README](../../../README.md)).
+
+
 Gates calibrated on the clean cal-half crops (family-weighted conformal p-values), alpha_quality = 0.1, alpha_OOD = 0.1. Evaluated on 553 test-half crops (up to 8 per family, 87 families), 14 synthetic corruptions of those same crops, and 400 off-target patches. CP after the gates: prob-T + family-weighted LAC, alpha 0.10. No retraining.
 
 ## What happens to each set

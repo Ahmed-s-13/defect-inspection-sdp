@@ -3,7 +3,8 @@
 From 1_main_model_resnet18/:
   python enhanced_res/arch_a/experiments/archA_examples.py       # reuses archA_gates.py's cached corrupted-crop features
 
-Same settings as architecture A (quality gate alpha 0.10 -> OOD gate 0.10 -> prob-T + family-weighted LAC, alpha 0.10).
+The deployed architecture A (calibration.json: quality gate 0.10 with sharpness on both sides, in parallel with the OOD gate = kNN
+distance + AoN, 0.08 -> prob-T + family-weighted LAC, alpha 0.10).
 Each example shows the clean crop next to its corrupted copy, the four quality statistics of both, the gate p-values
 and, for crops that got through, the CP set the visor would show. Also shows clean crops that were stopped (false
 alarms). Examples are drawn at random (seeded), at most one per photo family per panel.
@@ -61,10 +62,10 @@ def stats_line(s):
 
 def card(D, name, i, clean_im, clean_st, im, st, pq, why, pood, S, classes, y):
     true = classes[y[i]]
-    if pq[i] <= G.ALPHA_Q:
-        verdict = f'<b class="stop">Re-take</b> (quality p = {pq[i]:.3f}, worst: {why[i]})'
-    elif pood[i] <= G.ALPHA_OOD:
+    if pood[i] <= G.arch().alpha_ood:                    # re-aim wins when both gates fire (runtime.py)
         verdict = f'<b class="aim">Re-aim</b> (OOD p = {pood[i]:.3f}; quality p = {pq[i]:.3f})'
+    elif pq[i] <= G.arch().alpha_q:
+        verdict = f'<b class="stop">Re-take</b> (quality p = {pq[i]:.3f}, worst: {why[i]})'
     else:
         st_set = [classes[k] for k in np.flatnonzero(S[i])]
         ok = y[i] in np.flatnonzero(S[i])
@@ -84,16 +85,15 @@ def main():
     D = G.prepare()
     te, is_cal, ev, classes = D["te"], D["is_cal"], D["ev"], D["classes"]
     y, fam = D["y"][ev], D["g"][ev]
-    q_cp = A1.family_threshold(D["P"][is_cal], D["y"][is_cal], D["g"][is_cal], G.ALPHA_CP)
+    q_cp = G.deployed_q(G.ALPHA_CP)
     clean_ims, clean_st = D["sets"]["clean"], G.quality_stats(D["sets"]["clean"])
     ref = D["q_ref"]
 
     def panel(name):
-        p, pq, why, _, pv = G.gate_pvalues(D, name)
-        pood = pv["kNN distance"]
+        p, pq, why, pood, part, _, _ = G.deployed_set(D, name)
         S = A0.lac_sets(p, q_cp)
         ims, st = D["sets"][name], G.quality_stats(D["sets"][name])
-        stopped = (pq <= G.ALPHA_Q) | (pood <= G.ALPHA_OOD)
+        stopped = (pq <= G.arch().alpha_q) | (pood <= G.arch().alpha_ood)
         passed = ~stopped
         cov = S[passed][np.arange(passed.sum()), y[passed]].mean() if passed.any() else np.nan
         mk = lambda ids: "".join(card(D, name, i, clean_ims[i], clean_st.iloc[i], ims[i], st.iloc[i], pq, why,
@@ -101,8 +101,8 @@ def main():
         caught_lbl, missed_lbl = ("Stopped (false alarms)", "Passed") if name == "clean" else ("Caught", "Not caught")
         return (f'<h3>{name} <small>{HOW.get(name, "no corruption")}</small></h3>'
                 f'<p class="sum">{stopped.mean() * 100:.1f}% stopped of {len(ims)} '
-                f'(quality {(pq <= G.ALPHA_Q).mean() * 100:.1f}%, OOD only '
-                f'{((pq > G.ALPHA_Q) & (pood <= G.ALPHA_OOD)).mean() * 100:.1f}%) · CP coverage on the crops that '
+                f'(re-take {((pood > G.arch().alpha_ood) & (pq <= G.arch().alpha_q)).mean() * 100:.1f}%, re-aim '
+                f'{(pood <= G.arch().alpha_ood).mean() * 100:.1f}%) · CP coverage on the crops that '
                 f'passed: {"-" if np.isnan(cov) else f"{cov * 100:.1f}%"} (target 90%)</p>'
                 f'<h4>{caught_lbl}</h4><div class="grid">{mk(pick(np.flatnonzero(stopped), fam, rng))}</div>'
                 f'<h4>{missed_lbl}</h4><div class="grid">{mk(pick(np.flatnonzero(passed), fam, rng))}</div>')
@@ -111,13 +111,14 @@ def main():
     body = [f'<h1>Quality gate: caught vs not caught</h1>',
             '<p class="lede">Architecture A on d1_grouped (enhanced_res, no retraining). Synthetic corruptions of '
             f'{len(ev)} test-half crops (up to 8 per photo family, {len(set(fam))} families). Pipeline: quality gate '
-            f'(α {G.ALPHA_Q}) → OOD gate (α {G.ALPHA_OOD}) → prob-T + family-weighted LAC (α {G.ALPHA_CP}). '
+            f'(α {G.arch().alpha_q}, sharpness checked on both sides) and, in parallel, OOD gate (kNN distance + AoN, '
+            f'α {G.arch().alpha_ood}) → prob-T + family-weighted LAC (α {G.ALPHA_CP}). '
             'Examples are random, one per family where possible.</p>',
-            '<p class="lede"><b>Reading the numbers.</b> sharp = variance of the Laplacian (low = blurry); bright = '
+            '<p class="lede"><b>Reading the numbers.</b> sharp = variance of the Laplacian (low = blurry, far above normal = noise); bright = '
             'mean grey 0–255; white / black = share of pixels ≥ 250 / ≤ 5. Typical normal (val) crop: '
             f'sharp {med.sharpness:.0f}, bright {med.brightness:.0f}, white {med.clipped_hi * 100:.1f}%, '
             f'black {med.clipped_lo * 100:.1f}%. A crop is stopped for quality when its quality p-value ≤ '
-            f'{G.ALPHA_Q}: its most extreme statistic is rarer than in all but ~10% of normal calibration families. '
+            f'{G.arch().alpha_q}: its most extreme statistic is rarer than in all but ~10% of normal calibration families. '
             '"Holds truth" / "WRONG" says whether the visor message contains the true class.</p>',
             '<p class="lede">Synthetic only: no real helmet footage, and no partial shadows (the dark test darkens '
             'the whole crop).</p>']

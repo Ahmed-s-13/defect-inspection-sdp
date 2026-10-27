@@ -4,8 +4,9 @@ accept / false reject rates of every stage, with real crops for each case.
 From 1_main_model_resnet18/:
   python enhanced_res/arch_a/experiments/archA_gallery.py     # reuses archA_gates.py's cached features
 
-Same settings as architecture A (quality gate alpha 0.10 -> OOD gate 0.10 -> prob-T -> family-weighted LAC, alpha
-0.10), thresholds from the cal half. Normal crops: all 2,417 test-half crops (rates) and the 553-crop sample (the
+The deployed architecture A (calibration.json: quality gate 0.10, sharpness both sides, in parallel with the OOD gate = kNN distance +
+AoN, 0.08 -> prob-T -> family-weighted LAC, alpha
+0.10), thresholds from calibration.json (val + cal half). Normal crops: all 2,417 test-half crops (rates) and the 553-crop sample (the
 corrupted copies). Off-target: 400 non-aircraft patches. D5 rows come from archA_d5.py's results.
 Writes enhanced_res/arch_a/results/archA/examples/archA_gallery.html (self-contained, images embedded).
 """
@@ -101,13 +102,11 @@ def main():
     imgs = [Image.open(p).convert("RGB") for p in paths]
 
     # gates on all clean test-half crops
-    pq, why = G.quality_pvalue(D["q_ref"], D["q_cal"], D["g_cal"], G.quality_stats(imgs))
-    sc = G.scores(D["bank"], D["ft"][tm], D["Lt"][:, tm], Pt)
-    pood = G.pvalue(D["s_cal"]["kNN distance"], D["g_cal"], sc["kNN distance"])
-    dist = sc["kNN distance"]
-    q_cp = {a: A1.family_threshold(P[is_cal], y[is_cal], g[is_cal], a) for a in ALPHAS}
+    pq, why, pood, part, dist, notair = G.deployed(D, imgs, D["ft"][tm])
+    q_cp = {a: G.deployed_q(a) for a in ALPHAS}
     S = Pt >= 1 - q_cp[0.10]
-    qfail, ofail = pq <= G.ALPHA_Q, (pq > G.ALPHA_Q) & (pood <= G.ALPHA_OOD)
+    ofail = pood <= G.arch().alpha_ood                  # re-aim wins when both gates fire (runtime.py)
+    qfail = ~ofail & (pq <= G.arch().alpha_q)
     passed = ~(qfail | ofail)
     fam_mean = lambda m: float(pd.Series(m).groupby(gt).mean().mean())
 
@@ -116,17 +115,16 @@ def main():
     for name in D["sets"]:
         if name == "clean":
             continue
-        p, q_, w_, sc_, pv = G.gate_pvalues(D, name)
-        sets[name] = dict(p=p, pq=q_, why=w_, dist=sc_["kNN distance"], pood=pv["kNN distance"],
-                          imgs=D["sets"][name])
+        p, q_, w_, po_, part_, dist_, na_ = G.deployed_set(D, name)
+        sets[name] = dict(p=p, pq=q_, why=w_, dist=dist_, pood=po_, part=part_, notair=na_, imgs=D["sets"][name])
     ev = D["ev"]
     y_ev, g_ev = y[ev], g[ev]
 
     html = []
     # ================================================================== 0. definitions
     html.append(f"""<h1>Architecture A in pictures</h1>
-<p class="lede">enhanced_res on d1_grouped, unchanged weights. Pipeline: quality gate (α {G.ALPHA_Q}) → unfamiliar-input
-gate (α {G.ALPHA_OOD}) → temperature (T = {T:.3f}) → conformal set (LAC, α 0.10). Thresholds come from the calibration half
+<p class="lede">enhanced_res on d1_grouped, unchanged weights. Pipeline (calibration.json): quality gate (α {G.arch().alpha_q},
+sharpness checked on both sides) → unfamiliar-input gate (kNN distance + AoN, α {G.arch().alpha_ood}) → temperature (T = {T:.3f}) → conformal set (LAC, α 0.10). Thresholds come from the calibration half
 (1,838 crops, 88 photo families); everything below is measured on the other half (2,417 crops, 87 families), which
 nothing was fitted on. Example crops are random (seeded), one per photo family where possible.</p>
 <p class="lede"><b>False reject</b> = a good, normal crop that a stage stops or doubts (costs inspector time).
@@ -137,52 +135,59 @@ wrong single answer shown with no warning).</p>
 
     # ================================================================== 1. OOD
     off = sets["off-target"]
-    cal_d = np.sort(D["s_cal"]["kNN distance"])
-    cut = float(np.quantile(cal_d, 1 - G.ALPHA_OOD))
-    fig, ax = plt.subplots(figsize=(7.5, 3.2))
-    bins = np.linspace(0, max(off["dist"].max(), dist.max()) * 1.02, 60)
-    ax.hist(dist, bins, alpha=.6, density=True, label="normal test-half crops")
-    ax.hist(off["dist"], bins, alpha=.6, density=True, label="off-target patches")
-    ax.hist(sets["jpeg s2"]["dist"], bins, alpha=.5, density=True, label="heavy JPEG damage")
-    ax.axvline(cut, color="k", ls="--", lw=1)
-    ax.text(cut, ax.get_ylim()[1] * .9, "  ≈ gate cut-off", fontsize=8)
-    ax.set_xlabel("kNN distance: 1 − mean cosine similarity to the 5 nearest training crops")
-    ax.set_yticks([]); ax.legend(fontsize=8)
-    off_caught = off["pood"] <= G.ALPHA_OOD
+    A = G.arch()
+    half = A.alpha_ood / A.n_parts                       # Bonferroni: each part fires at about alpha / 2
+    fig, axs = plt.subplots(1, 2, figsize=(11, 3.2))
+    for ax, key, cal_s, lab in ((axs[0], "dist", A.o_cal, "kNN distance: 1 − mean cosine similarity to the 5 nearest training crops"),
+                                (axs[1], "notair", A.lr["cal_scores"], "AoN: probability of NOT aircraft skin")):
+        vals = {"normal test-half crops": dist if key == "dist" else notair, "off-target patches": off[key],
+                "heavy JPEG damage": sets["jpeg s2"][key]}
+        bins = np.linspace(0, max(v.max() for v in vals.values()) * 1.02, 60)
+        for (k, v), al in zip(vals.items(), (.6, .6, .5)):
+            ax.hist(v, bins, alpha=al, density=True, label=k)
+        cut = float(np.quantile(cal_s, 1 - half))
+        ax.axvline(cut, color="k", ls="--", lw=1)
+        ax.text(cut, ax.get_ylim()[1] * .9, "  ≈ cut-off", fontsize=8)
+        ax.set_xlabel(lab, fontsize=8); ax.set_yticks([])
+    axs[0].legend(fontsize=8)
+    off_caught = off["pood"] <= G.arch().alpha_ood
     html.append(f"""<h2 id="ood">1. Unfamiliar-input (OOD) gate: "CAN'T ASSESS: re-aim"</h2>
-<p class="lede">Each crop's 768 model features are compared with the 20,179 training crops; the score is how far it is
-from its 5 nearest neighbours. Far away = unfamiliar. The cut-off is set on normal calibration crops so that about
-{G.ALPHA_OOD * 100:.0f}% of normal photo families are flagged.</p>
-<p class="sum">Normal crops flagged (false reject): <b>{pct(float((pood <= G.ALPHA_OOD).mean()))}</b> per crop,
-{pct(fam_mean(pood <= G.ALPHA_OOD))} per family · off-target patches caught: <b>{pct(float(off_caught.mean()))}</b>
+<p class="lede">Two scores on each crop's 768 model features. <b>kNN distance</b>: how far the crop is from its 5 nearest
+of the 20,179 training crops (far = unfamiliar). <b>AoN</b>: a logistic regression on the same features,
+fitted on D1 crops vs photos of people, faces, helmets, hands, gloves, tools, vehicles and hangar / airport / industrial
+scenes (Open Images, Places365). Each score becomes a conformal p-value on normal calibration crops; the gate fires when
+2 × the smaller one is ≤ {A.alpha_ood} (each part at about {half:.2f}). The off-target patches below are macOS
+wallpapers, which the regression never saw. Realistic people / helmets / hands / hangars, held out from the regression:
+about 5% get through both gates on categories the AoN never saw (runways 14.5%; <code>results/archA/offtarget/rates.md</code>), against 54–70% for the kNN-only gate.</p>
+<p class="sum">Normal crops flagged (false reject): <b>{pct(float((pood <= G.arch().alpha_ood).mean()))}</b> per crop,
+{pct(fam_mean(pood <= G.arch().alpha_ood))} per family · off-target patches caught: <b>{pct(float(off_caught.mean()))}</b>
 (false accept {pct(float(1 - off_caught.mean()))}; with the quality gate too: caught
-{pct(float(((off["pq"] <= G.ALPHA_Q) | off_caught).mean()))}) · AUROC off-target vs normal: 0.939
-(energy 0.710, max probability 0.699).</p>{b64fig(fig)}""")
+{pct(float(((off["pq"] <= G.arch().alpha_q) | off_caught).mean()))}).</p>{b64fig(fig)}""")
     S_off = A0.lac_sets(off["p"], q_cp[0.10])
     ofam = np.arange(len(off["imgs"]))
     html.append(gallery("Off-target patches caught", "→ re-aim",
-                        [card(off["imgs"][i], [f"distance {off['dist'][i]:.3f}", f"OOD p {off['pood'][i]:.3f}",
+                        [card(off["imgs"][i], [f"distance {off['dist'][i]:.3f}", f"AoN {off['notair'][i]:.2f}", f"OOD p {off['pood'][i]:.3f} ({off['part'][i]})",
                                                f"model's guess: {classes[off['p'][i].argmax()]} {off['p'][i].max() * 100:.0f}%"], "good")
                          for i in pick(np.flatnonzero(off_caught), ofam, rng)]))
-    miss = np.flatnonzero(~off_caught & (off["pq"] > G.ALPHA_Q))
+    miss = np.flatnonzero(~off_caught & (off["pq"] > G.arch().alpha_q))
     html.append(gallery("Off-target patches that got through both gates", "false accepts: the visor names a defect",
-                        [card(off["imgs"][i], [f"distance {off['dist'][i]:.3f}", f"OOD p {off['pood'][i]:.3f}",
+                        [card(off["imgs"][i], [f"distance {off['dist'][i]:.3f}", f"AoN {off['notair'][i]:.2f}", f"OOD p {off['pood'][i]:.3f}",
                                                f"visor: <b>{setstr(S_off[i], off['p'][i], classes)}</b>"], "bad")
                          for i in pick(miss, ofam, rng)]))
-    fr = np.flatnonzero(pood <= G.ALPHA_OOD)
+    fr = np.flatnonzero(pood <= G.arch().alpha_ood)
     html.append(gallery("Normal defect crops flagged as unfamiliar", f"false rejects ({len(fr)} of {len(pood)})",
-                        [card(imgs[i], [f"true: {classes[yt[i]]}", f"distance {dist[i]:.3f}", f"OOD p {pood[i]:.3f}"], "bad")
+                        [card(imgs[i], [f"true: {classes[yt[i]]}", f"distance {dist[i]:.3f}", f"AoN {notair[i]:.2f}", f"OOD p {pood[i]:.3f} ({part[i]})"], "bad")
                          for i in pick(fr, gt, rng)]))
     ok = np.flatnonzero(pood > 0.5)
     html.append(gallery("Typical normal crops (well inside the training data)", "for comparison",
-                        [card(imgs[i], [f"true: {classes[yt[i]]}", f"distance {dist[i]:.3f}", f"OOD p {pood[i]:.3f}"], "good")
+                        [card(imgs[i], [f"true: {classes[yt[i]]}", f"distance {dist[i]:.3f}", f"AoN {notair[i]:.2f}", f"OOD p {pood[i]:.3f}"], "good")
                          for i in pick(ok, gt, rng, 4)]))
     for name in ("noise s2", "jpeg s2"):
         s = sets[name]
-        c = np.flatnonzero((s["pood"] <= G.ALPHA_OOD) & (s["pq"] > G.ALPHA_Q))
+        c = np.flatnonzero((s["pood"] <= G.arch().alpha_ood) & (s["pq"] > G.arch().alpha_q))
         html.append(gallery(f"{name}: damaged crops only the OOD gate caught",
                             f"the quality gate passed these ({pct(float(len(c) / len(s['pq'])))} of the set)",
-                            [card(s["imgs"][i], [f"true: {classes[y_ev[i]]}", f"distance {s['dist'][i]:.3f}"], "good")
+                            [card(s["imgs"][i], [f"true: {classes[y_ev[i]]}", f"distance {s['dist'][i]:.3f}", f"AoN {s['notair'][i]:.2f}"], "good")
                              for i in pick(c, g_ev, rng, 4)]))
 
     # ================================================================== 2. temperature
@@ -275,13 +280,13 @@ CP alone (no gates) on all 2,417 test-half crops, then real examples of each out
 
     # ================================================================== 4. rates everywhere
     rows = [{"stage": "quality gate", "set": "normal crops (all 2,417)", "kind": "false reject",
-             "per crop": qfail.mean() + 0, "per family": fam_mean(pq <= G.ALPHA_Q)},
+             "per crop": (pq <= G.arch().alpha_q).mean(), "per family": fam_mean(pq <= G.arch().alpha_q)},
             {"stage": "OOD gate", "set": "normal crops (all 2,417)", "kind": "false reject",
-             "per crop": (pood <= G.ALPHA_OOD).mean(), "per family": fam_mean(pood <= G.ALPHA_OOD)},
+             "per crop": (pood <= G.arch().alpha_ood).mean(), "per family": fam_mean(pood <= G.arch().alpha_ood)},
             {"stage": "both gates", "set": "normal crops (all 2,417)", "kind": "false reject",
              "per crop": (~passed).mean(), "per family": fam_mean(~passed)}]
     for name, s in sets.items():
-        qf, of = s["pq"] <= G.ALPHA_Q, s["pood"] <= G.ALPHA_OOD
+        qf, of = s["pq"] <= G.arch().alpha_q, s["pood"] <= G.arch().alpha_ood
         rows.append({"stage": "quality / OOD / both", "set": name, "kind": "false accept (passed)",
                      "per crop": f"{pct(float((~qf).mean()))} / {pct(float((~of).mean()))} / {pct(float((~(qf | of)).mean()))}",
                      "per family": "-"})

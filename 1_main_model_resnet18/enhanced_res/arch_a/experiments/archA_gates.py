@@ -67,7 +67,7 @@ from klshift.mlp import knn_proba, l2n
 CACHE = A0.CACHE
 OUT = HERE.parent / "results" / "archA" / "step2"
 OFFTARGET_DIR = CACHE / "offtarget_src"
-ALPHA_Q, ALPHA_OOD = 0.10, 0.10      # quality 0.10 so glare is caught (2026-10-26); OOD 0.10 for fewer false accepts (2026-10-27)
+ALPHA_Q, ALPHA_OOD = 0.10, 0.10      # this study's settings (step 2). The final gate is in calibration.json (kNN + AoN, 0.08)
 ALPHA_CP = 0.10
 PER_FAMILY, N_OFF, SEED = 8, 400, 0
 
@@ -265,6 +265,40 @@ def gate_pvalues(D, name):
     return p, pq, why, sc, pv
 
 
+# ------------------------------------------------------------------ the deployed gates (calibration.json)
+_ARCH = {}
+
+
+def arch():
+    """architecture A as deployed (runtime.py + calibration.json): quality gate with both-sided sharpness, OOD gate =
+    kNN distance + AoN (Bonferroni). Used by the visor, D5, example and gallery reports."""
+    if "a" not in _ARCH:
+        from arch_a import runtime as R
+        _ARCH["a"], _ARCH["R"] = R.ArchA(), R
+    return _ARCH["a"]
+
+
+def deployed_q(alpha):
+    """The deployed CP threshold at alpha (calibration.json: val + cal half, family-weighted LAC)."""
+    return arch().cal["cp"]["q"][f"{alpha:.2f}"]
+
+
+def deployed(D, images, feats):
+    """Deployed gates on images with their 768-d enhanced_res features. Returns quality p-value, its reason, the
+    combined OOD p-value, which OOD part decided ('knn' / 'aon'), the kNN distance and the AoN score."""
+    a, R = arch(), _ARCH["R"]
+    pq, why, _ = a.quality(images)
+    dist = R.knn_distance(feats, D["bank"].numpy())
+    po, part = a.ood(dist, feats)
+    return pq, why, po, part, dist, a.aon_score(feats)
+
+
+def deployed_set(D, name):
+    """deployed() for one evaluation set of prepare(), plus its tempered probabilities."""
+    f, L, K = D["out"][name]
+    return (A1.temper(A1.blend(L, K), D["T_prob"]),) + deployed(D, D["sets"][name], f)
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     D = prepare()
@@ -360,6 +394,9 @@ def main():
     for n, r in au.iterrows():
         md.append(f"| {n} | " + " | ".join(f"{v:.3f}" for v in r) + " |")
     md += ["", "![examples](examples.png)", ""]
+    md[1:1] = ["", "> **Earlier study, kept for the record.** Architecture A's final gate is different: kNN distance + AoN "
+               "(Bonferroni), α 0.08, sharpness on both sides, in parallel with the quality gate (`calibration.json`; "
+               "[README](../../../README.md))."]
     (OUT / "README.md").write_text("\n".join(md))
     res.to_csv(OUT / "gates.csv")
     au.to_csv(OUT / "auroc.csv")

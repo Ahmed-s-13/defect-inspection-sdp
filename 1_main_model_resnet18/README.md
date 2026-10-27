@@ -6,7 +6,7 @@
 > rotated, cropped or recoloured copies) is in both training and test, plus reviewed no-defect crops from
 > `../2_lama_healing/no_defect` and `../3_clean_cropper`, each in its photo's split.
 > Its answers go through **[architecture A](enhanced_res/arch_a/README.md)**, the calibrated decision layer
-> (quality gate → unfamiliar-input gate → temperature → conformal set). It replaced the fixed top-2 display, and the
+> (quality gate and unfamiliar-input gate in parallel → temperature → conformal set). It replaced the fixed top-2 display, and the
 > model is unchanged.
 > Everything else in the repo either builds on this folder (`2_lama_healing`, `3_clean_cropper`, `trt_enhanced_res`) or came before it
 > (`4_early_classifiers_archive`).
@@ -54,7 +54,7 @@ python predict.py photo.jpg --legacy                 # the legacy ResNet-18 + ML
 ```
 
 Output is one of `crack_01.jpg:  CRACK 88.0%`, `NO-DEFECT 92.9%`, `AMBIGUOUS: crack 52.1%   dent 33.0%`, `BAD IMAGE: re-take (blurry)`,
-`CAN'T ASSESS: re-aim (unlike any training crop)` or `UNCLEAR: re-inspect`
+`CAN'T ASSESS: re-aim (not aircraft skin)` or `UNCLEAR: re-inspect`
 (see [`enhanced_res/arch_a/README.md`](enhanced_res/arch_a/README.md)).
 `samples/` holds 5 grouped-test crops per class plus `labels.csv` (one per source group, never trained on).
 The legacy model scores higher on them (0.97 vs 0.80) only because D1's original split put copies of these

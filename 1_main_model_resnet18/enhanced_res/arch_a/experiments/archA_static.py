@@ -81,7 +81,7 @@ def main():
     # ---- options
     options = {"previous (quality 0.10, OOD 0.025)": ("low", 0.10, 0.025),
                "OOD 0.05": ("low", 0.10, 0.05),
-               "OOD 0.10 (default since 2026-10-27)": ("low", 0.10, 0.10),
+               "OOD 0.10, kNN only (superseded)": ("low", 0.10, 0.10),
                "sharpness both sides": ("both", 0.10, 0.025),
                "sharpness both sides + OOD 0.05": ("both", 0.10, 0.05)}
     rows, stop = [], {}
@@ -137,6 +137,9 @@ def main():
     for n, r in piv.iterrows():
         md.append(f"| {n} | " + " | ".join(pct(v) for v in r) + " |")
     md += ["", "![examples](examples.png)", ""]
+    md[1:1] = ["", "> **Earlier study, kept for the record.** Architecture A's final gate is different: kNN distance + AoN "
+               "(Bonferroni), α 0.08, sharpness on both sides, in parallel with the quality gate (`calibration.json`; "
+               "[README](../../../README.md))."]
     (OUT / "README.md").write_text("\n".join(md))
     print("\n".join(md))
 

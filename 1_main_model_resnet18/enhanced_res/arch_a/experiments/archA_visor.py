@@ -4,9 +4,9 @@ often the inspector has to step in, at each CP alpha.
 From 1_main_model_resnet18/:
   python enhanced_res/arch_a/experiments/archA_visor.py          # reuses archA_gates.py's cached corrupted-crop features
 
-Pipeline, in this order (A's decided settings; no retraining):
-  1. quality gate, alpha 0.10        fail -> "Bad image: re-take"
-  2. unfamiliar-input gate, 0.10     fail -> "Can't assess: re-aim"
+Pipeline, in this order (the deployed calibration.json; no retraining):
+  1. quality gate, alpha 0.05 (sharpness both sides)                     fail -> "Bad image: re-take"
+  2. unfamiliar-input gate: kNN distance + AoN, alpha 0.08   fail -> "Can't assess: re-aim"
   3. CP set (prob-T probabilities, family-weighted global LAC, alpha 0.05 / 0.10 / 0.20):
        1 class        -> show the class and its calibrated score                  (no human step)
        2+ classes     -> "Ambiguous: <classes>", flag for review / screenshot     (human step)
@@ -43,8 +43,8 @@ ACTIONS = ["show class", "ambiguous: review", "unclear: re-inspect", "bad image:
 
 def actions(pq, pood, p, q_cp):
     """Visor action per crop, plus the CP set (empty for gated crops)."""
-    retake = pq <= G.ALPHA_Q
-    reaim = ~retake & (pood <= G.ALPHA_OOD)
+    reaim = pood <= G.arch().alpha_ood                 # re-aim wins when both gates fire (runtime.py)
+    retake = ~reaim & (pq <= G.arch().alpha_q)
     S = A0.lac_sets(p, q_cp)
     S[retake | reaim] = False
     size = S.sum(1)
@@ -78,18 +78,16 @@ def main():
     # clean: every test-half crop (not just the 553 sample)
     tm = ~is_cal
     imgs = [Image.open(p).convert("RGB") for p in te.crop_path[tm]]
-    pq_clean, _ = G.quality_pvalue(D["q_ref"], D["q_cal"], D["g_cal"], G.quality_stats(imgs))
-    sc_clean = G.scores(D["bank"], D["ft"][tm], D["Lt"][:, tm], P[tm])
-    pood_clean = G.pvalue(D["s_cal"]["kNN distance"], D["g_cal"], sc_clean["kNN distance"])
+    pq_clean, _, pood_clean, _, _, _ = G.deployed(D, imgs, D["ft"][tm])
 
     rows = []
     for a in ALPHAS_CP:
-        q_cp = A1.family_threshold(P[is_cal], y[is_cal], g[is_cal], a)
+        q_cp = G.deployed_q(a)
         act, S = actions(pq_clean, pood_clean, P[tm], q_cp)
         rows.append({"set": "clean (all 2,417 test-half crops)", "alpha_cp": a, **summarise(act, S, y[tm])})
         for name in D["sets"]:
-            p, pq, _, _, pv = G.gate_pvalues(D, name)
-            act, S = actions(pq, pv["kNN distance"], p, q_cp)
+            p, pq, _, po, _, _, _ = G.deployed_set(D, name)
+            act, S = actions(pq, po, p, q_cp)
             rows.append({"set": name, "alpha_cp": a,
                          **summarise(act, S, None if name == "off-target" else y[D["ev"]])})
     res = pd.DataFrame(rows)
@@ -109,8 +107,8 @@ def main():
     # ------------------------------------------------------------------ report
     pct = lambda v: "-" if pd.isna(v) else f"{v * 100:.1f}%"
     md = ["# Architecture A, step 4: from prediction set to visor action", "",
-          f"Quality gate alpha {G.ALPHA_Q}, unfamiliar-input gate alpha {G.ALPHA_OOD}, then prob-T + family-weighted "
-          "global LAC. Thresholds from the cal half; everything below on the test half. No retraining.", "",
+          f"Quality gate alpha {G.arch().alpha_q}, unfamiliar-input gate alpha {G.arch().alpha_ood}, then prob-T + family-weighted "
+          "global LAC. Thresholds from calibration.json (val + cal half); everything below on the test half. No retraining.", "",
           "## The action table", "",
           "| pipeline outcome | visor shows | inspector |", "|---|---|---|",
           "| quality gate fails (blur, dark, overexposed, glare) | **Bad image: re-take** | re-takes the shot |",

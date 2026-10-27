@@ -2,11 +2,13 @@
 enhanced_res. The model is unchanged; everything here reads numbers fitted once by calibrate.py
 (calibration.json, in git).
 
-Per crop, in this order:
+Per crop (both gates are checked; if both fire, the visor says "re-aim"):
   1. quality gate        4 pixel statistics -> conformal p-value; p <= alpha_quality   -> "BAD IMAGE: re-take"
   2. (model)             enhanced_res probabilities and its 768-d features
-  3. unfamiliar-input    1 - mean cosine similarity to the 5 nearest train features -> conformal p-value;
-     (OOD) gate          p <= alpha_ood                                               -> "CAN'T ASSESS: re-aim"
+  3. unfamiliar-input    two scores on the model's 768-d features, each a conformal p-value, combined by
+     (OOD) gate          Bonferroni (p = 2 x the smaller one; p <= alpha_ood -> "CAN'T ASSESS: re-aim"):
+                           kNN distance       1 - mean cosine similarity to the 5 nearest train features
+                           AoN                logistic regression (aircraft or not), D1 crops vs people / hands / vehicles / scenes
   4. temperature         p ** (1 / T), renormalised (T fitted on val)                 -> the shown percentage
   5. CP set (LAC)        every class with tempered p >= 1 - q[alpha]                  -> 1 class: that class
                                                                                          2+: "AMBIGUOUS"
@@ -57,10 +59,10 @@ def tail(ref_sorted, v, side):
     return {"low": lo, "high": hi, "both": np.minimum(1, 2 * np.minimum(lo, hi))}[side]
 
 
-def quality_score(ref, stats):
+def quality_score(ref, stats, sides=SIDES):
     """-log of the most extreme tail probability over the 4 statistics, and which statistic it was.
-    ref: {stat: sorted reference values}; stats: {stat: array of values}."""
-    t = np.vstack([np.maximum(tail(ref[s], np.asarray(stats[s]), SIDES[s]), 1e-6) for s in STATS])
+    ref: {stat: sorted reference values}; stats: {stat: array of values}; sides: which tail is bad per statistic."""
+    t = np.vstack([np.maximum(tail(ref[s], np.asarray(stats[s]), sides[s]), 1e-6) for s in STATS])
     return -np.log(t.min(0)), np.array(STATS)[t.argmin(0)]
 
 
@@ -115,7 +117,7 @@ class Decision:
         if self.action == RETAKE:
             return f"BAD IMAGE: re-take ({self.reason})"
         if self.action == REAIM:
-            return "CAN'T ASSESS: re-aim (unlike any training crop)"
+            return f"CAN'T ASSESS: re-aim ({self.reason or 'unlike any training crop'})"
         if self.action == UNCLEAR:
             return "UNCLEAR: re-inspect"
         ranked = "   ".join(f"{c} {s * 100:.1f}%" for c, s in zip(self.classes, self.scores))
@@ -140,22 +142,40 @@ class ArchA:
         self.q = c["cp"]["q"][key]
         qg, og = c["quality_gate"], c["ood_gate"]
         self.alpha_q, self.alpha_ood = qg["alpha"], og["alpha"]
+        self.sides = qg.get("sides", SIDES)
         self.ref = {s: np.asarray(qg["reference"][s]) for s in STATS}
         self.median = {s: float(np.median(self.ref[s])) for s in STATS}
         self.q_cal, self.q_groups = np.asarray(qg["cal_scores"]), np.asarray(qg["cal_groups"])
         self.o_cal, self.o_groups = np.asarray(og["cal_scores"]), np.asarray(og["cal_groups"])
         self.k = og["k"]
+        lr = og.get("aon", og.get("aircraft_or_not"))   # optional second score; older files call it "aircraft_or_not"
+        self.lr = None if lr is None else {k: np.asarray(v) for k, v in lr.items() if k != "about"}
+        self.n_parts = 2 if self.lr is not None else 1
 
     # ---- the pieces
     def quality(self, crops):
         """Quality p-values and the deciding statistic for a list of crops."""
         st = [quality_stats(c) for c in crops]
         stats = {s: np.array([d[s] for d in st]) for s in STATS}
-        sc, why = quality_score(self.ref, stats)
+        sc, why = quality_score(self.ref, stats, self.sides)
         return pvalue(self.q_cal, self.q_groups, sc), why, stats
 
-    def ood(self, knn_dist):
-        return pvalue(self.o_cal, self.o_groups, knn_dist)
+    def aon_score(self, feats):
+        """Logistic AoN score (probability of NOT aircraft skin) from the 768-d features."""
+        z = (np.asarray(feats, float) - self.lr["mu"]) / self.lr["sd"]
+        return 1 / (1 + np.exp(-(z @ self.lr["coef"] + self.lr["intercept"])))
+
+    def ood(self, knn_dist=None, feats=None):
+        """Combined OOD p-value and which part decided ('knn' / 'aon'). Bonferroni over the configured parts,
+        so the false-reject guarantee holds even when a part is unavailable (it then simply cannot fire)."""
+        parts = {}
+        if knn_dist is not None:
+            parts["knn"] = pvalue(self.o_cal, self.o_groups, np.asarray(knn_dist, float))
+        if feats is not None and self.lr is not None:
+            parts["aon"] = pvalue(self.lr["cal_scores"], self.o_groups, self.aon_score(feats))
+        names = list(parts)
+        P = np.vstack([parts[k] for k in names])
+        return np.minimum(1, self.n_parts * P.min(0)), np.array(names)[P.argmin(0)]
 
     def sets(self, probs):
         """Tempered probabilities and the boolean CP sets [N, n_classes]."""
@@ -164,31 +184,37 @@ class ArchA:
 
     def _reason(self, stat, value):
         if stat == "sharpness":
-            return "blurry"
+            return "blurry" if value < self.median["sharpness"] else "noisy / grainy"
         if stat == "brightness":
             return "too dark" if value < self.median["brightness"] else "too bright"
         return "glare / blown-out highlights" if stat == "clipped_hi" else "black areas"
 
     # ---- everything
-    def decide(self, probs, crops=None, knn_dist=None):
+    def decide(self, probs, crops=None, knn_dist=None, feats=None):
         """One Decision per crop. probs: [N, n_classes] enhanced_res probabilities (untempered). crops: the 224 px
-        crops (quality gate skipped when None). knn_dist: EnhancedRes.knn_distance(...) (OOD gate skipped when None)."""
+        crops (quality gate skipped when None). knn_dist: EnhancedRes.knn_distance(f); feats: EnhancedRes.features(x)
+        as numpy (the OOD gate uses whichever of the two is given; skipped when both are None)."""
         probs = np.asarray(probs, float)
         n = len(probs)
         pq = np.ones(n) if crops is None else None
         why, stats = None, None
         if crops is not None:
             pq, why, stats = self.quality(crops)
-        po = np.ones(n) if knn_dist is None else self.ood(np.asarray(knn_dist, float))
+        use_ood = knn_dist is not None or (feats is not None and self.lr is not None)
+        po, part = self.ood(knn_dist, feats) if use_ood else (np.ones(n), None)
         p, S = self.sets(probs)
         out = []
         for i in range(n):
             d = Decision(action="", p_quality=float(pq[i]) if crops is not None else float("nan"),
-                         p_ood=float(po[i]) if knn_dist is not None else float("nan"))
-            if crops is not None and pq[i] <= self.alpha_q:
-                d.action, d.reason = RETAKE, self._reason(why[i], stats[why[i]][i])
-            elif knn_dist is not None and po[i] <= self.alpha_ood:
+                         p_ood=float(po[i]) if use_ood else float("nan"))
+            # both gates are checked; when both fire, "re-aim" wins: an unrelated photo is often also "unusual" in its
+            # pixel statistics (far sharper than D1 crops), but the inspector needs to point at the aircraft, not
+            # re-take the same view. Which crops are stopped does not change, only the message.
+            if use_ood and po[i] <= self.alpha_ood:
                 d.action = REAIM
+                d.reason = "not aircraft skin" if part[i] == "aon" else "unlike any training crop"
+            elif crops is not None and pq[i] <= self.alpha_q:
+                d.action, d.reason = RETAKE, self._reason(why[i], stats[why[i]][i])
             else:
                 idx = [k for k in np.argsort(-p[i]) if S[i, k]]
                 d.classes, d.scores = [self.classes[k] for k in idx], [float(p[i, k]) for k in idx]
@@ -217,5 +243,7 @@ def summarise(decisions, arch, probs, y, groups):
         "cp_single_class": float((S.sum(1) == 1).mean()),
         "actions": {k: float((act == k).mean()) for k in ACTIONS},
         "human_attention": float(1 - shown.mean()),
+        "gates_false_reject": float(np.isin(act, (RETAKE, REAIM)).mean()),
+        "gates_false_reject_family": float((np.bincount(inv, np.isin(act, (RETAKE, REAIM))) / np.bincount(inv)).mean()),
         "single_class_wrong": float((shown & ~right).mean()),
     }

@@ -40,16 +40,17 @@ TOL = 0.003   # GPU arithmetic can flip a borderline crop or two between runs
 
 
 def run(model, paths, batch, workers):
-    """Probabilities and kNN distances (architecture A's unfamiliar-input score) for every crop."""
-    P, D = [], []
+    """Probabilities, kNN distances and features (architecture A's unfamiliar-input gate) for every crop."""
+    P, D, F = [], [], []
     for x, _ in DataLoader(CropDataset(paths), batch_size=batch, num_workers=workers):
         f = model.features(x)
         P.append(model.proba_from_features(f).cpu())
         D.append(model.knn_distance(f).cpu())
-    return torch.cat(P).numpy(), torch.cat(D).numpy()
+        F.append(f.cpu())
+    return torch.cat(P).numpy(), torch.cat(D).numpy(), torch.cat(F).numpy()
 
 
-def check_arch_a(d, prob, dist, classes, model):
+def check_arch_a(d, prob, dist, feats, classes, model):
     """Architecture A on the test half of the test split vs the calibration file's expected numbers."""
     arch = ArchA(CALIBRATIONS[model])
     sp = pd.read_csv(HERE / "arch_a/cal_split.csv")
@@ -60,7 +61,8 @@ def check_arch_a(d, prob, dist, classes, model):
     t = half == "test"
     dt = d[t]
     y = dt.cls.map({c: i for i, c in enumerate(classes)}).to_numpy()
-    dec = arch.decide(prob[t], crops=[Image.open(p).convert("RGB") for p in dt.crop_path], knn_dist=dist[t])
+    dec = arch.decide(prob[t], crops=[Image.open(p).convert("RGB") for p in dt.crop_path], knn_dist=dist[t],
+                      feats=feats[t])
     m = summarise(dec, arch, prob[t], y, dt.src_group.to_numpy())
     exp = arch.cal["expected_test_half"]
     print(f"\narchitecture A on the test half ({t.sum()} crops, {dt.src_group.nunique()} families; "
@@ -68,7 +70,7 @@ def check_arch_a(d, prob, dist, classes, model):
     print(f"  {'metric':20s} {'now':>8s} {'expected':>9s}")
     ok = True
     for k in ("cp_coverage", "cp_family_coverage", "cp_mean_set_size", "cp_single_class", "human_attention",
-              "single_class_wrong"):
+              "single_class_wrong", "gates_false_reject_family"):
         same = abs(m[k] - exp[k]) <= 0.005 * (3 if k == "cp_mean_set_size" else 1)
         ok &= same
         print(f"  {k:20s} {m[k]:8.4f} {exp[k]:9.4f}  {'match' if same else 'DIFFERENT'}")
@@ -110,7 +112,7 @@ def main():
         else:
             d = crops[crops.split == s]
         y = d.cls.map(cidx).values
-        prob, dist = run(model, list(d.crop_path), a.batch, a.workers)
+        prob, dist, feats = run(model, list(d.crop_path), a.batch, a.workers)
         p = prob.argmax(1)
         name = "D5 outside test (photos not in D1)" if s == "d5" else f"{'d1_gc7' if a.model == 'gc7' else 'grouped D1'}-{s}"
         m = {"accuracy": accuracy_score(y, p), "macro_f1": f1_score(y, p, average="macro", labels=sorted(set(y)))}
@@ -133,7 +135,7 @@ def main():
             cm = pd.DataFrame(confusion_matrix(y, p, labels=lab), index=classes, columns=classes)
             print("  confusion matrix (rows = true, columns = predicted):")
             print("\n".join("    " + line for line in cm.to_string().splitlines()))
-            ok &= check_arch_a(d, prob, dist, classes, a.model)
+            ok &= check_arch_a(d, prob, dist, feats, classes, a.model)
     src = "results/gc7/summary.json" if a.model == "gc7" else "results/ablation.csv"
     print(f"\nOK: results match the original enhanced_res {a.model} run (and architecture A's calibration)." if ok else
           f"\nWARNING: some numbers differ from {src}. Check that the data and model are the shared versions.")

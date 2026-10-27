@@ -13,17 +13,25 @@
 
 ## What it does, per crop
 
+Steps 1a and 1b run in parallel, on the same crop: the quality gate needs only the pixels, the OOD gate the features
+from the model's single forward pass. Both p-values reach one decision: if both gates fire, **re-aim** wins (pointing the
+camera at aircraft skin is the useful instruction); which crops are stopped doesn't depend on that order.
+
 | order | step | how | if it fires, the visor shows |
 |---|---|---|---|
-| 1 | **quality gate** | 4 pixel statistics of the grey crop: sharpness (variance of the Laplacian), brightness, share of blown-out (≥ 250) and black (≤ 5) pixels. The most unusual one, compared with normal val crops, becomes a conformal p-value against the calibration crops | **BAD IMAGE: re-take (blurry / too dark / glare ...)** if p ≤ 0.10 |
-| 2 | model | enhanced_res as before: 8-view features → 5 MLP heads (softmax averaged) + 5-NN vote, blended 50/50 | |
-| 3 | **unfamiliar-input (OOD) gate** | 1 − mean cosine similarity of the crop's 768-d features to its 5 nearest training crops → conformal p-value | **CAN'T ASSESS: re-aim** if p ≤ 0.10 |
-| 4 | **temperature** | p^(1/T), renormalised, T = 1.34 fitted on val. Same top class, honest percentages | |
-| 5 | **conformal set (LAC)** | keep every class with tempered p ≥ 1 − q̂ (α = 0.10, one global threshold, every photo family weighted equally) | 1 class: **CRACK 88.0%** · 2+: **AMBIGUOUS: crack 52% dent 31%** · 0: **UNCLEAR** |
+| 0 | model | enhanced_res as before: 8-view features → 5 MLP heads (softmax averaged) + 5-NN vote, blended 50/50 | |
+| 1a | **quality gate** | 4 pixel statistics of the grey crop: sharpness (variance of the Laplacian), brightness, share of blown-out (≥ 250) and black (≤ 5) pixels. The most unusual one, compared with normal val crops, becomes a conformal p-value against the calibration crops. Sharpness is checked on both sides: too blurry or far too sharp (noise) | **BAD IMAGE: re-take (blurry / too dark / glare ...)** if p ≤ 0.05 |
+| 1b | **unfamiliar-input (OOD) gate** | two scores on the crop's 768-d features, each a conformal p-value: (a) **kNN distance**, 1 − mean cosine similarity to the 5 nearest training crops; (b) **AoN** (short for "aircraft or not"), a logistic regression on the same features, D1 crops vs people, faces, helmets, hands, gloves, tools, vehicles and hangar / airport / industrial scenes. Combined by Bonferroni (p = 2 × the smaller) | **CAN'T ASSESS: re-aim (not aircraft skin / unlike any training crop)** if p ≤ 0.08 |
+| 2 | **temperature** | p^(1/T), renormalised, T = 1.34 fitted on val. Same top class, honest percentages | |
+| 3 | **conformal set (LAC)** | keep every class with tempered p ≥ 1 − q̂ (α = 0.10, one global threshold, every photo family weighted equally) | 1 class: **CRACK 88.0%** · 2+: **AMBIGUOUS: crack 52% dent 31%** · 0: **UNCLEAR** |
+
+**The quality gate is kept in architecture A (α 0.05), but it is legacy from here on.** Architecture B (the gc7
+model) is not built around it. [`results/archA/no_quality/`](results/archA/no_quality/README.md) has what dropping it
+would change.
 
 **The guarantees, and what they are not:**
 - **The set:** on normal crops like d1_grouped's, it contains the true class about 90% of the time (α = 0.10).
-- **Each gate:** it flags about α of normal photo families (10% each).
+- **The gates:** together they stop 6.7% of normal photo families (budget ≤ 15%; by the union bound at most 0.05 + 0.08 = 13%).
 - **Not guaranteed:** coverage per class, on new data sources, or on bad images that get through the gates.
 - **"No damage":** with v2, architecture A can't say a crop is undamaged. gc7 adds that as a 7th class, and
   architecture A treats it like any other class (next section).
@@ -38,15 +46,18 @@ needs `calibrate.py` (`python enhanced_res/arch_a/calibrate.py` for gc7, `--mode
 - **The unfamiliar-input gate** uses gc7's kNN bank, which holds the no-defect train crops.
 - **The quality gate's reference** is d1_gc7 val.
 
-Test half: 2,752 crops in 87 families, 335 of them no-defect. α = 0.10.
+Test half: 2,752 crops in 87 families, 335 of them no-defect. α = 0.10. These gc7 numbers were fitted with the
+earlier gates (kNN distance only at α 0.10, sharpness checked on the low side only). **`calibration_gc7.json` is
+the one place the earlier gate remains**: re-running `calibrate.py` (default `--model gc7`) moves gc7 to the final
+gate. It needs the d1_gc7 no-defect crops (`d1_gc7_no_defect_crops.zip`, team Drive) and the gc7 weights.
 
 | | v2 | **gc7** |
 |---|---|---|
 | T | 1.34 | 1.06 |
 | CP coverage per crop / per family (target 90%) | 91.5% / 91.7% | **92.0% / 92.2%** |
 | mean set size / single-class answers | 1.65 / 65% | **1.70 / 65%** |
-| single wrong class shown without warning | 6.2% | **5.3%** |
-| inspector needed (re-take, re-aim, ambiguous) | 47.1% | **46.3%** |
+| single wrong class shown without warning | 6.7% | **5.3%** |
+| inspector needed (re-take, re-aim, ambiguous) | 38.5% | **46.3%** |
 | no-defect coverage | n/a | 98% |
 | defects shown as a single "no-defect" (a silent miss) | n/a | **0.3%** |
 
@@ -73,27 +84,31 @@ reference for crops the model calls no-defect.
 
 ## Results (d1_grouped, test half: 2,417 crops, 87 photo families; α = 0.10)
 
-Calibration uses the other half of d1_grouped's test split (1,838 crops, 88 families). Train and val are unchanged.
+Calibration uses the other half of d1_grouped's test split (1,838 crops, 88 families); temperature and the quality reference use val. Nothing is retrained. **The test half is used for reporting only**: no choice is made on it. (Pooling val into the calibration was tried and rolled back: [`results/archA/pooled_cal/`](results/archA/pooled_cal/FINDINGS.md).)
 
 | what | result |
 |---|---|
 | stated confidence vs reality (ECE) | 0.105 → **0.035** with temperature; accuracy unchanged (79.1%) |
-| CP coverage, per crop / per family | **91.5% / 91.7%** (target 90%); 100 random re-splits: 91.8% (83–97%) |
+| CP coverage, per crop / per family | **91.5% / 91.7%** (target 90%); 200 random re-splits: 91.8% per crop (5th–95th pct 87.1–95.8%) |
 | CP set size / single-class answers | 1.65 / 65% (fixed top-2 always shows 2) |
 | per-class coverage (100 re-splits) | dent 96%, missing-head 97%, crack 90%, paint-peel-off 86%, scratch 84%, corrosion 83% |
-| OOD gate, off-target patches | AUROC **0.94** (energy 0.71, top probability 0.70); stops 77% at α 0.10, **82.5% with both gates** (was 45% / 60% at α 0.025) |
+| real off-target photos (people, helmets, hands, gloves, hangars, airports, runways, storage rooms; Open Images + Places365) | categories the AoN never trained on, at the deployed α 0.08: **5.8% pass on average** (helmets 2.8%, gloves 2.9%, hands 4.2%, hangars 6.5–11.5%, runways 15.5%); the old kNN-only gate let 54–70% through. The shipped AoN, which trained on all of them, lets 1.0% through ([`results/archA/offtarget/rates.md`](results/archA/offtarget/rates.md)) |
 | random static, solid colours, gradients (320 images) | **100% stopped** |
-| quality gate, synthetic damage stopped (mild / strong) | dark 65 / 100%, overexposed 74 / 97%, glare 68 / 98%, blur 21 / 25%, motion blur 12 / 22% |
-| normal crops stopped by a gate | **20.0%** per crop, 17.8% averaged per family (quality 15.1%, OOD 4.9%) |
-| **inspector needed** (re-take, re-aim, ambiguous) | **47.1%** of normal crops |
-| **single wrong class shown with no warning** | **6.2%** (the old top-1 display: 20.9%) |
+| a photo of a person in a hard hat | **re-aim (not aircraft skin)**; the old gate showed "CRACK 86%" |
+| quality gate at α 0.05, synthetic damage stopped (mild / strong; cal half, test half not used) | dark 26 / 100%, overexposed 59 / 92%, glare 23 / 34%, noise 95 / 100%, blur 13 / 16%, motion blur 11 / 16% |
+| normal crops stopped by a gate | **6.6%** per crop, **6.7%** averaged per family (re-take 4.3%, re-aim 2.4%); D5: 6.6% |
+| **inspector needed** (re-take, re-aim, ambiguous) | **38.5%** of normal crops |
+| **single wrong class shown with no warning** | **6.7%** (the old top-1 display: 20.9%) |
 | D5 outside test (calibrated on D1 only) | coverage 95.0%, but dent 87.2%; ECE 0.071 |
 
 **Known limits:**
 - The synthetic damage isn't real helmet footage, and there was no partial-shadow test.
 - Blur mostly gets through. On strongly blurred crops that pass, coverage is about 79%.
+- Off-target photos are often stopped with "re-take" rather than "re-aim": high-resolution photos are far sharper than D1 crops, so the both-sided sharpness check fires first. Either way, no defect is shown.
+- 24.2% of undamaged aircraft-skin patches (FGVC) still pass and get a defect label. Only a "no damage" class closes that: architecture B (the gc7 model) is next, then C (anomaly detection).
+- The AoN regression was fitted on Open Images and Places365 photos; hangar, helmet and hand photos from the real helmet camera are still untested.
 - Rare classes (corrosion, scratch, paint-peel-off) are below 90%, and per-class thresholds can't fix that with about 12–21 calibration families per class.
-- Some D1 crack/dent labels may be wrong: [`results/label_audit/`](results/label_audit/README.md) is waiting for GAES review.
+- 54 D1 boxes were found misplaced and corrected on 27 October 2026 ([`d1_grouped/label_corrections/`](../../d1_grouped/label_corrections/README.md)). The numbers here still come from the old boxes until the crops are re-cut and `calibrate.py` is re-run.
 
 ## Why these choices (each one tested against its alternatives)
 
@@ -103,10 +118,13 @@ Calibration uses the other half of d1_grouped's test split (1,838 crops, 88 fami
 | family-weighted thresholds | one weight per crop | crops of one photo are near-copies. Family coverage 90.6% vs 87.7% |
 | LAC score | APS, RAPS | same coverage with smaller sets (1.65 vs 2.17) and far more single answers (65% vs 8%). RAPS tuned to λ = 0, which is APS |
 | one global threshold | per-class (Mondrian), pooled | per-class makes every class 92–96% but cuts single answers to 20%, and breaks at α 0.05 (3 classes in every set). Kept as an option for when more data exists |
-| kNN feature distance | energy, max probability | 0.94 vs 0.71 / 0.70 AUROC on off-target. The model's probabilities stay confident on things it has never seen |
+| kNN distance + AoN on the model's own features | kNN alone (k 1/5/20, layer4 only, per predicted class); AoN alone | at the 15% budget: kNN alone lets 60–74% of real off-target photos through; the combination reaches 2–4% at that budget (α 0.11; about 5% at the deployed α 0.08) with **no extra model**, and the kNN half still stops random static that the regression alone misses |
+| keep a quality gate | OOD gate alone (α 0.08, or 0.13 with the freed budget) | without it, far more bad images get through (all damage: 49% → 57–66%; strong overexposure 8% → 40–49%, noise 5% → 60–72%, strong darkening 0.3% → 16–25%), and silent wrong answers on them rise (5.2% → 6.2–7.1%). The OOD gate barely reacts to exposure, noise or glare. Gain: fewer good photos stopped (7.4% → 4.5% at OOD 0.08) |
+| quality α 0.05 (28 Oct) | 0.10 (`results/archA/quality_alpha/`; cal half only) | 0.05 halves false rejects (normal families 12.3% → 7.4%, D5 14.4% → 6.6%). The cost: most glare and mild dimming now get through (strong glare 3.9% → 66.4% passing, mild darkening 38% → 74%) |
 | one combined quality score | 4 separate tests (Bonferroni) | with 88 calibration families the separate tests can never fire. Two extra glare statistics made it worse |
-| CP α 0.10 | 0.05, 0.20 | trade-off between inspector workload and silent errors: 63.5% / 2.9% at α 0.05, 47.1% / 6.2% at 0.10, 31.2% / 10.6% at 0.20 |
-| OOD α 0.10 (since 27 Oct; was 0.025) | 0.025, 0.05, sharpness both sides | lowest false accept on off-target (40.5% → 17.5%) and heavy JPEG (12.7% → 6.7%); costs 4.2 points more false rejects per crop (`results/archA/static/`) |
+| CP α 0.10 | 0.05, 0.20 | trade-off between inspector workload and silent errors: 56.7% / 3.1% at α 0.05, 38.5% / 6.7% at 0.10, 20.6% / 12.1% at 0.20 |
+| calibration on the cal half alone (88 families) | val + cal half pooled (266); val alone (178) | pooling narrowed the spread between calibration draws (per-family coverage 87–93% vs 85–95%) but lowered rare-class coverage (scratch 86 → 83%, corrosion 84 → 83%) and changed little else; rolled back |
+| OOD α 0.08, sharpness both sides (27 Oct) | kNN-only at α 0.025 / 0.10; α 0.03–0.08 | first chosen on the test half; re-checked without it: 500 halvings of the cal half stop 12.9% of normal families on average (budget 15%; [`results/archA/alpha_check/`](results/archA/alpha_check/README.md)). With the quality gate at 0.05, the union bound now guarantees at most 13% on its own. Both-sided sharpness also stops noise and lowers D5 false rejects (23.5% → 14.4%) |
 
 ## Using it
 
@@ -135,7 +153,7 @@ print(dec[0].text(), dec[0].action, dec[0].classes, dec[0].scores)
 ```
 
 **TensorRT** (`trt_enhanced_res/predict_trt.py`) still runs **v2** with `calibration.json`; moving it to gc7 needs a
-new ONNX export of the gc7 weights (7 outputs) and `ArchA(CALIBRATIONS["gc7"])`. It runs the quality gate, temperature and the conformal set; `runtime.py` needs only numpy and PIL. The engine outputs `probs` only, so the OOD gate is skipped there. Enabling it needs a `features` output added to the ONNX export (owned by the `trt_enhanced_res/` team). `--grouped-test` also checks the CP coverage and set size against PyTorch.
+new ONNX export of the gc7 weights (7 outputs) and `ArchA(CALIBRATIONS["gc7"])`. It runs the quality gate, temperature and the conformal set; `runtime.py` needs only numpy and PIL. The engine outputs `probs` only, so the OOD gate (both parts need the 768-d features) is skipped there. Enabling it needs a `features` output added to the ONNX export (owned by the `trt_enhanced_res/` team); the AoN part is then one dot product on those features. `--grouped-test` also checks the CP coverage and set size against PyTorch.
 
 **Re-calibrate** whenever the model weights, the labels or the split change. It retrains nothing:
 
@@ -166,7 +184,13 @@ Inside `experiments/` and `results/`:
 | full pipeline as visor actions, workload per α | `archA_visor.py` | [`results/archA/step4/`](results/archA/step4/README.md) |
 | D5 outside test | `archA_d5.py` | [`results/archA/d5/`](results/archA/d5/README.md) |
 | caught vs missed examples (blur, glare, exposure) | `archA_examples.py` | `results/archA/examples/quality_examples.html` |
-| OOD gate, temperature and CP coverage with example crops; false accept / reject rates of every stage | `archA_gallery.py` | `results/archA/examples/archA_gallery.html` |
-| crack/dent label review sheet for GAES | `label_audit.py` | [`results/label_audit/`](results/label_audit/README.md) |
+| OOD gate, temperature and CP coverage with example crops; false accept / reject rates of every stage (deployed gates) | `archA_gallery.py` | `results/archA/examples/archA_gallery.html` (local only, not in git: it embeds third-party wallpaper patches; run `archA_gallery.py` to make it) |
+| realistic off-target benchmark (people, helmets, hands, hangars; Open Images + Places365; local only) | `offtarget_data.py` | data in `data/work/enhanced_res/offtarget/` (not in git) |
+| pooled calibration (val + cal half): tried, audited for overfitting, rolled back | `archA_pooled_cal.py`, `archA_overfit_check.py` | [`results/archA/pooled_cal/`](results/archA/pooled_cal/FINDINGS.md) |
+| dropping the quality gate (OOD only at 0.08 / 0.13) vs keeping it (test half not used) | `archA_no_quality.py` | [`results/archA/no_quality/`](results/archA/no_quality/README.md) |
+| quality α 0.10 vs 0.05, false reject vs false accept (test half not used) | `archA_quality_alpha.py` | [`results/archA/quality_alpha/`](results/archA/quality_alpha/README.md) |
+| OOD α checked without the test half | `archA_alpha_check.py` | [`results/archA/alpha_check/`](results/archA/alpha_check/README.md) |
+| false accept / false reject per category, held out and deployed | `archA_rates.py` | [`results/archA/offtarget/rates.md`](results/archA/offtarget/rates.md) |
+| the deployed gate on every off-target set, undamaged aircraft, D5 and the user photo | `archA_offtarget_check.py` | [`results/archA/offtarget/deployed.md`](results/archA/offtarget/deployed.md) |
 
 Methods: split conformal prediction and LAC (Vovk et al. 2005; Sadinle et al. 2019), APS/RAPS (Romano et al. 2020; Angelopoulos et al. 2021), temperature scaling (Guo et al. 2017), kNN OOD (Sun et al. 2022), conformal outlier p-values (Bates et al. 2023), variance of the Laplacian (Pech-Pacheco et al. 2000).

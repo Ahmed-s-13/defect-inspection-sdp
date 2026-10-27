@@ -11,6 +11,11 @@ Nothing is trained; the enhanced_res weights are unchanged. Data (all d1_grouped
   val       (4,203 crops)   temperature T (minimum NLL), and the quality gate's reference statistics
   cal half  (1,838 crops,   CP thresholds q (family-weighted LAC at alpha 0.05 / 0.10 / 0.20), and the calibration
              88 families)   scores of both gates
+  (Pooling val into the calibration was tried on 27 October and rolled back: experiments/archA_pooled_cal.py.)
+  off-target (local only)   the AoN logistic regression: D1 train crops vs people, faces, helmets,
+                            hands, gloves, tools, vehicles and industrial / hangar / airport scenes from
+                            experiments/offtarget_data.py (Open Images + Places365, not in git). Without that data
+                            the regression stored in calibration.json is reused.
   test half (2,417 crops,   only read to store the expected results, which enhanced_res/evaluate.py checks against
              87 families)
 Re-run it when the model, the labels or the split change. The research behind every choice is in experiments/ and
@@ -38,25 +43,56 @@ from klshift.common import CropDataset
 SPLIT = HERE / "cal_split.csv"
 CACHE = {"v2": EWORK / "arch_a_outputs.npz", "gc7": EWORK / "arch_a_outputs_gc7.npz"}   # git-ignored
 ALPHA, ALPHAS = 0.10, (0.05, 0.10, 0.20)
-ALPHA_Q, ALPHA_OOD, K = 0.10, 0.10, 5
+ALPHA_Q, ALPHA_OOD, K = 0.05, 0.08, 5      # quality 0.05 (28 Oct; experiments/archA_quality_alpha.py). OOD: kNN + AoN, Bonferroni (0.04 each). Checked without the test
+                                           # half: 500 halvings of the cal half stop 12.9% of families (budget 15%;
+                                           # experiments/archA_alpha_check.py). Worst case by the union bound: 0.05 + 0.08 = 13%.
+QUALITY_SIDES = {**R.SIDES, "sharpness": "both"}     # also flag far-too-sharp crops (noise), 2026-10-27
+OFFTARGET = EWORK / "offtarget/manifest.csv"
+OFF_CACHE = {"v2": EWORK / "arch_a_offtarget_feats.npz", "gc7": EWORK / "arch_a_offtarget_feats_gc7.npz"}
 
 
 def outputs(m, paths, cache):
-    """Probabilities and kNN distances for every crop, cached by crop list."""
+    """Features, probabilities and kNN distances for every crop, cached by crop list."""
     if cache.exists():
         z = np.load(cache, allow_pickle=True)
-        if list(z["crop_path"]) == list(paths):
-            return z["probs"], z["knn_dist"]
-    P, D = [], []
+        if list(z["crop_path"]) == list(paths) and "feats" in z:
+            return z["feats"], z["probs"], z["knn_dist"]
+    F, P, D = [], [], []
     for i, (x, _) in enumerate(DataLoader(CropDataset(list(paths)), batch_size=64, num_workers=4)):
         f = m.features(x)
+        F.append(f.cpu())
         P.append(m.proba_from_features(f).cpu())
         D.append(m.knn_distance(f, K).cpu())
         print(f"\r  features {min((i + 1) * 64, len(paths))}/{len(paths)}", end="", flush=True)
     print()
+    feats = torch.cat(F).numpy().astype(np.float32)
     probs, dist = torch.cat(P).numpy().astype(float), torch.cat(D).numpy().astype(float)
-    np.savez(cache, crop_path=np.array(paths), probs=probs, knn_dist=dist)
-    return probs, dist
+    np.savez(cache, crop_path=np.array(paths), feats=feats, probs=probs, knn_dist=dist)
+    return feats, probs, dist
+
+
+def fit_aon(m, old, model):
+    """Logistic regression on the 768-d features: D1 train crops (0) vs off-target crops (1)."""
+    from sklearn.linear_model import LogisticRegression
+    if not OFFTARGET.exists():
+        if old is None:
+            raise SystemExit(f"{OFFTARGET} missing and no previous regression: run experiments/offtarget_data.py")
+        print("  off-target data not found: reusing the AoN regression from calibration.json")
+        return {k: v for k, v in old.items() if k != "cal_scores"}
+    man = pd.read_csv(OFFTARGET)
+    man = man[man.role.isin(["fit", "test"]) & (man.source != "user")]
+    neg, _, _ = outputs(m, [str(MAIN / p) for p in man.crop_path], OFF_CACHE[model])
+    head = torch.load(MODELS[model] / "enhanced_res_head.pt", map_location="cpu")
+    pos = head["knn_bank"].float().numpy()                      # the model's train crops' features
+    X = np.concatenate([pos, neg])
+    mu, sd = X.mean(0), X.std(0) + 1e-6
+    clf = LogisticRegression(C=0.5, class_weight="balanced", max_iter=3000)
+    clf.fit((X - mu) / sd, np.r_[np.zeros(len(pos)), np.ones(len(neg))])
+    print(f"  AoN: {len(pos)} D1 train crops vs {len(neg)} off-target crops "
+          f"({man.category.nunique()} categories)")
+    return {"about": "P(not aircraft skin) = sigmoid(((f - mu) / sd) @ coef + intercept); f = EnhancedRes.features",
+            "negatives": sorted(man.category.unique().tolist()),
+            "mu": g9(mu), "sd": g9(sd), "coef": g9(clf.coef_[0]), "intercept": float(clf.intercept_[0])}
 
 
 def nll(p, y):
@@ -95,20 +131,20 @@ def main():
     classes = m.classes
     cid = {c: i for i, c in enumerate(classes)}
     paths = list(va.crop_path) + list(cal.crop_path) + list(tst.crop_path)
-    P, D = outputs(m, paths, CACHE[model])
+    Fe, P, D = outputs(m, paths, CACHE[model])
     nv, nc = len(va), len(cal)
     sl = {"val": slice(0, nv), "cal": slice(nv, nv + nc), "test": slice(nv + nc, None)}
     y = {"val": va.cls.map(cid).to_numpy(), "cal": cal.cls.map(cid).to_numpy(), "test": tst.cls.map(cid).to_numpy()}
-    g = {"cal": cal.src_group.to_numpy(), "test": tst.src_group.to_numpy()}
+    g = {"val": va.src_group.to_numpy(), "cal": cal.src_group.to_numpy(), "test": tst.src_group.to_numpy()}
 
     # temperature on val
     r = minimize_scalar(lambda lt: nll(R.temper(P[sl["val"]], np.exp(lt)), y["val"]),
                         bounds=(np.log(0.05), np.log(20)), method="bounded")
     T = float(np.exp(r.x))
-    Pc = R.temper(P[sl["cal"]], T)
     print(f"T = {T:.3f}  (val NLL {nll(P[sl['val']], y['val']):.3f} -> {r.fun:.3f})")
 
     # CP thresholds on the cal half
+    Pc = R.temper(P[sl["cal"]], T)
     q = {f"{a:.2f}": R.family_threshold(Pc, y["cal"], g["cal"], a) for a in ALPHAS}
 
     # quality gate: reference = val crops, calibration scores = cal half
@@ -118,10 +154,18 @@ def main():
     print("  quality statistics ...", flush=True)
     ref = {s: np.sort(v) for s, v in stats(va).items()}
     ref = {s: np.asarray(g9(v)) for s, v in ref.items()}         # exactly what the JSON will hold
-    q_cal, _ = R.quality_score(ref, stats(cal))
+    q_cal, _ = R.quality_score(ref, stats(cal), QUALITY_SIDES)
+
+    # unfamiliar-input gate, second part: AoN
+    path = R.CALIBRATIONS[model]
+    og = json.loads(path.read_text())["ood_gate"] if path.exists() else {}
+    old = og.get("aon", og.get("aircraft_or_not"))                 # "aircraft_or_not": the key before 28 Oct
+    lr = fit_aon(m, old, model)
+    z = (Fe[sl["cal"]] - np.asarray(lr["mu"])) / np.asarray(lr["sd"])
+    lr["cal_scores"] = g9(1 / (1 + np.exp(-(z @ np.asarray(lr["coef"]) + lr["intercept"]))))
 
     cfg = {
-        "about": "architecture A for enhanced_res: quality gate -> OOD gate -> temperature -> LAC CP set. Written by "
+        "about": "architecture A for enhanced_res: quality gate and OOD gate (in parallel; re-aim wins if both fire) -> temperature -> LAC CP set. Written by "
                  "enhanced_res/arch_a/calibrate.py; read by enhanced_res/arch_a/runtime.py.",
         "created": str(date.today()),
         "model": {"version": model,
@@ -137,20 +181,22 @@ def main():
         "cp": {"score": "LAC: 1 - tempered probability of the true class",
                "weighting": "every calibration family carries weight 1", "alpha": ALPHA, "q": q,
                "rule": "set = every class with tempered probability >= 1 - q[alpha]"},
-        "quality_gate": {"alpha": ALPHA_Q, "stats": list(R.STATS), "sides": R.SIDES,
+        "quality_gate": {"alpha": ALPHA_Q, "stats": list(R.STATS), "sides": QUALITY_SIDES,
                          "score": "-log(min over stats of the tail probability vs the val reference)",
                          "reference": {s: list(v) for s, v in ref.items()},
                          "cal_scores": g9(q_cal), "cal_groups": [int(v) for v in g["cal"]]},
-        "ood_gate": {"alpha": ALPHA_OOD, "k": K, "score": "1 - mean cosine similarity to the k nearest train features",
-                     "cal_scores": g9(D[sl["cal"]]), "cal_groups": [int(v) for v in g["cal"]]},
+        "ood_gate": {"alpha": ALPHA_OOD, "combine": "Bonferroni: p = 2 x min(p_knn, p_aon)",
+                     "k": K, "score": "1 - mean cosine similarity to the k nearest train features",
+                     "cal_scores": g9(D[sl["cal"]]), "cal_groups": [int(v) for v in g["cal"]],
+                     "aon": lr},
     }
-    path = R.CALIBRATIONS[model]
     path.write_text(json.dumps(cfg))
 
     # expected results on the test half (enhanced_res/evaluate.py compares against these)
     a = R.ArchA(path)
     print("  checking the test half ...", flush=True)
-    dec = a.decide(P[sl["test"]], crops=[Image.open(p).convert("RGB") for p in tst.crop_path], knn_dist=D[sl["test"]])
+    dec = a.decide(P[sl["test"]], crops=[Image.open(p).convert("RGB") for p in tst.crop_path], knn_dist=D[sl["test"]],
+                   feats=Fe[sl["test"]])
     exp = R.summarise(dec, a, P[sl["test"]], y["test"], g["test"])
     cfg["expected_test_half"] = exp
     path.write_text(json.dumps(cfg))
