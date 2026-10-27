@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clean Crop Review</title>
+<style>
+  :root {
+    --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #deded9; --accent: #2b5d9e;
+    --clean: #2f7d4f; --damage: #c0392b; --background: #7a5bb5; --other: #8a8a84; --keep: #2f7d4f; --reject: #c0392b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161615; --panel: #20201e; --text: #ececea; --muted: #a0a09a; --line: #34342f; --accent: #6b9be0;
+      --clean: #4caf74; --damage: #e5604f; --background: #a68be0; --other: #a0a09a; --keep: #4caf74; --reject: #e5604f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, -apple-system, sans-serif; }
+  header { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 1px solid var(--line);
+           padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+  h1 { font-size: 16px; margin: 0 8px 0 0; }
+  button, select { font: inherit; padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px;
+                   background: var(--panel); color: var(--text); cursor: pointer; }
+  .tabs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .stats { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+  .help { color: var(--muted); padding: 8px 16px 0; margin: 0; max-width: 1100px; }
+  main { padding: 12px 16px 40px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
+  .card { background: var(--panel); border: 3px solid var(--line); border-radius: 8px; overflow: hidden; position: relative; }
+  .card img { display: block; width: 100%; height: auto; }
+  .row { display: flex; gap: 4px; padding: 6px; flex-wrap: wrap; }
+  .row button { flex: 1; padding: 4px 6px; font-size: 12px; }
+  .meta { padding: 0 8px 6px; font-size: 12px; color: var(--muted); }
+  .card.l-clean { border-color: var(--clean); } .card.l-damage { border-color: var(--damage); }
+  .card.l-background { border-color: var(--background); } .card.l-other { border-color: var(--other); }
+  .card.l-keep { border-color: var(--keep); } .card.l-reject { border-color: var(--reject); }
+  .card.l-reject img { opacity: .35; }
+  .row button.on { color: #fff; }
+  .row button.on[data-l="clean"], .row button.on[data-l="keep"] { background: var(--clean); border-color: var(--clean); }
+  .row button.on[data-l="damage"], .row button.on[data-l="reject"] { background: var(--damage); border-color: var(--damage); }
+  .row button.on[data-l="background"] { background: var(--background); border-color: var(--background); }
+  .row button.on[data-l="other"] { background: var(--other); border-color: var(--other); }
+  .bar { padding: 0 16px 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .saved { color: var(--muted); font-size: 12px; }
+  @media (max-width: 480px) { main { grid-template-columns: 1fr; } .stats { margin-left: 0; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clean crop review</h1>
+  <div class="tabs" id="tabs" role="group"></div>
+  <span class="stats" id="stats"></span>
+</header>
+<p class="help" id="help"></p>
+<main id="grid"></main>
+<div class="bar">
+  <button id="prev">← Previous</button><span id="page"></span><button id="next">Next →</button>
+  <button id="fillRest"></button>
+  <span class="saved" id="saved"></span>
+</div>
+<script>
+const PER = 36;
+const HELP = {
+  audit: "Each card: the candidate crop | its whole photo (red = the crop, yellow = labelled defects). Label what the crop shows. " +
+         "Clean = intact aircraft surface (panels, rivets, screws, seams are fine). Damage = any crack, dent, scratch, corrosion, " +
+         "peeling paint or missing screw head, however small. Background = mostly not the aircraft (sky, plants, ground, buildings). " +
+         "Other = blurry, too dark, text, or can't tell. Every click is saved.",
+  final: "The crops picked for the no-defect class. Click a card to reject it (damage, background, or unusable); click again to keep. " +
+         "Undecided cards count as kept. Every click is saved."
+};
+let sets = [], LBL = {}, set = null, items = [], lab = {}, page = 0;
+const $ = (id) => document.getElementById(id);
+
+async function save(upd) {
+  Object.entries(upd).forEach(([k, v]) => v === null ? delete lab[k] : lab[k] = v);
+  render();
+  try {
+    const r = await fetch(`/api/label/${set}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(upd) });
+    $("saved").textContent = `saved (${(await r.json()).saved} labels on disk)`;
+  } catch (e) { $("saved").textContent = "NOT SAVED: is review_server.py running?"; }
+}
+
+function render() {
+  const pages = Math.max(1, Math.ceil(items.length / PER));
+  page = Math.min(page, pages - 1);
+  $("tabs").innerHTML = sets.map(s => `<button data-s="${s}" aria-pressed="${s === set}">${s}</button>`).join("");
+  $("help").textContent = HELP[set];
+  const counts = {}; items.forEach(i => { const l = lab[i.id] || (set === "final" ? "undecided (kept)" : "unlabelled"); counts[l] = (counts[l] || 0) + 1; });
+  $("stats").textContent = Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(" · ");
+  $("page").textContent = `page ${page + 1} / ${pages} (${items.length})`;
+  $("fillRest").textContent = set === "audit" ? "Mark unlabelled on this page clean" : "Keep all undecided on this page";
+  $("grid").innerHTML = items.slice(page * PER, (page + 1) * PER).map(i => {
+    const l = lab[i.id] || "";
+    const tip = set === "final" ? `${i.id}\nskin ${i.p_skin} · damage ${i.p_damage} · yolo ${i.yolo_conf} ${i.yolo_cls || ""}` : i.id;
+    const btns = set === "audit"
+      ? LBL.audit.map(x => `<button data-l="${x}" class="${l === x ? "on" : ""}">${x}</button>`).join("")
+      : LBL.final.map(x => `<button data-l="${x}" class="${(l || "keep") === x ? "on" : ""}">${x}</button>`).join("");
+    return `<div class="card l-${set === "final" ? (l || "keep") : l}" data-id="${i.id}" title="${tip}">
+      <img loading="lazy" src="/thumbs/${i.id}.jpg" alt=""><div class="row">${btns}</div>
+      <div class="meta">${i.split} · group ${i.group}</div></div>`;
+  }).join("");
+}
+
+async function open_(s) {
+  set = s; page = 0;
+  const j = await (await fetch(`/api/items/${s}`)).json();
+  items = j.items; lab = j.labels; render(); scrollTo(0, 0);
+}
+
+$("grid").addEventListener("click", e => {
+  const card = e.target.closest(".card"); if (!card) return;
+  const id = card.dataset.id, b = e.target.closest("button");
+  if (b) { const x = b.dataset.l; save({ [id]: lab[id] === x ? null : x }); }
+  else if (set === "final") save({ [id]: lab[id] === "reject" ? "keep" : "reject" });
+});
+$("tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) open_(b.dataset.s); });
+$("prev").onclick = () => { page = Math.max(0, page - 1); render(); scrollTo(0, 0); };
+$("next").onclick = () => { page += 1; render(); scrollTo(0, 0); };
+$("fillRest").onclick = () => {
+  const upd = {}, v = set === "audit" ? "clean" : "keep";
+  items.slice(page * PER, (page + 1) * PER).forEach(i => { if (!lab[i.id]) upd[i.id] = v; });
+  if (Object.keys(upd).length) save(upd);
+};
+
+fetch("/api/sets").then(r => r.json()).then(j => { sets = j.sets; LBL = j.labels; if (sets.length) open_(sets[0]); });
+</script>
+</body>
+</html>
