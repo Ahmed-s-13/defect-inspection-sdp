@@ -66,3 +66,9 @@ handoffs/
 2_lama_healing/weights/
 2_lama_healing/out/
 !2_lama_healing/donor_bank/head_scorer.npz
+
+# Healer no-defect pipeline (2_lama_healing/no_defect) and the clean cropper (5_clean_cropper): generated images,
+# feature caches and review thumbnails are local; the CSV lists, review decisions and reports are in git. The final
+# no-defect crops (data/work/crops/no_defect/) are d1_gc7_no_defect_crops.zip on the team Drive.
+2_lama_healing/no_defect/work/
+5_clean_cropper/work/

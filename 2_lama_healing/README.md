@@ -144,8 +144,8 @@ trained vs OpenCV), and the first hand-made screw-head fixes ([`docs/missing_hea
 
 **Known limits.** The screw-head scorer was trained on only 16 heads, so it sometimes accepts paint chips or blobs
 as donors. Pasted heads can be slightly smaller or brighter than their neighbours. LaMa leaves out repeating detail
-(rivet rows) inside large fills. These are images that look right to a person: they have **not** been checked
-against a detector, so don't use them as "no damage" training data without that test.
+(rivet rows) inside large fills. Healed photos are not used as "no damage" data straight from here: the
+[`no_defect/`](no_defect/README.md) pipeline filters and reviews them first (section 7).
 
 ## 6. Improving the screw-head scorer
 
@@ -163,6 +163,14 @@ left out as ambiguous (5-fold CV: 15/16 heads found, 10/157 non-heads accepted).
 examples (paint chips, stains, letters) are the main way to make it better. `--mine` overwrites the candidate
 numbering, so re-pick `--keep` after it.
 
+## 7. Healed crops for the "no-defect" class ([`no_defect/`](no_defect/README.md))
+
+`no_defect/` heals one photo per d1_grouped group, cuts the healed photo at the defect crop squares, drops bad
+crops by rule, flags suspicious ones from image statistics, and has a person review them (a local web page). That
+gives **1,858 healed crops**, half of the 7th class of [`d1_gc7`](../1_main_model_resnet18/d1_gc7/README.md), the
+data the main model (enhanced_res gc7) is trained on. It also contains a probe and decoy crops that check whether
+a model can learn "LaMa fill = no defect" (it can tell LaMa fill apart a little, and gc7 barely relies on it).
+
 ## Files
 
 | file | what |
@@ -176,3 +184,4 @@ numbering, so re-pick `--keep` after it.
 | `docs/` | results and reports (see section 5) |
 | `weights/` | `big-lama.pt` (from `lama_weights.zip`, not in git) |
 | `out/` | your runs (not in git) |
+| `no_defect/` | healed crops for the no-defect class: heal, filter, review, finalize, LaMa-shortcut probe, decoys (section 7) |

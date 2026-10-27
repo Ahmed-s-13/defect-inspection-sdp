@@ -1,0 +1,850 @@
+group,split,key,file,w,h,n_boxes,classes,healed_frac,mh_boxes,heads_put_back,mh_flagged,mh_too_small,secs
+0,train,train/aircraft_000000.jpg,work/healed/train/0000_aircraft_000000.png,640,640,2,paint-peel-off,0.18,0,0,0,0,2.4
+1,train,test/aircraft_001637.jpg,work/healed/train/0001_aircraft_001637.png,640,640,2,crack,0.309,0,0,0,0,1.8
+2,train,train/aircraft_000002.jpg,work/healed/train/0002_aircraft_000002.png,640,640,2,corrosion dent,0.014,0,0,0,0,1.5
+3,test,train/aircraft_000003.jpg,work/healed/test/0003_aircraft_000003.png,640,640,2,paint-peel-off,0.169,0,0,0,0,1.4
+4,train,test/aircraft_005717.jpg,work/healed/train/0004_aircraft_005717.png,640,640,1,crack,0.248,0,0,0,0,1.4
+5,train,test/aircraft_002153.jpg,work/healed/train/0005_aircraft_002153.png,640,640,1,dent,0.014,0,0,0,0,1.9
+6,test,test/aircraft_000336.jpg,work/healed/test/0006_aircraft_000336.png,640,640,1,crack,0.03,0,0,0,0,1.6
+7,val,test/aircraft_000619.jpg,work/healed/val/0007_aircraft_000619.png,640,640,1,crack,0.002,0,0,0,0,1.5
+8,val,test/aircraft_000126.jpg,work/healed/val/0008_aircraft_000126.png,1024,1240,2,dent,0.094,0,0,0,0,9.2
+9,train,test/aircraft_002381.jpg,work/healed/train/0009_aircraft_002381.png,640,640,2,dent,0.113,0,0,0,0,1.5
+10,train,test/aircraft_000011.jpg,work/healed/train/0010_aircraft_000011.png,640,640,1,dent,0.082,0,0,0,0,1.4
+11,train,test/aircraft_009248.jpg,work/healed/train/0011_aircraft_009248.png,640,640,2,crack dent,0.099,0,0,0,0,1.5
+12,train,train/aircraft_000019.jpg,work/healed/train/0012_aircraft_000019.png,640,640,1,scratch,0.183,0,0,0,0,1.4
+13,train,test/aircraft_000017.jpg,work/healed/train/0013_aircraft_000017.png,1024,1240,1,dent,0.053,0,0,0,0,8.9
+14,train,test/aircraft_013674.jpg,work/healed/train/0014_aircraft_013674.png,640,640,1,paint-peel-off,0.045,0,0,0,0,1.5
+15,train,test/aircraft_000144.jpg,work/healed/train/0015_aircraft_000144.png,640,640,1,crack,0.018,0,0,0,0,1.4
+16,train,test/aircraft_000009.jpg,work/healed/train/0016_aircraft_000009.png,640,640,3,crack dent,0.052,0,0,0,0,1.4
+17,train,test/aircraft_001832.jpg,work/healed/train/0017_aircraft_001832.png,640,640,2,dent,0.124,0,0,0,0,1.6
+18,test,test/aircraft_000537.jpg,work/healed/test/0018_aircraft_000537.png,1024,1240,3,crack dent,0.283,0,0,0,0,8.8
+19,test,test/aircraft_001281.jpg,work/healed/test/0019_aircraft_001281.png,1024,1240,2,corrosion dent,0.336,0,0,0,0,8.2
+20,val,test/aircraft_010103.jpg,work/healed/val/0020_aircraft_010103.png,640,640,6,dent,0.026,0,0,0,0,1.5
+21,train,train/aircraft_000030.jpg,work/healed/train/0021_aircraft_000030.png,640,640,1,missing-head,0.032,1,1,0,0,6.7
+22,train,test/aircraft_001339.jpg,work/healed/train/0022_aircraft_001339.png,1024,1240,1,crack,0.026,0,0,0,0,8.5
+23,val,test/aircraft_000235.jpg,work/healed/val/0023_aircraft_000235.png,640,640,2,dent,0.273,0,0,0,0,1.5
+25,test,test/aircraft_010619.jpg,work/healed/test/0025_aircraft_010619.png,640,640,1,crack,0.025,0,0,0,0,1.4
+26,val,train/aircraft_000038.jpg,work/healed/val/0026_aircraft_000038.png,1024,1240,1,crack,0.065,0,0,0,0,8.5
+27,train,test/aircraft_000270.jpg,work/healed/train/0027_aircraft_000270.png,640,640,1,crack,0.21,0,0,0,0,1.5
+28,test,test/aircraft_000008.jpg,work/healed/test/0028_aircraft_000008.png,640,640,1,crack,0.028,0,0,0,0,1.4
+29,train,test/aircraft_007538.jpg,work/healed/train/0029_aircraft_007538.png,640,640,2,crack,0.04,0,0,0,0,1.4
+30,train,test/aircraft_000285.jpg,work/healed/train/0030_aircraft_000285.png,1024,1240,1,crack,0.067,0,0,0,0,8.5
+31,train,test/aircraft_000184.jpg,work/healed/train/0031_aircraft_000184.png,640,640,1,dent,0.101,0,0,0,0,1.5
+32,train,test/aircraft_013306.jpg,work/healed/train/0032_aircraft_013306.png,640,640,4,crack dent,0.264,0,0,0,0,1.4
+33,train,train/aircraft_000051.jpg,work/healed/train/0033_aircraft_000051.png,800,800,1,scratch,0.045,0,0,0,0,3.0
+34,test,test/aircraft_002798.jpg,work/healed/test/0034_aircraft_002798.png,640,640,1,crack,0.015,0,0,0,0,1.5
+35,val,test/aircraft_002130.jpg,work/healed/val/0035_aircraft_002130.png,1024,1240,1,dent,0.029,0,0,0,0,8.7
+36,val,test/aircraft_000180.jpg,work/healed/val/0036_aircraft_000180.png,1024,1240,2,corrosion dent,0.256,0,0,0,0,8.7
+37,train,test/aircraft_000952.jpg,work/healed/train/0037_aircraft_000952.png,640,640,1,dent,0.717,0,0,0,0,1.5
+38,val,test/aircraft_004847.jpg,work/healed/val/0038_aircraft_004847.png,800,800,1,dent,0.026,0,0,0,0,2.8
+39,test,test/aircraft_009107.jpg,work/healed/test/0039_aircraft_009107.png,1024,1240,2,dent,0.009,0,0,0,0,8.6
+40,test,test/aircraft_005054.jpg,work/healed/test/0040_aircraft_005054.png,640,640,2,crack,0.711,0,0,0,0,1.8
+41,test,test/aircraft_001573.jpg,work/healed/test/0041_aircraft_001573.png,640,640,1,crack,0.019,0,0,0,0,1.5
+42,train,test/aircraft_002149.jpg,work/healed/train/0042_aircraft_002149.png,640,640,1,dent,0.088,0,0,0,0,1.5
+43,train,test/aircraft_002990.jpg,work/healed/train/0043_aircraft_002990.png,1024,1240,1,crack,0.124,0,0,0,0,9.2
+44,train,test/aircraft_008178.jpg,work/healed/train/0044_aircraft_008178.png,640,640,1,dent,0.035,0,0,0,0,1.6
+45,train,test/aircraft_001345.jpg,work/healed/train/0045_aircraft_001345.png,640,640,1,crack,0.128,0,0,0,0,1.5
+46,train,test/aircraft_000016.jpg,work/healed/train/0046_aircraft_000016.png,640,640,3,crack dent,0.45,0,0,0,0,1.4
+47,train,test/aircraft_000916.jpg,work/healed/train/0047_aircraft_000916.png,640,640,1,dent,0.278,0,0,0,0,1.5
+48,train,test/aircraft_000064.jpg,work/healed/train/0048_aircraft_000064.png,640,640,1,dent,0.071,0,0,0,0,1.4
+49,train,test/aircraft_000805.jpg,work/healed/train/0049_aircraft_000805.png,640,640,4,dent,0.304,0,0,0,0,1.4
+50,train,test/aircraft_003404.jpg,work/healed/train/0050_aircraft_003404.png,640,640,1,crack,0.474,0,0,0,0,1.4
+51,train,train/aircraft_000081.jpg,work/healed/train/0051_aircraft_000081.png,640,640,1,dent,0.037,0,0,0,0,1.4
+52,test,test/aircraft_010266.jpg,work/healed/test/0052_aircraft_010266.png,640,640,1,crack,0.036,0,0,0,0,1.5
+53,train,test/aircraft_011766.jpg,work/healed/train/0053_aircraft_011766.png,416,416,3,crack,0.368,0,0,0,0,0.6
+54,val,train/aircraft_000086.jpg,work/healed/val/0054_aircraft_000086.png,640,640,1,corrosion,0.394,0,0,0,0,1.5
+55,train,test/aircraft_000131.jpg,work/healed/train/0055_aircraft_000131.png,640,640,1,dent,0.202,0,0,0,0,1.4
+56,train,test/aircraft_001323.jpg,work/healed/train/0056_aircraft_001323.png,640,640,1,dent,0.025,0,0,0,0,1.5
+57,train,train/aircraft_000098.jpg,work/healed/train/0057_aircraft_000098.png,640,640,1,paint-peel-off,0.07,0,0,0,0,1.4
+58,train,test/aircraft_000201.jpg,work/healed/train/0058_aircraft_000201.png,640,640,1,dent,0.105,0,0,0,0,1.4
+59,train,test/aircraft_000121.jpg,work/healed/train/0059_aircraft_000121.png,640,640,11,crack dent missing-head paint-peel-off,0.005,7,0,0,7,1.5
+60,train,test/aircraft_007104.jpg,work/healed/train/0060_aircraft_007104.png,640,640,2,missing-head,0.015,2,2,0,0,15.5
+61,train,test/aircraft_000881.jpg,work/healed/train/0061_aircraft_000881.png,1024,1240,2,corrosion crack,0.264,0,0,0,0,9.1
+62,test,test/aircraft_013952.jpg,work/healed/test/0062_aircraft_013952.png,640,640,1,paint-peel-off,0.101,0,0,0,0,1.6
+63,train,test/aircraft_001782.jpg,work/healed/train/0063_aircraft_001782.png,640,640,1,crack,0.07,0,0,0,0,1.4
+64,val,test/aircraft_004422.jpg,work/healed/val/0064_aircraft_004422.png,640,640,1,crack,0.039,0,0,0,0,1.5
+65,val,test/aircraft_008196.jpg,work/healed/val/0065_aircraft_008196.png,640,640,2,missing-head paint-peel-off,0.037,1,1,0,0,8.5
+66,test,test/aircraft_000440.jpg,work/healed/test/0066_aircraft_000440.png,640,640,1,dent,0.396,0,0,0,0,1.4
+67,train,test/aircraft_004270.jpg,work/healed/train/0067_aircraft_004270.png,640,640,2,dent,0.065,0,0,0,0,1.5
+68,train,test/aircraft_001013.jpg,work/healed/train/0068_aircraft_001013.png,640,640,1,dent,0.167,0,0,0,0,1.4
+69,val,test/aircraft_011293.jpg,work/healed/val/0069_aircraft_011293.png,640,640,1,crack,0.012,0,0,0,0,1.4
+70,train,test/aircraft_000139.jpg,work/healed/train/0070_aircraft_000139.png,1024,1240,1,crack,0.373,0,0,0,0,8.4
+71,train,test/aircraft_000691.jpg,work/healed/train/0071_aircraft_000691.png,640,640,1,crack,0.101,0,0,0,0,1.6
+72,train,test/aircraft_002526.jpg,work/healed/train/0072_aircraft_002526.png,640,640,5,crack,0.213,0,0,0,0,1.4
+73,train,test/aircraft_000414.jpg,work/healed/train/0073_aircraft_000414.png,1024,1240,1,dent,0.521,0,0,0,0,8.6
+74,train,test/aircraft_005778.jpg,work/healed/train/0074_aircraft_005778.png,1024,1240,1,crack,0.022,0,0,0,0,9.0
+75,test,train/aircraft_000151.jpg,work/healed/test/0075_aircraft_000151.png,640,640,3,crack dent,0.138,0,0,0,0,1.6
+76,train,train/aircraft_000152.jpg,work/healed/train/0076_aircraft_000152.png,640,640,1,scratch,0.16,0,0,0,0,1.4
+77,train,test/aircraft_001578.jpg,work/healed/train/0077_aircraft_001578.png,640,640,1,paint-peel-off,0.013,0,0,0,0,1.5
+78,train,test/aircraft_001546.jpg,work/healed/train/0078_aircraft_001546.png,640,640,1,crack,0.052,0,0,0,0,1.4
+79,train,test/aircraft_005324.jpg,work/healed/train/0079_aircraft_005324.png,640,640,4,crack,0.159,0,0,0,0,1.4
+80,train,test/aircraft_000222.jpg,work/healed/train/0080_aircraft_000222.png,640,640,2,dent,0.063,0,0,0,0,1.4
+81,train,test/aircraft_009575.jpg,work/healed/train/0081_aircraft_009575.png,640,640,1,crack,0.178,0,0,0,0,1.5
+82,train,test/aircraft_001234.jpg,work/healed/train/0082_aircraft_001234.png,640,640,1,crack,0.136,0,0,0,0,1.4
+83,train,train/aircraft_000160.jpg,work/healed/train/0083_aircraft_000160.png,1024,1240,2,corrosion dent,0.02,0,0,0,0,8.8
+84,test,test/aircraft_004839.jpg,work/healed/test/0084_aircraft_004839.png,640,640,1,dent,0.022,0,0,0,0,1.5
+85,train,train/aircraft_000165.jpg,work/healed/train/0085_aircraft_000165.png,640,640,1,corrosion,0.237,0,0,0,0,1.5
+86,val,test/aircraft_000204.jpg,work/healed/val/0086_aircraft_000204.png,640,640,2,crack,0.005,0,0,0,0,1.5
+87,train,test/aircraft_000445.jpg,work/healed/train/0087_aircraft_000445.png,640,640,1,dent,0.062,0,0,0,0,1.4
+88,train,train/aircraft_000179.jpg,work/healed/train/0088_aircraft_000179.png,640,640,4,crack,0.056,0,0,0,0,1.4
+89,train,test/aircraft_001735.jpg,work/healed/train/0089_aircraft_001735.png,640,640,2,corrosion,0.057,0,0,0,0,1.4
+90,train,test/aircraft_000840.jpg,work/healed/train/0090_aircraft_000840.png,640,640,2,dent,0.022,0,0,0,0,1.4
+91,train,test/aircraft_004353.jpg,work/healed/train/0091_aircraft_004353.png,640,640,1,corrosion,0.111,0,0,0,0,1.4
+92,val,test/aircraft_000699.jpg,work/healed/val/0092_aircraft_000699.png,640,640,1,dent,0.071,0,0,0,0,1.4
+93,train,train/aircraft_000194.jpg,work/healed/train/0093_aircraft_000194.png,640,640,1,crack,0.039,0,0,0,0,1.4
+94,train,test/aircraft_002006.jpg,work/healed/train/0094_aircraft_002006.png,640,640,1,crack,0.038,0,0,0,0,1.4
+95,train,train/aircraft_000202.jpg,work/healed/train/0095_aircraft_000202.png,640,640,1,dent,0.15,0,0,0,0,1.5
+96,train,test/aircraft_000613.jpg,work/healed/train/0096_aircraft_000613.png,640,640,4,crack dent,0.22,0,0,0,0,1.4
+97,val,test/aircraft_006084.jpg,work/healed/val/0097_aircraft_006084.png,1024,1240,2,dent,0.185,0,0,0,0,12.1
+98,val,test/aircraft_003354.jpg,work/healed/val/0098_aircraft_003354.png,640,640,1,crack,0.211,0,0,0,0,1.6
+99,train,train/aircraft_000218.jpg,work/healed/train/0099_aircraft_000218.png,800,800,17,scratch,0.092,0,0,0,0,2.0
+100,train,test/aircraft_005318.jpg,work/healed/train/0100_aircraft_005318.png,1024,1240,3,crack dent,0.378,0,0,0,0,8.4
+101,train,test/aircraft_000756.jpg,work/healed/train/0101_aircraft_000756.png,1024,1240,1,crack,0.049,0,0,0,0,8.3
+102,train,test/aircraft_000048.jpg,work/healed/train/0102_aircraft_000048.png,640,640,1,dent,0.125,0,0,0,0,1.6
+103,test,train/aircraft_000245.jpg,work/healed/test/0103_aircraft_000245.png,640,640,6,paint-peel-off,0.003,0,0,0,0,1.4
+104,train,train/aircraft_000246.jpg,work/healed/train/0104_aircraft_000246.png,640,640,1,paint-peel-off,0.366,0,0,0,0,1.4
+105,train,test/aircraft_002667.jpg,work/healed/train/0105_aircraft_002667.png,640,640,1,dent,0.198,0,0,0,0,1.4
+106,train,test/aircraft_010417.jpg,work/healed/train/0106_aircraft_010417.png,640,640,1,crack,0.035,0,0,0,0,1.4
+107,train,test/aircraft_001191.jpg,work/healed/train/0107_aircraft_001191.png,640,640,6,crack,0.058,0,0,0,0,1.4
+108,train,train/aircraft_000252.jpg,work/healed/train/0108_aircraft_000252.png,640,640,1,dent,0.125,0,0,0,0,1.4
+109,train,train/aircraft_000261.jpg,work/healed/train/0109_aircraft_000261.png,640,640,1,scratch,0.033,0,0,0,0,1.4
+110,test,test/aircraft_000035.jpg,work/healed/test/0110_aircraft_000035.png,1024,1240,1,dent,0.066,0,0,0,0,8.3
+111,test,train/aircraft_000271.jpg,work/healed/test/0111_aircraft_000271.png,640,640,1,dent,0.015,0,0,0,0,1.5
+112,train,test/aircraft_000219.jpg,work/healed/train/0112_aircraft_000219.png,640,640,4,crack paint-peel-off,0.23,0,0,0,0,1.4
+113,val,test/aircraft_010607.jpg,work/healed/val/0113_aircraft_010607.png,640,640,2,crack,0.538,0,0,0,0,1.4
+114,val,train/aircraft_000277.jpg,work/healed/val/0114_aircraft_000277.png,640,640,1,dent,0.538,0,0,0,0,1.4
+115,val,test/aircraft_006309.jpg,work/healed/val/0115_aircraft_006309.png,640,640,1,dent,0.034,0,0,0,0,1.4
+116,val,test/aircraft_000227.jpg,work/healed/val/0116_aircraft_000227.png,640,640,1,missing-head,0.064,1,0,1,0,5.5
+117,train,test/aircraft_003745.jpg,work/healed/train/0117_aircraft_003745.png,640,640,1,dent,0.176,0,0,0,0,1.4
+118,train,test/aircraft_013970.jpg,work/healed/train/0118_aircraft_013970.png,640,640,1,crack,0.02,0,0,0,0,1.5
+119,train,train/aircraft_000295.jpg,work/healed/train/0119_aircraft_000295.png,1024,1240,1,corrosion,0.014,0,0,0,0,9.5
+120,train,test/aircraft_002567.jpg,work/healed/train/0120_aircraft_002567.png,640,640,1,crack,0.048,0,0,0,0,1.5
+121,train,test/aircraft_004286.jpg,work/healed/train/0121_aircraft_004286.png,1024,1240,1,dent,0.045,0,0,0,0,8.4
+122,train,test/aircraft_001414.jpg,work/healed/train/0122_aircraft_001414.png,640,640,1,crack,0.052,0,0,0,0,1.5
+123,train,test/aircraft_007151.jpg,work/healed/train/0123_aircraft_007151.png,640,640,2,dent,0.031,0,0,0,0,1.4
+124,train,test/aircraft_000593.jpg,work/healed/train/0124_aircraft_000593.png,640,640,1,dent,0.027,0,0,0,0,1.4
+125,val,train/aircraft_000315.jpg,work/healed/val/0125_aircraft_000315.png,640,640,1,scratch,0.213,0,0,0,0,1.4
+126,test,test/aircraft_000806.jpg,work/healed/test/0126_aircraft_000806.png,1024,1240,4,dent,0.324,0,0,0,0,10.1
+127,train,test/aircraft_000677.jpg,work/healed/train/0127_aircraft_000677.png,640,640,1,missing-head,0.003,1,0,1,0,8.0
+128,test,test/aircraft_004159.jpg,work/healed/test/0128_aircraft_004159.png,640,640,1,dent,0.2,0,0,0,0,1.4
+129,train,test/aircraft_000407.jpg,work/healed/train/0129_aircraft_000407.png,640,640,1,dent,0.163,0,0,0,0,1.4
+130,train,train/aircraft_000329.jpg,work/healed/train/0130_aircraft_000329.png,640,640,3,dent,0.093,0,0,0,0,1.4
+131,test,train/aircraft_000330.jpg,work/healed/test/0131_aircraft_000330.png,640,640,2,paint-peel-off,0.032,0,0,0,0,1.4
+132,train,test/aircraft_001422.jpg,work/healed/train/0132_aircraft_001422.png,800,800,5,dent,0.053,0,0,0,0,2.0
+133,train,test/aircraft_000616.jpg,work/healed/train/0133_aircraft_000616.png,640,640,3,corrosion crack,0.142,0,0,0,0,1.4
+134,train,test/aircraft_000447.jpg,work/healed/train/0134_aircraft_000447.png,640,640,1,missing-head,0.056,1,1,0,0,7.1
+135,train,test/aircraft_001800.jpg,work/healed/train/0135_aircraft_001800.png,640,640,4,corrosion,0.054,0,0,0,0,1.4
+136,test,test/aircraft_005116.jpg,work/healed/test/0136_aircraft_005116.png,640,640,1,corrosion,0.006,0,0,0,0,1.4
+137,test,test/aircraft_012179.jpg,work/healed/test/0137_aircraft_012179.png,640,640,3,crack dent,0.252,0,0,0,0,1.4
+138,train,train/aircraft_000351.jpg,work/healed/train/0138_aircraft_000351.png,640,640,1,crack,0.009,0,0,0,0,1.4
+139,train,train/aircraft_000354.jpg,work/healed/train/0139_aircraft_000354.png,1024,1240,1,dent,0.2,0,0,0,0,8.7
+140,train,test/aircraft_002824.jpg,work/healed/train/0140_aircraft_002824.png,640,640,1,dent,0.107,0,0,0,0,1.6
+141,train,test/aircraft_005386.jpg,work/healed/train/0141_aircraft_005386.png,416,416,1,dent,0.086,0,0,0,0,0.6
+142,train,test/aircraft_008980.jpg,work/healed/train/0142_aircraft_008980.png,640,291,4,crack dent,0.085,0,0,0,0,0.6
+143,train,test/aircraft_000095.jpg,work/healed/train/0143_aircraft_000095.png,640,640,1,dent,0.027,0,0,0,0,1.7
+144,train,test/aircraft_013908.jpg,work/healed/train/0144_aircraft_013908.png,640,640,1,dent,0.042,0,0,0,0,1.4
+145,train,test/aircraft_000220.jpg,work/healed/train/0145_aircraft_000220.png,640,640,2,dent,0.038,0,0,0,0,1.5
+146,test,train/aircraft_000366.jpg,work/healed/test/0146_aircraft_000366.png,800,800,4,dent,0.012,0,0,0,0,3.5
+147,train,test/aircraft_000453.jpg,work/healed/train/0147_aircraft_000453.png,640,640,4,dent,0.15,0,0,0,0,1.5
+148,train,test/aircraft_005401.jpg,work/healed/train/0148_aircraft_005401.png,640,640,9,dent scratch,0.075,0,0,0,0,1.4
+149,train,test/aircraft_002048.jpg,work/healed/train/0149_aircraft_002048.png,640,640,3,corrosion,0.046,0,0,0,0,1.4
+150,test,test/aircraft_000085.jpg,work/healed/test/0150_aircraft_000085.png,640,640,1,crack,0.069,0,0,0,0,1.4
+151,val,test/aircraft_003976.jpg,work/healed/val/0151_aircraft_003976.png,640,640,1,crack,0.439,0,0,0,0,1.4
+152,test,train/aircraft_000383.jpg,work/healed/test/0152_aircraft_000383.png,1024,1240,4,corrosion,0.088,0,0,0,0,8.3
+153,train,test/aircraft_001418.jpg,work/healed/train/0153_aircraft_001418.png,640,640,1,scratch,0.111,0,0,0,0,1.5
+154,train,test/aircraft_004620.jpg,work/healed/train/0154_aircraft_004620.png,640,480,1,crack,0.519,0,0,0,0,1.1
+155,train,train/aircraft_000387.jpg,work/healed/train/0155_aircraft_000387.png,640,640,1,crack,0.11,0,0,0,0,1.6
+156,val,test/aircraft_000239.jpg,work/healed/val/0156_aircraft_000239.png,640,640,1,dent,0.018,0,0,0,0,1.5
+157,val,test/aircraft_002294.jpg,work/healed/val/0157_aircraft_002294.png,1024,1240,3,dent,0.122,0,0,0,0,8.7
+158,val,test/aircraft_010115.jpg,work/healed/val/0158_aircraft_010115.png,640,640,3,crack dent,0.155,0,0,0,0,1.5
+159,train,test/aircraft_001335.jpg,work/healed/train/0159_aircraft_001335.png,640,640,1,missing-head,0.05,1,0,1,0,7.6
+160,test,test/aircraft_000993.jpg,work/healed/test/0160_aircraft_000993.png,1024,1240,1,dent,0.085,0,0,0,0,8.1
+161,test,train/aircraft_000409.jpg,work/healed/test/0161_aircraft_000409.png,640,640,45,crack missing-head paint-peel-off,0.014,41,0,0,41,1.5
+162,test,train/aircraft_000419.jpg,work/healed/test/0162_aircraft_000419.png,1024,1240,6,corrosion,0.051,0,0,0,0,8.2
+163,train,test/aircraft_003667.jpg,work/healed/train/0163_aircraft_003667.png,640,640,3,corrosion crack,0.036,0,0,0,0,1.5
+164,test,test/aircraft_003082.jpg,work/healed/test/0164_aircraft_003082.png,1024,1240,3,corrosion,0.006,0,0,0,0,8.3
+165,train,train/aircraft_000428.jpg,work/healed/train/0165_aircraft_000428.png,640,640,1,dent,0.03,0,0,0,0,1.7
+166,test,test/aircraft_003641.jpg,work/healed/test/0166_aircraft_003641.png,640,640,1,crack,0.256,0,0,0,0,1.7
+167,train,test/aircraft_006149.jpg,work/healed/train/0167_aircraft_006149.png,640,640,1,dent,0.04,0,0,0,0,1.6
+168,test,test/aircraft_009223.jpg,work/healed/test/0168_aircraft_009223.png,640,640,1,corrosion,0.257,0,0,0,0,1.4
+169,train,test/aircraft_007660.jpg,work/healed/train/0169_aircraft_007660.png,640,640,1,dent,0.059,0,0,0,0,1.5
+170,train,test/aircraft_001987.jpg,work/healed/train/0170_aircraft_001987.png,640,640,1,dent,0.145,0,0,0,0,1.4
+171,test,train/aircraft_000468.jpg,work/healed/test/0171_aircraft_000468.png,1024,1240,7,corrosion,0.022,0,0,0,0,8.6
+172,train,train/aircraft_000469.jpg,work/healed/train/0172_aircraft_000469.png,800,800,6,scratch,0.066,0,0,0,0,3.3
+173,val,train/aircraft_000470.jpg,work/healed/val/0173_aircraft_000470.png,640,640,1,dent,0.068,0,0,0,0,1.5
+174,test,test/aircraft_001361.jpg,work/healed/test/0174_aircraft_001361.png,640,640,4,dent,0.106,0,0,0,0,1.5
+175,train,test/aircraft_003676.jpg,work/healed/train/0175_aircraft_003676.png,416,416,2,crack dent,0.148,0,0,0,0,0.6
+176,train,train/aircraft_000495.jpg,work/healed/train/0176_aircraft_000495.png,640,640,1,missing-head,0.046,1,1,0,0,8.1
+177,train,test/aircraft_003346.jpg,work/healed/train/0177_aircraft_003346.png,640,640,2,dent,0.047,0,0,0,0,1.6
+178,train,test/aircraft_004812.jpg,work/healed/train/0178_aircraft_004812.png,640,640,2,dent,0.144,0,0,0,0,1.5
+179,train,test/aircraft_008551.jpg,work/healed/train/0179_aircraft_008551.png,640,640,2,crack,0.504,0,0,0,0,1.4
+180,test,test/aircraft_003990.jpg,work/healed/test/0180_aircraft_003990.png,640,640,7,dent missing-head paint-peel-off scratch,0.017,1,0,0,1,1.4
+181,train,train/aircraft_000512.jpg,work/healed/train/0181_aircraft_000512.png,640,640,1,crack,0.059,0,0,0,0,1.4
+183,train,test/aircraft_001019.jpg,work/healed/train/0183_aircraft_001019.png,640,640,1,crack,0.089,0,0,0,0,1.4
+184,train,test/aircraft_001370.jpg,work/healed/train/0184_aircraft_001370.png,640,640,11,crack,0.413,0,0,0,0,1.4
+185,train,test/aircraft_005066.jpg,work/healed/train/0185_aircraft_005066.png,640,640,13,dent,0.032,0,0,0,0,1.5
+186,train,test/aircraft_000490.jpg,work/healed/train/0186_aircraft_000490.png,1024,1240,1,dent,0.006,0,0,0,0,9.1
+187,train,test/aircraft_008957.jpg,work/healed/train/0187_aircraft_008957.png,1024,1240,1,dent,0.034,0,0,0,0,8.5
+188,train,test/aircraft_000307.jpg,work/healed/train/0188_aircraft_000307.png,640,640,1,crack,0.106,0,0,0,0,1.6
+189,val,test/aircraft_007043.jpg,work/healed/val/0189_aircraft_007043.png,640,640,2,crack,0.034,0,0,0,0,1.5
+190,train,test/aircraft_004718.jpg,work/healed/train/0190_aircraft_004718.png,640,384,2,dent,0.069,0,0,0,0,0.9
+191,val,train/aircraft_000545.jpg,work/healed/val/0191_aircraft_000545.png,640,640,1,dent,0.151,0,0,0,0,1.4
+192,train,test/aircraft_006017.jpg,work/healed/train/0192_aircraft_006017.png,640,640,1,dent,0.511,0,0,0,0,1.4
+193,train,test/aircraft_004680.jpg,work/healed/train/0193_aircraft_004680.png,640,640,1,crack,0.137,0,0,0,0,1.4
+194,test,test/aircraft_010598.jpg,work/healed/test/0194_aircraft_010598.png,1024,1240,1,crack,0.036,0,0,0,0,8.8
+195,test,train/aircraft_000551.jpg,work/healed/test/0195_aircraft_000551.png,640,640,2,paint-peel-off,0.106,0,0,0,0,1.6
+196,test,test/aircraft_000197.jpg,work/healed/test/0196_aircraft_000197.png,640,640,1,crack,0.034,0,0,0,0,1.4
+197,train,train/aircraft_000562.jpg,work/healed/train/0197_aircraft_000562.png,640,640,1,dent,0.033,0,0,0,0,1.4
+198,train,test/aircraft_007489.jpg,work/healed/train/0198_aircraft_007489.png,1024,1240,1,crack,0.035,0,0,0,0,8.4
+199,val,test/aircraft_000704.jpg,work/healed/val/0199_aircraft_000704.png,640,640,2,crack dent,0.322,0,0,0,0,1.5
+200,val,test/aircraft_000236.jpg,work/healed/val/0200_aircraft_000236.png,416,416,1,dent,0.098,0,0,0,0,0.6
+201,val,train/aircraft_000580.jpg,work/healed/val/0201_aircraft_000580.png,640,640,1,crack,0.044,0,0,0,0,1.4
+202,train,test/aircraft_000335.jpg,work/healed/train/0202_aircraft_000335.png,640,640,1,dent,0.027,0,0,0,0,1.4
+203,test,train/aircraft_000587.jpg,work/healed/test/0203_aircraft_000587.png,640,640,23,crack dent missing-head paint-peel-off scratch,0.054,9,0,0,9,1.4
+204,train,test/aircraft_003696.jpg,work/healed/train/0204_aircraft_003696.png,416,416,2,dent,0.047,0,0,0,0,0.5
+205,train,test/aircraft_000280.jpg,work/healed/train/0205_aircraft_000280.png,1024,1240,1,crack,0.02,0,0,0,0,8.6
+206,test,train/aircraft_000591.jpg,work/healed/test/0206_aircraft_000591.png,640,640,2,missing-head,0.024,2,2,0,0,15.2
+207,train,train/aircraft_000598.jpg,work/healed/train/0207_aircraft_000598.png,800,800,7,scratch,0.015,0,0,0,0,3.8
+208,train,test/aircraft_009388.jpg,work/healed/train/0208_aircraft_009388.png,640,640,3,corrosion crack,0.951,0,0,0,0,1.5
+209,train,train/aircraft_000606.jpg,work/healed/train/0209_aircraft_000606.png,1024,1240,1,dent,0.015,0,0,0,0,9.6
+210,val,train/aircraft_000608.jpg,work/healed/val/0210_aircraft_000608.png,640,640,12,crack dent missing-head scratch,0.04,5,0,0,5,1.5
+211,train,test/aircraft_004809.jpg,work/healed/train/0211_aircraft_004809.png,640,640,3,crack dent,0.644,0,0,0,0,1.5
+212,train,test/aircraft_004385.jpg,work/healed/train/0212_aircraft_004385.png,640,640,1,corrosion,0.071,0,0,0,0,1.4
+213,train,train/aircraft_000615.jpg,work/healed/train/0213_aircraft_000615.png,640,480,10,corrosion,0.097,0,0,0,0,1.1
+214,train,test/aircraft_001132.jpg,work/healed/train/0214_aircraft_001132.png,640,640,1,dent,0.368,0,0,0,0,1.9
+215,train,test/aircraft_001849.jpg,work/healed/train/0215_aircraft_001849.png,640,640,1,crack,0.072,0,0,0,0,1.5
+216,train,train/aircraft_000621.jpg,work/healed/train/0216_aircraft_000621.png,640,640,3,dent,0.868,0,0,0,0,1.4
+217,train,test/aircraft_000331.jpg,work/healed/train/0217_aircraft_000331.png,640,640,2,dent,0.103,0,0,0,0,1.5
+218,train,test/aircraft_000088.jpg,work/healed/train/0218_aircraft_000088.png,1024,1240,1,corrosion,0.217,0,0,0,0,9.0
+219,val,test/aircraft_004672.jpg,work/healed/val/0219_aircraft_004672.png,640,640,1,dent,0.114,0,0,0,0,1.5
+220,train,train/aircraft_000637.jpg,work/healed/train/0220_aircraft_000637.png,640,640,1,corrosion,0.003,0,0,0,0,1.4
+221,test,test/aircraft_005444.jpg,work/healed/test/0221_aircraft_005444.png,640,640,1,missing-head,0.017,1,1,0,0,7.7
+222,val,train/aircraft_000639.jpg,work/healed/val/0222_aircraft_000639.png,640,640,1,dent,0.081,0,0,0,0,1.5
+223,train,test/aircraft_003663.jpg,work/healed/train/0223_aircraft_003663.png,800,800,5,scratch,0.027,0,0,0,0,2.3
+224,test,test/aircraft_005759.jpg,work/healed/test/0224_aircraft_005759.png,640,640,2,corrosion,0.017,0,0,0,0,1.4
+225,test,test/aircraft_002920.jpg,work/healed/test/0225_aircraft_002920.png,640,640,1,crack,0.282,0,0,0,0,1.4
+226,train,test/aircraft_007896.jpg,work/healed/train/0226_aircraft_007896.png,640,640,2,corrosion,0.016,0,0,0,0,1.4
+227,val,train/aircraft_000665.jpg,work/healed/val/0227_aircraft_000665.png,480,640,2,corrosion,0.004,0,0,0,0,1.1
+228,train,test/aircraft_007035.jpg,work/healed/train/0228_aircraft_007035.png,640,640,1,dent,0.755,0,0,0,0,2.2
+229,train,train/aircraft_000670.jpg,work/healed/train/0229_aircraft_000670.png,640,640,1,crack,0.183,0,0,0,0,1.5
+230,val,test/aircraft_000170.jpg,work/healed/val/0230_aircraft_000170.png,640,640,1,dent,0.05,0,0,0,0,1.4
+231,val,train/aircraft_000686.jpg,work/healed/val/0231_aircraft_000686.png,640,640,4,paint-peel-off,0.194,0,0,0,0,1.5
+232,train,test/aircraft_006443.jpg,work/healed/train/0232_aircraft_006443.png,640,640,1,dent,0.166,0,0,0,0,1.4
+233,train,test/aircraft_002041.jpg,work/healed/train/0233_aircraft_002041.png,640,640,1,dent,0.044,0,0,0,0,1.4
+234,test,train/aircraft_000703.jpg,work/healed/test/0234_aircraft_000703.png,640,640,1,dent,0.1,0,0,0,0,1.4
+235,val,test/aircraft_004140.jpg,work/healed/val/0235_aircraft_004140.png,640,291,2,dent,0.041,0,0,0,0,0.6
+236,train,test/aircraft_005420.jpg,work/healed/train/0236_aircraft_005420.png,640,291,5,corrosion,0.074,0,0,0,0,0.6
+237,train,train/aircraft_000716.jpg,work/healed/train/0237_aircraft_000716.png,640,640,1,corrosion,0.149,0,0,0,0,1.7
+238,train,test/aircraft_007764.jpg,work/healed/train/0238_aircraft_007764.png,640,640,29,dent missing-head scratch,0.078,17,0,1,16,2.1
+239,train,train/aircraft_004412.jpg,work/healed/train/0239_aircraft_004412.png,800,800,4,scratch,0.401,0,0,0,0,3.9
+240,train,test/aircraft_005190.jpg,work/healed/train/0240_aircraft_005190.png,1024,1240,1,dent,0.033,0,0,0,0,8.5
+241,test,test/aircraft_000848.jpg,work/healed/test/0241_aircraft_000848.png,1024,1240,1,dent,0.065,0,0,0,0,8.9
+242,train,test/aircraft_003159.jpg,work/healed/train/0242_aircraft_003159.png,640,640,1,dent,0.044,0,0,0,0,1.6
+243,val,train/aircraft_000741.jpg,work/healed/val/0243_aircraft_000741.png,1024,1240,2,dent,0.071,0,0,0,0,8.1
+244,val,train/aircraft_000748.jpg,work/healed/val/0244_aircraft_000748.png,1024,1240,2,crack dent,0.005,0,0,0,0,8.5
+245,test,train/aircraft_000752.jpg,work/healed/test/0245_aircraft_000752.png,640,640,2,dent,0.088,0,0,0,0,1.6
+246,train,test/aircraft_000358.jpg,work/healed/train/0246_aircraft_000358.png,640,640,1,paint-peel-off,0.005,0,0,0,0,1.4
+247,val,test/aircraft_008527.jpg,work/healed/val/0247_aircraft_008527.png,640,640,4,crack,0.956,0,0,0,0,1.4
+248,test,test/aircraft_002052.jpg,work/healed/test/0248_aircraft_002052.png,640,640,1,paint-peel-off,0.103,0,0,0,0,1.4
+249,test,train/aircraft_000772.jpg,work/healed/test/0249_aircraft_000772.png,640,640,13,missing-head scratch,0.006,11,0,0,11,1.4
+250,train,train/aircraft_000776.jpg,work/healed/train/0250_aircraft_000776.png,640,640,1,dent,0.028,0,0,0,0,1.5
+251,val,test/aircraft_000394.jpg,work/healed/val/0251_aircraft_000394.png,640,640,1,crack,0.01,0,0,0,0,1.4
+252,test,train/aircraft_000779.jpg,work/healed/test/0252_aircraft_000779.png,1024,1240,2,corrosion,0.052,0,0,0,0,8.4
+253,val,test/aircraft_002764.jpg,work/healed/val/0253_aircraft_002764.png,640,640,3,crack,0.194,0,0,0,0,1.6
+254,val,test/aircraft_001073.jpg,work/healed/val/0254_aircraft_001073.png,640,640,1,dent,0.027,0,0,0,0,1.5
+255,val,train/aircraft_000788.jpg,work/healed/val/0255_aircraft_000788.png,640,640,2,missing-head scratch,0.038,1,1,0,0,7.5
+256,train,test/aircraft_000380.jpg,work/healed/train/0256_aircraft_000380.png,416,416,4,crack,0.07,0,0,0,0,0.6
+257,val,train/aircraft_000800.jpg,work/healed/val/0257_aircraft_000800.png,1024,1240,1,dent,0.135,0,0,0,0,8.6
+258,train,test/aircraft_000860.jpg,work/healed/train/0258_aircraft_000860.png,640,640,1,missing-head,0.005,1,1,0,0,7.5
+259,train,train/aircraft_000812.jpg,work/healed/train/0259_aircraft_000812.png,640,640,1,crack,0.041,0,0,0,0,1.4
+260,train,test/aircraft_009104.jpg,work/healed/train/0260_aircraft_009104.png,640,640,1,missing-head,0.032,1,1,0,0,7.2
+261,train,test/aircraft_000251.jpg,work/healed/train/0261_aircraft_000251.png,1024,1240,1,crack,0.161,0,0,0,0,8.2
+262,train,test/aircraft_002227.jpg,work/healed/train/0262_aircraft_002227.png,640,640,1,crack,0.031,0,0,0,0,1.5
+263,val,test/aircraft_000056.jpg,work/healed/val/0263_aircraft_000056.png,640,640,1,crack,0.035,0,0,0,0,1.4
+264,val,test/aircraft_013910.jpg,work/healed/val/0264_aircraft_013910.png,640,640,1,paint-peel-off,0.05,0,0,0,0,1.4
+265,train,test/aircraft_002161.jpg,work/healed/train/0265_aircraft_002161.png,640,640,1,crack,0.015,0,0,0,0,1.4
+266,val,train/aircraft_000859.jpg,work/healed/val/0266_aircraft_000859.png,640,480,1,corrosion,0.848,0,0,0,0,1.0
+267,train,test/aircraft_000718.jpg,work/healed/train/0267_aircraft_000718.png,640,640,1,dent,0.147,0,0,0,0,2.2
+268,train,test/aircraft_010284.jpg,work/healed/train/0268_aircraft_010284.png,640,640,5,dent,0.1,0,0,0,0,1.5
+269,train,test/aircraft_006439.jpg,work/healed/train/0269_aircraft_006439.png,640,640,2,crack dent,0.137,0,0,0,0,1.4
+270,val,train/aircraft_000870.jpg,work/healed/val/0270_aircraft_000870.png,800,800,1,dent,1.0,0,0,0,0,3.7
+271,train,train/aircraft_000871.jpg,work/healed/train/0271_aircraft_000871.png,640,640,9,missing-head,0.171,9,9,0,0,43.4
+272,train,train/aircraft_000879.jpg,work/healed/train/0272_aircraft_000879.png,640,640,1,missing-head,0.013,1,1,0,0,7.7
+273,train,test/aircraft_003230.jpg,work/healed/train/0273_aircraft_003230.png,640,640,2,crack,0.043,0,0,0,0,1.4
+274,train,test/aircraft_011040.jpg,work/healed/train/0274_aircraft_011040.png,800,800,6,scratch,0.082,0,0,0,0,2.3
+275,val,train/aircraft_000900.jpg,work/healed/val/0275_aircraft_000900.png,800,800,4,dent,0.324,0,0,0,0,2.2
+276,val,test/aircraft_014018.jpg,work/healed/val/0276_aircraft_014018.png,640,640,1,scratch,0.082,0,0,0,0,1.4
+277,train,test/aircraft_004258.jpg,work/healed/train/0277_aircraft_004258.png,640,640,1,crack,0.361,0,0,0,0,1.4
+278,val,test/aircraft_000391.jpg,work/healed/val/0278_aircraft_000391.png,640,640,1,crack,0.009,0,0,0,0,1.4
+279,val,train/aircraft_000920.jpg,work/healed/val/0279_aircraft_000920.png,1024,1240,2,dent,0.061,0,0,0,0,8.1
+280,val,test/aircraft_010660.jpg,work/healed/val/0280_aircraft_010660.png,640,640,1,crack,0.735,0,0,0,0,1.5
+281,val,test/aircraft_002116.jpg,work/healed/val/0281_aircraft_002116.png,640,640,2,dent,0.029,0,0,0,0,1.4
+282,test,train/aircraft_000927.jpg,work/healed/test/0282_aircraft_000927.png,640,640,3,missing-head,0.132,3,3,0,0,15.5
+283,val,train/aircraft_000928.jpg,work/healed/val/0283_aircraft_000928.png,640,640,2,corrosion,0.007,0,0,0,0,1.4
+284,val,test/aircraft_005955.jpg,work/healed/val/0284_aircraft_005955.png,640,640,1,crack,0.077,0,0,0,0,1.4
+285,train,test/aircraft_004340.jpg,work/healed/train/0285_aircraft_004340.png,640,640,1,crack,0.019,0,0,0,0,1.4
+286,train,train/aircraft_000955.jpg,work/healed/train/0286_aircraft_000955.png,640,640,36,dent missing-head scratch,0.024,33,0,10,23,5.1
+287,test,train/aircraft_000961.jpg,work/healed/test/0287_aircraft_000961.png,1024,1240,1,corrosion,0.032,0,0,0,0,8.3
+288,train,train/aircraft_000966.jpg,work/healed/train/0288_aircraft_000966.png,640,640,2,dent,0.041,0,0,0,0,1.5
+289,train,test/aircraft_008098.jpg,work/healed/train/0289_aircraft_008098.png,640,640,1,missing-head,0.005,1,1,0,0,7.8
+290,train,train/aircraft_000973.jpg,work/healed/train/0290_aircraft_000973.png,640,640,1,paint-peel-off,0.527,0,0,0,0,1.4
+291,train,test/aircraft_003192.jpg,work/healed/train/0291_aircraft_003192.png,1024,1240,2,crack,0.244,0,0,0,0,8.6
+292,test,test/aircraft_010396.jpg,work/healed/test/0292_aircraft_010396.png,640,640,4,corrosion dent,0.022,0,0,0,0,1.5
+293,train,test/aircraft_013214.jpg,work/healed/train/0293_aircraft_013214.png,1024,1240,2,dent,0.161,0,0,0,0,7.7
+294,train,train/aircraft_000997.jpg,work/healed/train/0294_aircraft_000997.png,640,640,3,dent,0.058,0,0,0,0,1.5
+295,train,test/aircraft_011614.jpg,work/healed/train/0295_aircraft_011614.png,426,640,2,crack dent,0.264,0,0,0,0,0.9
+296,train,test/aircraft_001230.jpg,work/healed/train/0296_aircraft_001230.png,1024,1240,4,corrosion dent,0.016,0,0,0,0,8.7
+297,train,train/aircraft_001009.jpg,work/healed/train/0297_aircraft_001009.png,640,640,1,crack,0.191,0,0,0,0,1.5
+298,train,test/aircraft_007809.jpg,work/healed/train/0298_aircraft_007809.png,640,640,1,crack,0.317,0,0,0,0,1.4
+299,train,test/aircraft_001925.jpg,work/healed/train/0299_aircraft_001925.png,640,479,1,corrosion,0.004,0,0,0,0,1.0
+300,train,train/aircraft_001049.jpg,work/healed/train/0300_aircraft_001049.png,640,640,1,dent,0.009,0,0,0,0,1.4
+301,train,train/aircraft_001052.jpg,work/healed/train/0301_aircraft_001052.png,640,640,4,crack dent missing-head,0.002,2,0,0,2,1.4
+302,train,test/aircraft_008712.jpg,work/healed/train/0302_aircraft_008712.png,640,640,18,dent missing-head paint-peel-off,0.175,10,0,4,6,14.4
+303,val,train/aircraft_001074.jpg,work/healed/val/0303_aircraft_001074.png,640,640,2,missing-head,0.02,2,2,0,0,15.2
+304,test,train/aircraft_001079.jpg,work/healed/test/0304_aircraft_001079.png,640,640,3,corrosion,0.111,0,0,0,0,1.7
+305,test,test/aircraft_010172.jpg,work/healed/test/0305_aircraft_010172.png,416,416,3,crack,0.11,0,0,0,0,0.6
+306,train,test/aircraft_002440.jpg,work/healed/train/0306_aircraft_002440.png,640,640,1,crack,0.001,0,0,0,0,1.6
+307,test,train/aircraft_001094.jpg,work/healed/test/0307_aircraft_001094.png,1024,1240,1,dent,0.005,0,0,0,0,9.0
+308,train,train/aircraft_001096.jpg,work/healed/train/0308_aircraft_001096.png,640,640,1,paint-peel-off,0.021,0,0,0,0,1.5
+309,train,train/aircraft_001103.jpg,work/healed/train/0309_aircraft_001103.png,800,800,6,dent scratch,0.034,0,0,0,0,2.2
+310,train,test/aircraft_014004.jpg,work/healed/train/0310_aircraft_014004.png,640,640,1,missing-head,0.086,1,1,0,0,2.5
+311,test,test/aircraft_010330.jpg,work/healed/test/0311_aircraft_010330.png,640,640,2,paint-peel-off,0.041,0,0,0,0,1.4
+312,val,train/aircraft_001149.jpg,work/healed/val/0312_aircraft_001149.png,640,640,2,corrosion,0.003,0,0,0,0,1.4
+313,train,test/aircraft_003700.jpg,work/healed/train/0313_aircraft_003700.png,1024,1240,1,dent,0.244,0,0,0,0,8.1
+314,train,test/aircraft_014040.jpg,work/healed/train/0314_aircraft_014040.png,640,640,1,dent,0.41,0,0,0,0,1.6
+315,test,test/aircraft_006528.jpg,work/healed/test/0315_aircraft_006528.png,640,640,2,crack dent,0.062,0,0,0,0,1.3
+316,val,test/aircraft_008625.jpg,work/healed/val/0316_aircraft_008625.png,640,640,1,crack,0.062,0,0,0,0,1.4
+317,test,train/aircraft_001208.jpg,work/healed/test/0317_aircraft_001208.png,800,800,2,dent scratch,0.137,0,0,0,0,2.8
+318,val,train/aircraft_001210.jpg,work/healed/val/0318_aircraft_001210.png,360,640,1,corrosion,0.01,0,0,0,0,0.8
+319,test,test/aircraft_005934.jpg,work/healed/test/0319_aircraft_005934.png,640,640,4,crack,0.169,0,0,0,0,1.9
+320,val,test/aircraft_006425.jpg,work/healed/val/0320_aircraft_006425.png,640,640,2,missing-head,0.098,2,0,2,0,13.9
+321,train,test/aircraft_000457.jpg,work/healed/train/0321_aircraft_000457.png,640,640,1,dent,0.006,0,0,0,0,1.5
+322,train,train/aircraft_001243.jpg,work/healed/train/0322_aircraft_001243.png,640,640,1,paint-peel-off,0.148,0,0,0,0,1.4
+323,val,test/aircraft_004345.jpg,work/healed/val/0323_aircraft_004345.png,640,640,1,dent,0.048,0,0,0,0,1.4
+324,train,test/aircraft_009487.jpg,work/healed/train/0324_aircraft_009487.png,1024,1240,1,dent,0.005,0,0,0,0,8.4
+325,test,test/aircraft_000543.jpg,work/healed/test/0325_aircraft_000543.png,640,640,2,dent,0.011,0,0,0,0,1.5
+326,train,train/aircraft_001257.jpg,work/healed/train/0326_aircraft_001257.png,640,640,1,scratch,0.183,0,0,0,0,1.4
+327,train,test/aircraft_000243.jpg,work/healed/train/0327_aircraft_000243.png,1024,1240,1,crack,0.139,0,0,0,0,8.3
+328,train,test/aircraft_000933.jpg,work/healed/train/0328_aircraft_000933.png,640,640,1,crack,0.036,0,0,0,0,1.5
+329,test,train/aircraft_001269.jpg,work/healed/test/0329_aircraft_001269.png,640,640,6,crack,0.058,0,0,0,0,1.4
+330,val,test/aircraft_002291.jpg,work/healed/val/0330_aircraft_002291.png,640,640,1,crack,0.037,0,0,0,0,1.4
+331,test,test/aircraft_008099.jpg,work/healed/test/0331_aircraft_008099.png,640,640,1,dent,0.04,0,0,0,0,1.4
+332,test,train/aircraft_001283.jpg,work/healed/test/0332_aircraft_001283.png,640,640,1,crack,0.087,0,0,0,0,1.4
+333,train,train/aircraft_001285.jpg,work/healed/train/0333_aircraft_001285.png,1024,1240,5,corrosion crack,0.015,0,0,0,0,8.0
+334,train,test/aircraft_002512.jpg,work/healed/train/0334_aircraft_002512.png,640,640,3,crack dent,0.478,0,0,0,0,1.5
+335,train,train/aircraft_001293.jpg,work/healed/train/0335_aircraft_001293.png,640,640,1,paint-peel-off,0.038,0,0,0,0,1.4
+336,train,train/aircraft_001302.jpg,work/healed/train/0336_aircraft_001302.png,640,640,1,paint-peel-off,0.108,0,0,0,0,1.4
+337,val,test/aircraft_000706.jpg,work/healed/val/0337_aircraft_000706.png,640,640,1,paint-peel-off,0.013,0,0,0,0,1.4
+338,val,test/aircraft_006885.jpg,work/healed/val/0338_aircraft_006885.png,640,640,82,crack dent missing-head paint-peel-off scratch,0.023,67,0,1,66,1.8
+339,train,test/aircraft_007677.jpg,work/healed/train/0339_aircraft_007677.png,640,640,1,paint-peel-off,0.032,0,0,0,0,1.4
+340,train,train/aircraft_001312.jpg,work/healed/train/0340_aircraft_001312.png,640,640,4,crack missing-head scratch,0.006,1,0,0,1,1.4
+341,train,train/aircraft_001327.jpg,work/healed/train/0341_aircraft_001327.png,640,640,1,paint-peel-off,0.319,0,0,0,0,1.4
+342,train,train/aircraft_001331.jpg,work/healed/train/0342_aircraft_001331.png,640,640,3,missing-head,0.048,3,3,0,0,19.3
+343,train,train/aircraft_001338.jpg,work/healed/train/0343_aircraft_001338.png,640,640,3,paint-peel-off,0.079,0,0,0,0,1.4
+344,test,test/aircraft_009360.jpg,work/healed/test/0344_aircraft_009360.png,640,640,2,crack dent,0.515,0,0,0,0,1.4
+345,train,test/aircraft_002493.jpg,work/healed/train/0345_aircraft_002493.png,640,640,1,dent,0.139,0,0,0,0,1.4
+346,test,test/aircraft_011919.jpg,work/healed/test/0346_aircraft_011919.png,640,640,1,dent,0.006,0,0,0,0,1.4
+347,val,test/aircraft_004439.jpg,work/healed/val/0347_aircraft_004439.png,640,640,1,crack,0.286,0,0,0,0,1.4
+348,val,train/aircraft_001371.jpg,work/healed/val/0348_aircraft_001371.png,640,640,3,dent,0.041,0,0,0,0,1.4
+350,train,train/aircraft_001381.jpg,work/healed/train/0350_aircraft_001381.png,640,640,9,corrosion,0.017,0,0,0,0,1.4
+351,train,test/aircraft_004001.jpg,work/healed/train/0351_aircraft_004001.png,640,640,1,crack,0.063,0,0,0,0,1.4
+352,val,test/aircraft_009872.jpg,work/healed/val/0352_aircraft_009872.png,640,640,1,crack,0.042,0,0,0,0,1.4
+353,val,test/aircraft_007991.jpg,work/healed/val/0353_aircraft_007991.png,416,416,1,dent,0.029,0,0,0,0,0.6
+354,train,train/aircraft_001401.jpg,work/healed/train/0354_aircraft_001401.png,640,640,3,corrosion,0.367,0,0,0,0,1.4
+355,test,test/aircraft_003187.jpg,work/healed/test/0355_aircraft_003187.png,640,640,1,paint-peel-off,0.023,0,0,0,0,1.4
+356,test,train/aircraft_001428.jpg,work/healed/test/0356_aircraft_001428.png,640,640,2,crack,0.192,0,0,0,0,1.4
+357,train,train/aircraft_001429.jpg,work/healed/train/0357_aircraft_001429.png,640,640,2,corrosion,0.895,0,0,0,0,1.4
+358,train,test/aircraft_012076.jpg,work/healed/train/0358_aircraft_012076.png,640,640,1,paint-peel-off,0.064,0,0,0,0,1.4
+359,train,test/aircraft_004058.jpg,work/healed/train/0359_aircraft_004058.png,1024,1240,1,crack,0.275,0,0,0,0,8.5
+360,train,test/aircraft_012172.jpg,work/healed/train/0360_aircraft_012172.png,640,640,3,corrosion,0.047,0,0,0,0,1.5
+361,train,test/aircraft_014331.jpg,work/healed/train/0361_aircraft_014331.png,640,640,2,crack dent,0.461,0,0,0,0,1.4
+362,test,test/aircraft_009996.jpg,work/healed/test/0362_aircraft_009996.png,640,640,1,dent,0.046,0,0,0,0,1.4
+363,train,train/aircraft_001459.jpg,work/healed/train/0363_aircraft_001459.png,640,640,2,corrosion,0.009,0,0,0,0,1.4
+364,train,train/aircraft_001469.jpg,work/healed/train/0364_aircraft_001469.png,640,640,1,dent,0.167,0,0,0,0,1.4
+365,val,test/aircraft_008684.jpg,work/healed/val/0365_aircraft_008684.png,640,640,4,crack,0.095,0,0,0,0,1.4
+366,train,test/aircraft_002745.jpg,work/healed/train/0366_aircraft_002745.png,1024,1240,1,crack,0.095,0,0,0,0,8.3
+367,train,train/aircraft_001485.jpg,work/healed/train/0367_aircraft_001485.png,1024,1240,1,crack,0.068,0,0,0,0,8.1
+368,val,test/aircraft_005856.jpg,work/healed/val/0368_aircraft_005856.png,640,640,2,dent,0.14,0,0,0,0,1.5
+369,train,train/aircraft_001497.jpg,work/healed/train/0369_aircraft_001497.png,640,640,1,missing-head,0.072,1,0,1,0,5.6
+370,val,train/aircraft_001512.jpg,work/healed/val/0370_aircraft_001512.png,640,640,16,corrosion,0.052,0,0,0,0,1.4
+371,train,train/aircraft_001513.jpg,work/healed/train/0371_aircraft_001513.png,640,640,9,missing-head,0.059,9,6,3,0,52.2
+372,train,test/aircraft_008973.jpg,work/healed/train/0372_aircraft_008973.png,640,640,11,corrosion,0.347,0,0,0,0,1.4
+373,train,train/aircraft_001518.jpg,work/healed/train/0373_aircraft_001518.png,640,640,1,corrosion,0.441,0,0,0,0,1.4
+374,test,train/aircraft_001522.jpg,work/healed/test/0374_aircraft_001522.png,640,640,4,paint-peel-off,0.161,0,0,0,0,1.4
+375,val,test/aircraft_009851.jpg,work/healed/val/0375_aircraft_009851.png,640,640,3,crack dent,0.135,0,0,0,0,1.4
+376,train,test/aircraft_010676.jpg,work/healed/train/0376_aircraft_010676.png,1024,1240,1,crack,0.487,0,0,0,0,8.6
+377,train,train/aircraft_001530.jpg,work/healed/train/0377_aircraft_001530.png,640,640,1,missing-head,0.032,1,1,0,0,7.2
+378,train,test/aircraft_004185.jpg,work/healed/train/0378_aircraft_004185.png,640,640,3,crack,0.048,0,0,0,0,1.4
+379,test,train/aircraft_001582.jpg,work/healed/test/0379_aircraft_001582.png,800,800,10,dent,0.382,0,0,0,0,2.2
+380,train,train/aircraft_001591.jpg,work/healed/train/0380_aircraft_001591.png,640,480,1,corrosion,0.007,0,0,0,0,1.0
+381,train,test/aircraft_013286.jpg,work/healed/train/0381_aircraft_013286.png,416,416,1,crack,0.179,0,0,0,0,0.5
+382,val,train/aircraft_001603.jpg,work/healed/val/0382_aircraft_001603.png,416,416,2,dent,0.014,0,0,0,0,0.5
+383,train,train/aircraft_001615.jpg,work/healed/train/0383_aircraft_001615.png,640,640,1,missing-head,0.036,1,1,0,0,8.6
+384,train,train/aircraft_001626.jpg,work/healed/train/0384_aircraft_001626.png,640,640,1,paint-peel-off,0.038,0,0,0,0,1.7
+385,val,test/aircraft_008935.jpg,work/healed/val/0385_aircraft_008935.png,640,640,4,crack dent,0.182,0,0,0,0,1.4
+386,test,test/aircraft_004513.jpg,work/healed/test/0386_aircraft_004513.png,1024,1240,1,crack,0.351,0,0,0,0,8.5
+387,train,train/aircraft_001676.jpg,work/healed/train/0387_aircraft_001676.png,640,640,3,dent missing-head,0.002,2,0,0,2,1.6
+388,val,train/aircraft_001684.jpg,work/healed/val/0388_aircraft_001684.png,640,640,10,dent missing-head paint-peel-off scratch,0.057,1,0,0,1,1.4
+389,train,test/aircraft_003241.jpg,work/healed/train/0389_aircraft_003241.png,640,640,18,corrosion,0.052,0,0,0,0,1.5
+390,train,train/aircraft_001693.jpg,work/healed/train/0390_aircraft_001693.png,416,416,1,dent,0.108,0,0,0,0,0.6
+391,test,test/aircraft_003538.jpg,work/healed/test/0391_aircraft_003538.png,640,640,2,crack dent,0.143,0,0,0,0,1.4
+392,train,test/aircraft_001872.jpg,work/healed/train/0392_aircraft_001872.png,800,800,1,dent,0.082,0,0,0,0,3.6
+393,val,test/aircraft_000844.jpg,work/healed/val/0393_aircraft_000844.png,800,800,2,dent,0.146,0,0,0,0,2.9
+394,train,train/aircraft_001705.jpg,work/healed/train/0394_aircraft_001705.png,800,800,5,dent scratch,0.228,0,0,0,0,3.3
+395,train,test/aircraft_005461.jpg,work/healed/train/0395_aircraft_005461.png,640,640,1,crack,0.142,0,0,0,0,1.5
+396,train,train/aircraft_001708.jpg,work/healed/train/0396_aircraft_001708.png,800,800,1,scratch,0.376,0,0,0,0,3.7
+397,train,train/aircraft_001709.jpg,work/healed/train/0397_aircraft_001709.png,640,640,1,paint-peel-off,0.188,0,0,0,0,1.5
+398,val,test/aircraft_013720.jpg,work/healed/val/0398_aircraft_013720.png,640,640,1,paint-peel-off,0.08,0,0,0,0,1.4
+399,train,test/aircraft_008727.jpg,work/healed/train/0399_aircraft_008727.png,640,640,1,dent,0.159,0,0,0,0,1.4
+400,val,train/aircraft_001731.jpg,work/healed/val/0400_aircraft_001731.png,640,640,1,crack,0.592,0,0,0,0,1.4
+401,train,test/aircraft_002565.jpg,work/healed/train/0401_aircraft_002565.png,640,640,1,crack,0.046,0,0,0,0,1.3
+402,train,test/aircraft_004072.jpg,work/healed/train/0402_aircraft_004072.png,1024,1240,1,crack,0.179,0,0,0,0,9.5
+403,train,test/aircraft_001888.jpg,work/healed/train/0403_aircraft_001888.png,640,640,1,missing-head,0.015,1,1,0,0,6.2
+404,val,train/aircraft_001767.jpg,work/healed/val/0404_aircraft_001767.png,640,640,1,dent,0.059,0,0,0,0,1.4
+405,test,test/aircraft_013760.jpg,work/healed/test/0405_aircraft_013760.png,640,640,1,paint-peel-off,0.045,0,0,0,0,1.3
+406,train,train/aircraft_001821.jpg,work/healed/train/0406_aircraft_001821.png,640,640,1,paint-peel-off,0.016,0,0,0,0,1.4
+407,val,train/aircraft_001836.jpg,work/healed/val/0407_aircraft_001836.png,1024,1240,1,dent,0.007,0,0,0,0,8.0
+408,train,train/aircraft_001852.jpg,work/healed/train/0408_aircraft_001852.png,640,640,1,corrosion,0.073,0,0,0,0,1.5
+409,test,train/aircraft_001855.jpg,work/healed/test/0409_aircraft_001855.png,1024,1240,2,corrosion,0.008,0,0,0,0,8.0
+410,val,train/aircraft_001891.jpg,work/healed/val/0410_aircraft_001891.png,640,640,1,corrosion,0.575,0,0,0,0,1.5
+411,train,test/aircraft_004848.jpg,work/healed/train/0411_aircraft_004848.png,640,640,1,dent,0.24,0,0,0,0,1.3
+412,test,test/aircraft_001300.jpg,work/healed/test/0412_aircraft_001300.png,640,640,1,crack,0.016,0,0,0,0,1.3
+413,train,test/aircraft_001266.jpg,work/healed/train/0413_aircraft_001266.png,640,640,1,crack,0.05,0,0,0,0,1.3
+414,train,test/aircraft_014541.jpg,work/healed/train/0414_aircraft_014541.png,640,640,2,missing-head,0.082,2,2,0,0,13.8
+415,train,test/aircraft_001275.jpg,work/healed/train/0415_aircraft_001275.png,1024,1240,3,corrosion,0.051,0,0,0,0,8.7
+416,test,train/aircraft_001911.jpg,work/healed/test/0416_aircraft_001911.png,640,640,13,dent,0.027,0,0,0,0,1.5
+417,val,train/aircraft_001914.jpg,work/healed/val/0417_aircraft_001914.png,640,640,1,missing-head,0.023,1,1,0,0,7.5
+418,train,test/aircraft_006108.jpg,work/healed/train/0418_aircraft_006108.png,640,640,3,crack dent,0.551,0,0,0,0,1.4
+419,train,train/aircraft_001935.jpg,work/healed/train/0419_aircraft_001935.png,1024,1240,1,corrosion,0.011,0,0,0,0,8.6
+420,test,test/aircraft_001854.jpg,work/healed/test/0420_aircraft_001854.png,416,416,8,crack,0.213,0,0,0,0,0.7
+421,val,train/aircraft_001937.jpg,work/healed/val/0421_aircraft_001937.png,640,640,1,crack,0.174,0,0,0,0,1.5
+422,test,train/aircraft_001948.jpg,work/healed/test/0422_aircraft_001948.png,640,640,3,paint-peel-off scratch,0.254,0,0,0,0,1.4
+423,val,test/aircraft_000403.jpg,work/healed/val/0423_aircraft_000403.png,640,640,1,crack,0.029,0,0,0,0,1.7
+424,train,test/aircraft_005863.jpg,work/healed/train/0424_aircraft_005863.png,640,640,4,corrosion crack,0.031,0,0,0,0,1.5
+425,train,train/aircraft_001978.jpg,work/healed/train/0425_aircraft_001978.png,640,479,1,crack,0.043,0,0,0,0,1.1
+426,test,train/aircraft_001986.jpg,work/healed/test/0426_aircraft_001986.png,800,800,3,scratch,0.007,0,0,0,0,4.4
+427,train,test/aircraft_004975.jpg,work/healed/train/0427_aircraft_004975.png,640,640,2,corrosion,0.036,0,0,0,0,1.5
+428,test,train/aircraft_002001.jpg,work/healed/test/0428_aircraft_002001.png,640,640,1,crack,0.187,0,0,0,0,1.4
+429,train,test/aircraft_004814.jpg,work/healed/train/0429_aircraft_004814.png,640,640,3,missing-head,0.103,3,1,2,0,21.9
+430,val,train/aircraft_002004.jpg,work/healed/val/0430_aircraft_002004.png,800,800,12,scratch,0.273,0,0,0,0,4.2
+431,train,train/aircraft_002009.jpg,work/healed/train/0431_aircraft_002009.png,800,800,5,dent scratch,0.497,0,0,0,0,3.9
+432,train,train/aircraft_002022.jpg,work/healed/train/0432_aircraft_002022.png,640,640,1,missing-head,0.027,1,1,0,0,6.6
+433,val,train/aircraft_002025.jpg,work/healed/val/0433_aircraft_002025.png,640,640,2,dent,0.051,0,0,0,0,1.5
+434,val,train/aircraft_002035.jpg,work/healed/val/0434_aircraft_002035.png,640,640,4,dent missing-head scratch,0.003,2,0,0,2,1.5
+435,train,test/aircraft_012358.jpg,work/healed/train/0435_aircraft_012358.png,416,416,1,crack,0.037,0,0,0,0,0.6
+436,val,train/aircraft_002056.jpg,work/healed/val/0436_aircraft_002056.png,640,480,1,crack,0.012,0,0,0,0,1.8
+437,train,test/aircraft_007393.jpg,work/healed/train/0437_aircraft_007393.png,640,640,1,dent,0.063,0,0,0,0,3.3
+438,train,train/aircraft_002075.jpg,work/healed/train/0438_aircraft_002075.png,640,640,1,scratch,0.146,0,0,0,0,2.2
+439,val,train/aircraft_002077.jpg,work/healed/val/0439_aircraft_002077.png,1024,1240,1,corrosion,0.023,0,0,0,0,10.2
+440,test,test/aircraft_001163.jpg,work/healed/test/0440_aircraft_001163.png,640,640,2,corrosion crack,0.008,0,0,0,0,1.5
+441,test,test/aircraft_007098.jpg,work/healed/test/0441_aircraft_007098.png,416,416,1,crack,0.018,0,0,0,0,0.6
+442,train,train/aircraft_002094.jpg,work/healed/train/0442_aircraft_002094.png,640,640,3,corrosion,0.961,0,0,0,0,1.5
+443,train,test/aircraft_005758.jpg,work/healed/train/0443_aircraft_005758.png,1024,1240,1,dent,0.026,0,0,0,0,8.8
+444,train,train/aircraft_002113.jpg,work/healed/train/0444_aircraft_002113.png,480,640,1,crack,0.141,0,0,0,0,1.1
+445,val,test/aircraft_001064.jpg,work/healed/val/0445_aircraft_001064.png,640,640,4,dent paint-peel-off,0.005,0,0,0,0,1.4
+446,test,train/aircraft_002118.jpg,work/healed/test/0446_aircraft_002118.png,640,640,3,crack dent,0.105,0,0,0,0,1.4
+447,train,train/aircraft_002126.jpg,work/healed/train/0447_aircraft_002126.png,640,640,1,paint-peel-off,0.123,0,0,0,0,1.4
+448,train,train/aircraft_002127.jpg,work/healed/train/0448_aircraft_002127.png,416,416,2,crack,0.055,0,0,0,0,0.5
+449,test,train/aircraft_002129.jpg,work/healed/test/0449_aircraft_002129.png,640,640,1,missing-head,0.004,1,1,0,0,5.1
+450,train,test/aircraft_000487.jpg,work/healed/train/0450_aircraft_000487.png,640,640,1,dent,0.047,0,0,0,0,1.6
+451,train,test/aircraft_010162.jpg,work/healed/train/0451_aircraft_010162.png,1024,1240,1,corrosion,0.754,0,0,0,0,8.5
+452,val,test/aircraft_004533.jpg,work/healed/val/0452_aircraft_004533.png,640,640,1,crack,0.002,0,0,0,0,1.5
+453,test,train/aircraft_002170.jpg,work/healed/test/0453_aircraft_002170.png,1024,1240,1,corrosion,0.019,0,0,0,0,7.9
+454,test,train/aircraft_002177.jpg,work/healed/test/0454_aircraft_002177.png,640,640,1,missing-head,0.013,1,1,0,0,2.4
+455,train,train/aircraft_002179.jpg,work/healed/train/0455_aircraft_002179.png,800,800,2,scratch,0.072,0,0,0,0,3.0
+456,train,test/aircraft_010719.jpg,work/healed/train/0456_aircraft_010719.png,800,800,1,dent,0.165,0,0,0,0,2.7
+457,train,test/aircraft_005891.jpg,work/healed/train/0457_aircraft_005891.png,416,416,18,crack,0.68,0,0,0,0,0.6
+459,train,test/aircraft_001442.jpg,work/healed/train/0459_aircraft_001442.png,640,640,1,crack,0.094,0,0,0,0,2.1
+460,train,test/aircraft_010350.jpg,work/healed/train/0460_aircraft_010350.png,640,640,1,paint-peel-off,0.046,0,0,0,0,1.7
+461,train,train/aircraft_002233.jpg,work/healed/train/0461_aircraft_002233.png,640,640,4,dent,0.06,0,0,0,0,1.4
+462,val,test/aircraft_005464.jpg,work/healed/val/0462_aircraft_005464.png,640,640,9,crack dent paint-peel-off,0.03,0,0,0,0,1.5
+463,train,train/aircraft_002248.jpg,work/healed/train/0463_aircraft_002248.png,800,800,2,scratch,0.068,0,0,0,0,3.7
+464,train,test/aircraft_009454.jpg,work/healed/train/0464_aircraft_009454.png,1024,1240,2,dent,0.031,0,0,0,0,8.8
+465,train,test/aircraft_004631.jpg,work/healed/train/0465_aircraft_004631.png,1024,1240,1,dent,0.078,0,0,0,0,8.4
+466,test,train/aircraft_002284.jpg,work/healed/test/0466_aircraft_002284.png,640,640,1,crack,0.168,0,0,0,0,1.5
+467,test,train/aircraft_002315.jpg,work/healed/test/0467_aircraft_002315.png,640,640,2,crack dent,0.129,0,0,0,0,1.4
+468,train,test/aircraft_002183.jpg,work/healed/train/0468_aircraft_002183.png,640,640,1,crack,0.19,0,0,0,0,1.4
+469,train,test/aircraft_008039.jpg,work/healed/train/0469_aircraft_008039.png,640,640,1,crack,0.039,0,0,0,0,1.4
+470,train,train/aircraft_002344.jpg,work/healed/train/0470_aircraft_002344.png,640,640,2,missing-head paint-peel-off,0.003,1,0,0,1,1.4
+471,test,train/aircraft_002356.jpg,work/healed/test/0471_aircraft_002356.png,640,640,1,paint-peel-off,0.223,0,0,0,0,1.4
+472,test,train/aircraft_002383.jpg,work/healed/test/0472_aircraft_002383.png,640,640,1,dent,0.065,0,0,0,0,1.4
+473,test,train/aircraft_002388.jpg,work/healed/test/0473_aircraft_002388.png,640,640,13,crack dent missing-head scratch,0.023,7,0,0,7,1.4
+474,train,test/aircraft_008351.jpg,work/healed/train/0474_aircraft_008351.png,640,640,1,paint-peel-off,0.093,0,0,0,0,1.4
+475,train,train/aircraft_002410.jpg,work/healed/train/0475_aircraft_002410.png,640,291,2,dent,0.071,0,0,0,0,0.6
+476,train,train/aircraft_002412.jpg,work/healed/train/0476_aircraft_002412.png,1024,1240,1,dent,0.059,0,0,0,0,8.8
+477,train,test/aircraft_002255.jpg,work/healed/train/0477_aircraft_002255.png,640,640,5,corrosion,0.026,0,0,0,0,1.5
+478,train,train/aircraft_002423.jpg,work/healed/train/0478_aircraft_002423.png,640,640,1,paint-peel-off,0.049,0,0,0,0,1.4
+479,train,train/aircraft_002450.jpg,work/healed/train/0479_aircraft_002450.png,640,640,1,missing-head,0.041,1,1,0,0,8.2
+480,val,train/aircraft_002471.jpg,work/healed/val/0480_aircraft_002471.png,640,640,7,dent missing-head scratch,0.006,2,0,0,2,1.4
+481,val,test/aircraft_012769.jpg,work/healed/val/0481_aircraft_012769.png,640,640,2,corrosion,0.023,0,0,0,0,1.4
+482,train,train/aircraft_002478.jpg,work/healed/train/0482_aircraft_002478.png,640,640,1,paint-peel-off,0.097,0,0,0,0,1.5
+483,train,test/aircraft_008497.jpg,work/healed/train/0483_aircraft_008497.png,640,640,3,crack dent,0.237,0,0,0,0,1.5
+484,val,train/aircraft_002509.jpg,work/healed/val/0484_aircraft_002509.png,640,640,1,dent,0.068,0,0,0,0,1.5
+485,test,train/aircraft_002511.jpg,work/healed/test/0485_aircraft_002511.png,416,416,1,crack,0.025,0,0,0,0,0.6
+486,val,test/aircraft_005709.jpg,work/healed/val/0486_aircraft_005709.png,640,640,1,dent,0.2,0,0,0,0,1.4
+487,train,test/aircraft_006881.jpg,work/healed/train/0487_aircraft_006881.png,640,640,10,dent paint-peel-off scratch,0.042,0,0,0,0,1.4
+488,train,test/aircraft_005773.jpg,work/healed/train/0488_aircraft_005773.png,640,640,1,crack,0.019,0,0,0,0,1.4
+489,val,test/aircraft_009764.jpg,work/healed/val/0489_aircraft_009764.png,640,479,1,crack,0.1,0,0,0,0,1.1
+490,train,train/aircraft_002600.jpg,work/healed/train/0490_aircraft_002600.png,640,640,1,paint-peel-off,0.037,0,0,0,0,2.5
+491,test,test/aircraft_000878.jpg,work/healed/test/0491_aircraft_000878.png,1024,1240,2,crack dent,0.213,0,0,0,0,8.9
+493,train,train/aircraft_002620.jpg,work/healed/train/0493_aircraft_002620.png,640,640,1,missing-head,0.018,1,1,0,0,8.4
+494,val,train/aircraft_002637.jpg,work/healed/val/0494_aircraft_002637.png,640,291,1,dent,0.049,0,0,0,0,0.7
+495,train,train/aircraft_002644.jpg,work/healed/train/0495_aircraft_002644.png,286,640,1,corrosion,0.139,0,0,0,0,0.6
+496,val,test/aircraft_012133.jpg,work/healed/val/0496_aircraft_012133.png,640,640,1,paint-peel-off,0.105,0,0,0,0,1.5
+497,train,test/aircraft_012978.jpg,work/healed/train/0497_aircraft_012978.png,640,640,9,dent missing-head,0.008,1,0,0,1,1.4
+498,val,train/aircraft_002649.jpg,work/healed/val/0498_aircraft_002649.png,640,640,3,missing-head paint-peel-off,0.001,2,0,0,2,1.5
+500,train,train/aircraft_002682.jpg,work/healed/train/0500_aircraft_002682.png,640,640,2,dent,0.009,0,0,0,0,1.4
+501,train,train/aircraft_002705.jpg,work/healed/train/0501_aircraft_002705.png,640,640,2,paint-peel-off,0.228,0,0,0,0,1.5
+502,train,train/aircraft_002706.jpg,work/healed/train/0502_aircraft_002706.png,640,640,1,paint-peel-off,0.101,0,0,0,0,1.5
+503,train,test/aircraft_007667.jpg,work/healed/train/0503_aircraft_007667.png,640,640,1,dent,0.054,0,0,0,0,1.5
+504,train,train/aircraft_002725.jpg,work/healed/train/0504_aircraft_002725.png,1024,1240,1,dent,0.029,0,0,0,0,8.9
+505,test,train/aircraft_002728.jpg,work/healed/test/0505_aircraft_002728.png,640,640,1,paint-peel-off,0.038,0,0,0,0,1.5
+506,val,test/aircraft_007082.jpg,work/healed/val/0506_aircraft_007082.png,640,640,20,crack dent missing-head paint-peel-off scratch,0.098,6,0,0,6,1.4
+507,train,train/aircraft_002735.jpg,work/healed/train/0507_aircraft_002735.png,640,640,1,paint-peel-off,0.089,0,0,0,0,1.4
+508,train,test/aircraft_003625.jpg,work/healed/train/0508_aircraft_003625.png,416,416,3,dent,0.036,0,0,0,0,0.6
+509,train,train/aircraft_002766.jpg,work/healed/train/0509_aircraft_002766.png,640,640,1,crack,0.032,0,0,0,0,1.4
+510,val,train/aircraft_002805.jpg,work/healed/val/0510_aircraft_002805.png,640,640,2,dent,0.007,0,0,0,0,1.4
+511,train,test/aircraft_011944.jpg,work/healed/train/0511_aircraft_011944.png,800,800,1,dent,0.132,0,0,0,0,3.3
+512,train,train/aircraft_002812.jpg,work/healed/train/0512_aircraft_002812.png,640,640,1,missing-head,0.005,1,1,0,0,6.6
+513,train,train/aircraft_002819.jpg,work/healed/train/0513_aircraft_002819.png,800,800,2,scratch,0.015,0,0,0,0,2.9
+514,val,train/aircraft_002832.jpg,work/healed/val/0514_aircraft_002832.png,640,640,1,paint-peel-off,0.065,0,0,0,0,1.4
+515,val,train/aircraft_002854.jpg,work/healed/val/0515_aircraft_002854.png,640,640,1,crack,0.543,0,0,0,0,1.4
+516,train,train/aircraft_002884.jpg,work/healed/train/0516_aircraft_002884.png,640,640,4,corrosion dent,0.056,0,0,0,0,1.4
+517,train,train/aircraft_002893.jpg,work/healed/train/0517_aircraft_002893.png,640,640,1,dent,0.005,0,0,0,0,1.4
+518,train,train/aircraft_002898.jpg,work/healed/train/0518_aircraft_002898.png,480,640,1,crack,0.243,0,0,0,0,1.1
+519,test,test/aircraft_012209.jpg,work/healed/test/0519_aircraft_012209.png,640,640,2,crack dent,0.014,0,0,0,0,2.4
+520,train,test/aircraft_013204.jpg,work/healed/train/0520_aircraft_013204.png,640,640,1,corrosion,0.01,0,0,0,0,1.5
+521,val,train/aircraft_002912.jpg,work/healed/val/0521_aircraft_002912.png,1024,1240,1,crack,0.031,0,0,0,0,8.8
+522,test,test/aircraft_006080.jpg,work/healed/test/0522_aircraft_006080.png,640,640,3,crack dent,0.134,0,0,0,0,1.5
+523,train,test/aircraft_011933.jpg,work/healed/train/0523_aircraft_011933.png,640,640,3,crack,0.028,0,0,0,0,1.4
+524,test,test/aircraft_012439.jpg,work/healed/test/0524_aircraft_012439.png,480,640,4,corrosion,0.015,0,0,0,0,1.0
+525,test,train/aircraft_002936.jpg,work/healed/test/0525_aircraft_002936.png,640,640,2,crack,0.015,0,0,0,0,1.4
+526,train,test/aircraft_002845.jpg,work/healed/train/0526_aircraft_002845.png,1024,1240,3,dent,0.03,0,0,0,0,8.6
+527,train,test/aircraft_002286.jpg,work/healed/train/0527_aircraft_002286.png,640,640,1,dent,0.056,0,0,0,0,1.5
+528,train,train/aircraft_002943.jpg,work/healed/train/0528_aircraft_002943.png,800,800,1,scratch,0.016,0,0,0,0,2.0
+529,train,test/aircraft_004795.jpg,work/healed/train/0529_aircraft_004795.png,800,800,1,dent,0.064,0,0,0,0,1.9
+530,val,train/aircraft_002962.jpg,work/healed/val/0530_aircraft_002962.png,640,480,1,crack,0.157,0,0,0,0,1.1
+531,train,train/aircraft_002972.jpg,work/healed/train/0531_aircraft_002972.png,640,291,1,dent,0.003,0,0,0,0,0.6
+532,train,train/aircraft_003027.jpg,work/healed/train/0532_aircraft_003027.png,800,800,12,scratch,0.028,0,0,0,0,3.8
+533,test,test/aircraft_003932.jpg,work/healed/test/0533_aircraft_003932.png,640,640,1,corrosion,1.0,0,0,0,0,1.6
+534,test,test/aircraft_013858.jpg,work/healed/test/0534_aircraft_013858.png,640,640,1,paint-peel-off,0.062,0,0,0,0,1.4
+535,train,test/aircraft_014013.jpg,work/healed/train/0535_aircraft_014013.png,640,640,1,paint-peel-off,0.09,0,0,0,0,1.4
+536,train,train/aircraft_003096.jpg,work/healed/train/0536_aircraft_003096.png,640,640,25,crack dent missing-head paint-peel-off scratch,0.019,8,0,0,8,1.4
+537,train,test/aircraft_000493.jpg,work/healed/train/0537_aircraft_000493.png,640,640,1,scratch,0.168,0,0,0,0,1.4
+538,train,train/aircraft_003112.jpg,work/healed/train/0538_aircraft_003112.png,640,640,1,corrosion,1.0,0,0,0,0,1.4
+539,train,train/aircraft_003145.jpg,work/healed/train/0539_aircraft_003145.png,640,640,1,paint-peel-off,0.058,0,0,0,0,1.4
+540,train,test/aircraft_005368.jpg,work/healed/train/0540_aircraft_005368.png,640,640,1,missing-head,0.325,1,0,1,0,2.8
+541,train,train/aircraft_003158.jpg,work/healed/train/0541_aircraft_003158.png,640,640,1,paint-peel-off,0.177,0,0,0,0,1.4
+542,train,train/aircraft_003174.jpg,work/healed/train/0542_aircraft_003174.png,800,800,15,scratch,0.186,0,0,0,0,3.4
+543,val,train/aircraft_003175.jpg,work/healed/val/0543_aircraft_003175.png,640,291,4,corrosion dent,0.016,0,0,0,0,0.7
+544,test,test/aircraft_000652.jpg,work/healed/test/0544_aircraft_000652.png,640,640,1,crack,0.444,0,0,0,0,1.4
+545,test,train/aircraft_003227.jpg,work/healed/test/0545_aircraft_003227.png,640,640,2,dent,0.183,0,0,0,0,1.4
+546,train,train/aircraft_003233.jpg,work/healed/train/0546_aircraft_003233.png,800,800,2,scratch,0.111,0,0,0,0,3.9
+547,train,train/aircraft_003243.jpg,work/healed/train/0547_aircraft_003243.png,640,640,1,paint-peel-off,0.34,0,0,0,0,1.5
+548,test,train/aircraft_003249.jpg,work/healed/test/0548_aircraft_003249.png,800,800,3,dent scratch,0.039,0,0,0,0,3.2
+549,test,train/aircraft_003256.jpg,work/healed/test/0549_aircraft_003256.png,640,291,1,dent,0.045,0,0,0,0,0.7
+550,train,test/aircraft_005580.jpg,work/healed/train/0550_aircraft_005580.png,800,800,18,scratch,0.064,0,0,0,0,3.8
+551,test,train/aircraft_003286.jpg,work/healed/test/0551_aircraft_003286.png,640,640,1,scratch,0.121,0,0,0,0,1.5
+552,val,train/aircraft_003306.jpg,work/healed/val/0552_aircraft_003306.png,640,640,7,corrosion,0.419,0,0,0,0,1.4
+553,train,test/aircraft_002492.jpg,work/healed/train/0553_aircraft_002492.png,640,640,1,dent,0.839,0,0,0,0,1.4
+554,train,train/aircraft_003373.jpg,work/healed/train/0554_aircraft_003373.png,800,800,4,scratch,0.07,0,0,0,0,3.2
+555,train,test/aircraft_012796.jpg,work/healed/train/0555_aircraft_012796.png,640,640,4,paint-peel-off,0.176,0,0,0,0,1.4
+556,train,train/aircraft_003392.jpg,work/healed/train/0556_aircraft_003392.png,1024,1240,1,corrosion,0.074,0,0,0,0,8.4
+557,val,train/aircraft_003402.jpg,work/healed/val/0557_aircraft_003402.png,640,640,11,crack dent missing-head scratch,0.002,5,0,0,5,1.5
+558,test,test/aircraft_012580.jpg,work/healed/test/0558_aircraft_012580.png,640,640,1,paint-peel-off,0.094,0,0,0,0,1.4
+559,test,train/aircraft_003450.jpg,work/healed/test/0559_aircraft_003450.png,640,640,1,crack,0.601,0,0,0,0,1.4
+561,train,test/aircraft_008789.jpg,work/healed/train/0561_aircraft_008789.png,640,640,2,crack,0.357,0,0,0,0,1.4
+562,train,train/aircraft_003474.jpg,work/healed/train/0562_aircraft_003474.png,640,640,3,dent,0.139,0,0,0,0,1.4
+563,train,test/aircraft_005854.jpg,work/healed/train/0563_aircraft_005854.png,640,640,3,dent paint-peel-off,0.008,0,0,0,0,1.4
+564,train,test/aircraft_008416.jpg,work/healed/train/0564_aircraft_008416.png,640,640,1,crack,0.189,0,0,0,0,1.4
+565,train,train/aircraft_003498.jpg,work/healed/train/0565_aircraft_003498.png,640,640,2,dent,0.016,0,0,0,0,1.4
+566,test,train/aircraft_003541.jpg,work/healed/test/0566_aircraft_003541.png,640,640,1,paint-peel-off,0.075,0,0,0,0,1.4
+567,train,train/aircraft_003577.jpg,work/healed/train/0567_aircraft_003577.png,640,640,5,dent missing-head,0.051,2,0,0,2,1.4
+568,val,train/aircraft_003601.jpg,work/healed/val/0568_aircraft_003601.png,416,416,2,crack,0.302,0,0,0,0,0.6
+569,test,train/aircraft_003606.jpg,work/healed/test/0569_aircraft_003606.png,640,640,2,missing-head,0.215,2,2,0,0,2.3
+571,test,train/aircraft_003651.jpg,work/healed/test/0571_aircraft_003651.png,640,640,1,dent,0.757,0,0,0,0,1.4
+572,test,train/aircraft_003693.jpg,work/healed/test/0572_aircraft_003693.png,640,640,27,crack dent paint-peel-off scratch,0.052,0,0,0,0,1.4
+573,train,train/aircraft_003702.jpg,work/healed/train/0573_aircraft_003702.png,1024,1240,4,corrosion,0.031,0,0,0,0,8.4
+574,train,train/aircraft_003703.jpg,work/healed/train/0574_aircraft_003703.png,640,640,16,dent missing-head paint-peel-off scratch,0.036,4,0,0,4,1.6
+575,train,test/aircraft_000385.jpg,work/healed/train/0575_aircraft_000385.png,640,640,2,crack dent,0.008,0,0,0,0,1.4
+576,val,train/aircraft_003725.jpg,work/healed/val/0576_aircraft_003725.png,640,291,2,crack dent,0.063,0,0,0,0,0.7
+577,train,train/aircraft_003733.jpg,work/healed/train/0577_aircraft_003733.png,640,640,3,paint-peel-off,0.139,0,0,0,0,1.4
+578,train,train/aircraft_003780.jpg,work/healed/train/0578_aircraft_003780.png,800,800,1,dent,0.039,0,0,0,0,4.0
+579,val,test/aircraft_001156.jpg,work/healed/val/0579_aircraft_001156.png,1024,1240,6,crack dent,0.035,0,0,0,0,8.7
+580,train,test/aircraft_005034.jpg,work/healed/train/0580_aircraft_005034.png,640,640,2,dent,0.01,0,0,0,0,1.5
+581,test,test/aircraft_006818.jpg,work/healed/test/0581_aircraft_006818.png,640,640,1,corrosion,0.919,0,0,0,0,1.4
+582,train,train/aircraft_003858.jpg,work/healed/train/0582_aircraft_003858.png,640,640,1,paint-peel-off,0.115,0,0,0,0,1.4
+584,test,train/aircraft_003893.jpg,work/healed/test/0584_aircraft_003893.png,640,640,3,crack,0.03,0,0,0,0,1.4
+585,test,train/aircraft_003902.jpg,work/healed/test/0585_aircraft_003902.png,640,640,1,paint-peel-off,0.176,0,0,0,0,1.4
+586,test,test/aircraft_009719.jpg,work/healed/test/0586_aircraft_009719.png,640,640,1,corrosion,0.327,0,0,0,0,1.4
+587,val,train/aircraft_003937.jpg,work/healed/val/0587_aircraft_003937.png,640,640,1,missing-head,0.028,1,1,0,0,8.0
+588,train,test/aircraft_010640.jpg,work/healed/train/0588_aircraft_010640.png,640,640,1,missing-head,0.053,1,1,0,0,7.8
+589,val,test/aircraft_004035.jpg,work/healed/val/0589_aircraft_004035.png,640,640,1,paint-peel-off,0.078,0,0,0,0,1.4
+590,train,test/aircraft_014481.jpg,work/healed/train/0590_aircraft_014481.png,640,640,1,paint-peel-off,0.675,0,0,0,0,1.4
+591,test,train/aircraft_003971.jpg,work/healed/test/0591_aircraft_003971.png,640,640,2,crack dent,0.288,0,0,0,0,1.4
+592,val,test/aircraft_005186.jpg,work/healed/val/0592_aircraft_005186.png,800,800,2,scratch,0.018,0,0,0,0,2.1
+593,val,train/aircraft_004007.jpg,work/healed/val/0593_aircraft_004007.png,640,640,1,crack,0.024,0,0,0,0,1.4
+594,val,train/aircraft_004046.jpg,work/healed/val/0594_aircraft_004046.png,640,640,2,paint-peel-off,0.001,0,0,0,0,1.4
+595,train,train/aircraft_004050.jpg,work/healed/train/0595_aircraft_004050.png,640,640,2,paint-peel-off,0.042,0,0,0,0,1.4
+596,train,train/aircraft_004053.jpg,work/healed/train/0596_aircraft_004053.png,1024,1240,1,corrosion,0.006,0,0,0,0,8.2
+597,test,test/aircraft_003717.jpg,work/healed/test/0597_aircraft_003717.png,416,416,1,crack,0.154,0,0,0,0,0.7
+598,train,test/aircraft_002143.jpg,work/healed/train/0598_aircraft_002143.png,640,640,5,corrosion dent,0.017,0,0,0,0,1.5
+599,test,train/aircraft_004094.jpg,work/healed/test/0599_aircraft_004094.png,640,640,1,dent,0.977,0,0,0,0,1.4
+600,train,train/aircraft_004103.jpg,work/healed/train/0600_aircraft_004103.png,640,640,20,missing-head scratch,0.003,19,0,0,19,1.4
+601,test,test/aircraft_010435.jpg,work/healed/test/0601_aircraft_010435.png,640,640,4,dent,0.107,0,0,0,0,1.4
+602,test,train/aircraft_004111.jpg,work/healed/test/0602_aircraft_004111.png,640,640,1,paint-peel-off,0.035,0,0,0,0,1.4
+603,train,train/aircraft_004119.jpg,work/healed/train/0603_aircraft_004119.png,1024,1240,1,corrosion,0.503,0,0,0,0,8.4
+604,test,train/aircraft_004122.jpg,work/healed/test/0604_aircraft_004122.png,800,800,5,dent scratch,0.12,0,0,0,0,2.3
+605,val,train/aircraft_004132.jpg,work/healed/val/0605_aircraft_004132.png,800,800,2,dent scratch,0.056,0,0,0,0,2.2
+606,train,train/aircraft_004161.jpg,work/healed/train/0606_aircraft_004161.png,1024,1240,1,corrosion,0.005,0,0,0,0,8.2
+607,val,train/aircraft_004172.jpg,work/healed/val/0607_aircraft_004172.png,640,640,1,crack,0.039,0,0,0,0,1.5
+608,test,test/aircraft_004283.jpg,work/healed/test/0608_aircraft_004283.png,640,640,5,corrosion,0.054,0,0,0,0,1.4
+609,test,train/aircraft_004179.jpg,work/healed/test/0609_aircraft_004179.png,640,640,3,crack,0.058,0,0,0,0,1.4
+610,val,train/aircraft_004191.jpg,work/healed/val/0610_aircraft_004191.png,640,640,5,paint-peel-off,0.016,0,0,0,0,1.4
+611,test,train/aircraft_004212.jpg,work/healed/test/0611_aircraft_004212.png,640,640,6,missing-head,0.057,6,6,0,0,40.8
+612,train,train/aircraft_004215.jpg,work/healed/train/0612_aircraft_004215.png,800,800,3,dent,0.196,0,0,0,0,2.9
+613,val,train/aircraft_004229.jpg,work/healed/val/0613_aircraft_004229.png,640,640,29,crack dent missing-head paint-peel-off,0.013,13,0,0,13,1.4
+614,test,train/aircraft_004268.jpg,work/healed/test/0614_aircraft_004268.png,640,640,2,paint-peel-off,0.037,0,0,0,0,1.4
+615,test,train/aircraft_004269.jpg,work/healed/test/0615_aircraft_004269.png,1024,1240,1,crack,0.27,0,0,0,0,8.3
+616,train,train/aircraft_004272.jpg,work/healed/train/0616_aircraft_004272.png,640,640,1,dent,0.122,0,0,0,0,1.6
+617,val,test/aircraft_004135.jpg,work/healed/val/0617_aircraft_004135.png,1024,1240,4,crack dent,0.297,0,0,0,0,8.8
+618,train,train/aircraft_004346.jpg,work/healed/train/0618_aircraft_004346.png,640,640,4,dent paint-peel-off scratch,0.007,0,0,0,0,1.6
+619,val,test/aircraft_002225.jpg,work/healed/val/0619_aircraft_002225.png,640,480,1,crack,0.008,0,0,0,0,1.1
+620,train,train/aircraft_004381.jpg,work/healed/train/0620_aircraft_004381.png,640,640,1,dent,0.652,0,0,0,0,1.9
+621,train,train/aircraft_004382.jpg,work/healed/train/0621_aircraft_004382.png,640,481,1,crack,0.013,0,0,0,0,1.1
+622,train,train/aircraft_004396.jpg,work/healed/train/0622_aircraft_004396.png,640,640,1,paint-peel-off,0.203,0,0,0,0,2.5
+623,val,train/aircraft_004402.jpg,work/healed/val/0623_aircraft_004402.png,640,640,28,dent missing-head scratch,0.04,14,0,0,14,1.5
+624,train,test/aircraft_004118.jpg,work/healed/train/0624_aircraft_004118.png,1024,1240,1,dent,0.002,0,0,0,0,8.6
+625,train,test/aircraft_004772.jpg,work/healed/train/0625_aircraft_004772.png,800,800,4,scratch,0.221,0,0,0,0,2.1
+626,train,train/aircraft_004471.jpg,work/healed/train/0626_aircraft_004471.png,640,640,1,paint-peel-off,0.188,0,0,0,0,1.4
+627,train,train/aircraft_004528.jpg,work/healed/train/0627_aircraft_004528.png,640,640,3,missing-head,0.107,3,3,0,0,18.3
+628,train,train/aircraft_004531.jpg,work/healed/train/0628_aircraft_004531.png,640,640,2,dent missing-head,0.001,1,0,0,1,1.4
+629,train,train/aircraft_004537.jpg,work/healed/train/0629_aircraft_004537.png,640,640,1,missing-head,0.01,1,1,0,0,1.8
+630,train,test/aircraft_004599.jpg,work/healed/train/0630_aircraft_004599.png,640,640,3,dent,0.126,0,0,0,0,1.5
+631,val,test/aircraft_004339.jpg,work/healed/val/0631_aircraft_004339.png,640,640,1,corrosion,0.003,0,0,0,0,1.5
+632,train,train/aircraft_004576.jpg,work/healed/train/0632_aircraft_004576.png,1024,1240,1,crack,0.053,0,0,0,0,8.0
+633,train,test/aircraft_002561.jpg,work/healed/train/0633_aircraft_002561.png,640,640,13,paint-peel-off,0.012,0,0,0,0,1.5
+634,train,train/aircraft_004595.jpg,work/healed/train/0634_aircraft_004595.png,640,640,2,missing-head,0.026,2,2,0,0,14.3
+635,train,train/aircraft_004597.jpg,work/healed/train/0635_aircraft_004597.png,640,640,1,paint-peel-off,0.006,0,0,0,0,1.4
+636,train,test/aircraft_008007.jpg,work/healed/train/0636_aircraft_008007.png,1024,1240,1,dent,0.013,0,0,0,0,8.8
+637,train,train/aircraft_004604.jpg,work/healed/train/0637_aircraft_004604.png,800,800,9,scratch,0.076,0,0,0,0,3.7
+638,val,train/aircraft_004650.jpg,work/healed/val/0638_aircraft_004650.png,640,640,1,missing-head,0.014,1,1,0,0,8.2
+639,train,test/aircraft_004054.jpg,work/healed/train/0639_aircraft_004054.png,640,640,4,paint-peel-off,0.119,0,0,0,0,1.5
+640,train,train/aircraft_004733.jpg,work/healed/train/0640_aircraft_004733.png,640,640,1,paint-peel-off,0.161,0,0,0,0,1.5
+641,train,train/aircraft_004851.jpg,work/healed/train/0641_aircraft_004851.png,640,640,9,missing-head,0.049,9,9,0,0,62.1
+642,train,train/aircraft_004856.jpg,work/healed/train/0642_aircraft_004856.png,640,640,5,paint-peel-off,0.241,0,0,0,0,1.4
+643,train,train/aircraft_004865.jpg,work/healed/train/0643_aircraft_004865.png,640,640,2,paint-peel-off,0.379,0,0,0,0,1.6
+644,train,train/aircraft_004881.jpg,work/healed/train/0644_aircraft_004881.png,640,640,67,missing-head scratch,0.021,66,0,0,66,1.4
+645,train,train/aircraft_004923.jpg,work/healed/train/0645_aircraft_004923.png,800,800,4,dent scratch,0.226,0,0,0,0,3.7
+646,test,train/aircraft_004926.jpg,work/healed/test/0646_aircraft_004926.png,640,640,3,missing-head,0.15,3,3,0,0,10.6
+647,train,train/aircraft_004940.jpg,work/healed/train/0647_aircraft_004940.png,640,640,2,missing-head,0.009,2,1,1,0,2.9
+648,train,train/aircraft_004967.jpg,work/healed/train/0648_aircraft_004967.png,640,640,6,corrosion,0.075,0,0,0,0,1.4
+649,test,test/aircraft_007258.jpg,work/healed/test/0649_aircraft_007258.png,640,480,4,corrosion,0.183,0,0,0,0,1.1
+650,train,train/aircraft_005045.jpg,work/healed/train/0650_aircraft_005045.png,640,640,13,dent missing-head paint-peel-off,0.011,7,0,0,7,2.6
+651,val,test/aircraft_008081.jpg,work/healed/val/0651_aircraft_008081.png,640,640,1,missing-head,0.006,1,1,0,0,8.5
+652,train,train/aircraft_005094.jpg,work/healed/train/0652_aircraft_005094.png,640,640,1,scratch,0.264,0,0,0,0,1.5
+653,val,train/aircraft_005096.jpg,work/healed/val/0653_aircraft_005096.png,640,640,2,crack,0.573,0,0,0,0,1.4
+654,val,test/aircraft_001330.jpg,work/healed/val/0654_aircraft_001330.png,1024,1240,1,corrosion,0.141,0,0,0,0,9.5
+655,train,test/aircraft_004625.jpg,work/healed/train/0655_aircraft_004625.png,640,640,5,corrosion,0.052,0,0,0,0,1.5
+656,train,train/aircraft_005176.jpg,work/healed/train/0656_aircraft_005176.png,1024,1240,1,crack,0.127,0,0,0,0,8.3
+657,test,test/aircraft_000268.jpg,work/healed/test/0657_aircraft_000268.png,640,640,1,missing-head,0.117,1,1,0,0,2.4
+658,test,train/aircraft_005188.jpg,work/healed/test/0658_aircraft_005188.png,800,800,6,scratch,0.024,0,0,0,0,3.0
+659,val,test/aircraft_011277.jpg,work/healed/val/0659_aircraft_011277.png,640,640,1,paint-peel-off,0.035,0,0,0,0,1.4
+660,train,train/aircraft_005280.jpg,work/healed/train/0660_aircraft_005280.png,640,640,2,corrosion,0.182,0,0,0,0,1.5
+661,train,test/aircraft_012877.jpg,work/healed/train/0661_aircraft_012877.png,640,640,1,missing-head,0.019,1,1,0,0,7.6
+662,train,test/aircraft_002525.jpg,work/healed/train/0662_aircraft_002525.png,640,291,4,crack dent,0.068,0,0,0,0,0.7
+663,test,train/aircraft_005340.jpg,work/healed/test/0663_aircraft_005340.png,640,640,7,crack dent missing-head paint-peel-off scratch,0.025,2,0,0,2,2.0
+664,train,train/aircraft_005351.jpg,work/healed/train/0664_aircraft_005351.png,640,640,1,paint-peel-off,0.162,0,0,0,0,1.5
+665,train,train/aircraft_005374.jpg,work/healed/train/0665_aircraft_005374.png,640,640,1,dent,0.069,0,0,0,0,1.4
+666,val,train/aircraft_005389.jpg,work/healed/val/0666_aircraft_005389.png,640,640,30,crack missing-head paint-peel-off,0.004,28,0,0,28,1.5
+667,train,train/aircraft_005422.jpg,work/healed/train/0667_aircraft_005422.png,800,800,3,scratch,0.056,0,0,0,0,3.8
+668,train,train/aircraft_005425.jpg,work/healed/train/0668_aircraft_005425.png,640,640,1,scratch,0.524,0,0,0,0,1.6
+669,val,train/aircraft_005452.jpg,work/healed/val/0669_aircraft_005452.png,640,640,34,dent,0.023,0,0,0,0,1.5
+670,test,test/aircraft_012197.jpg,work/healed/test/0670_aircraft_012197.png,640,640,14,missing-head,0.015,14,1,9,4,64.0
+671,train,train/aircraft_005523.jpg,work/healed/train/0671_aircraft_005523.png,800,800,2,dent scratch,0.108,0,0,0,0,3.6
+672,val,train/aircraft_005562.jpg,work/healed/val/0672_aircraft_005562.png,640,640,18,missing-head paint-peel-off scratch,0.121,5,0,0,5,1.6
+673,train,test/aircraft_012732.jpg,work/healed/train/0673_aircraft_012732.png,640,640,13,dent missing-head scratch,0.04,2,0,0,2,1.4
+674,train,test/aircraft_001665.jpg,work/healed/train/0674_aircraft_001665.png,416,416,1,crack,0.204,0,0,0,0,0.7
+675,test,train/aircraft_005671.jpg,work/healed/test/0675_aircraft_005671.png,640,640,4,crack dent,0.223,0,0,0,0,1.7
+676,train,train/aircraft_005690.jpg,work/healed/train/0676_aircraft_005690.png,640,640,1,paint-peel-off,0.054,0,0,0,0,1.6
+677,val,train/aircraft_005707.jpg,work/healed/val/0677_aircraft_005707.png,640,640,3,missing-head,0.014,3,3,0,0,21.3
+678,test,test/aircraft_009063.jpg,work/healed/test/0678_aircraft_009063.png,640,640,2,missing-head paint-peel-off,0.135,1,1,0,0,2.6
+679,val,train/aircraft_005809.jpg,work/healed/val/0679_aircraft_005809.png,640,640,1,missing-head,0.068,1,1,0,0,8.1
+680,train,train/aircraft_005848.jpg,work/healed/train/0680_aircraft_005848.png,640,640,1,scratch,0.043,0,0,0,0,2.0
+681,train,train/aircraft_005885.jpg,work/healed/train/0681_aircraft_005885.png,640,640,1,scratch,0.087,0,0,0,0,1.6
+682,train,train/aircraft_005892.jpg,work/healed/train/0682_aircraft_005892.png,800,800,28,dent,0.016,0,0,0,0,4.6
+683,train,test/aircraft_007618.jpg,work/healed/train/0683_aircraft_007618.png,640,640,1,corrosion,0.23,0,0,0,0,1.8
+684,val,train/aircraft_005899.jpg,work/healed/val/0684_aircraft_005899.png,640,640,8,dent scratch,0.017,0,0,0,0,1.6
+685,train,train/aircraft_005971.jpg,work/healed/train/0685_aircraft_005971.png,640,640,2,paint-peel-off,0.064,0,0,0,0,1.6
+686,test,train/aircraft_006010.jpg,work/healed/test/0686_aircraft_006010.png,640,640,1,crack,0.008,0,0,0,0,1.5
+687,train,test/aircraft_000101.jpg,work/healed/train/0687_aircraft_000101.png,640,640,4,crack dent,0.687,0,0,0,0,1.5
+688,train,test/aircraft_007800.jpg,work/healed/train/0688_aircraft_007800.png,800,800,4,dent scratch,0.357,0,0,0,0,4.1
+689,test,train/aircraft_006073.jpg,work/healed/test/0689_aircraft_006073.png,640,640,3,missing-head,0.08,3,3,0,0,23.2
+690,val,train/aircraft_006127.jpg,work/healed/val/0690_aircraft_006127.png,640,640,6,corrosion,0.825,0,0,0,0,1.6
+691,train,test/aircraft_003368.jpg,work/healed/train/0691_aircraft_003368.png,640,640,5,corrosion,0.537,0,0,0,0,1.4
+692,train,train/aircraft_006151.jpg,work/healed/train/0692_aircraft_006151.png,640,640,1,paint-peel-off,0.209,0,0,0,0,1.4
+693,train,train/aircraft_006172.jpg,work/healed/train/0693_aircraft_006172.png,800,800,1,scratch,0.046,0,0,0,0,4.2
+694,train,train/aircraft_006196.jpg,work/healed/train/0694_aircraft_006196.png,640,640,1,missing-head,0.029,1,1,0,0,8.3
+695,train,train/aircraft_006207.jpg,work/healed/train/0695_aircraft_006207.png,640,640,2,paint-peel-off,0.029,0,0,0,0,1.9
+696,val,test/aircraft_011282.jpg,work/healed/val/0696_aircraft_011282.png,640,640,1,scratch,0.422,0,0,0,0,1.7
+697,val,train/aircraft_006365.jpg,work/healed/val/0697_aircraft_006365.png,800,800,3,scratch,0.021,0,0,0,0,4.0
+698,train,train/aircraft_006388.jpg,work/healed/train/0698_aircraft_006388.png,640,640,2,dent,0.38,0,0,0,0,1.5
+699,train,test/aircraft_008751.jpg,work/healed/train/0699_aircraft_008751.png,640,640,1,corrosion,0.004,0,0,0,0,1.4
+700,val,train/aircraft_006522.jpg,work/healed/val/0700_aircraft_006522.png,640,640,2,missing-head,0.016,2,2,0,0,6.1
+701,val,test/aircraft_001430.jpg,work/healed/val/0701_aircraft_001430.png,800,800,1,scratch,0.002,0,0,0,0,3.8
+702,val,train/aircraft_006673.jpg,work/healed/val/0702_aircraft_006673.png,800,800,1,scratch,0.096,0,0,0,0,3.9
+703,train,train/aircraft_006686.jpg,work/healed/train/0703_aircraft_006686.png,640,640,5,missing-head paint-peel-off,0.003,3,0,0,3,1.6
+704,train,train/aircraft_006719.jpg,work/healed/train/0704_aircraft_006719.png,640,640,13,paint-peel-off,0.165,0,0,0,0,1.4
+705,test,test/aircraft_013225.jpg,work/healed/test/0705_aircraft_013225.png,640,640,122,crack dent missing-head scratch,0.012,113,0,0,113,1.4
+707,train,train/aircraft_006784.jpg,work/healed/train/0707_aircraft_006784.png,640,640,2,paint-peel-off,0.066,0,0,0,0,1.4
+708,test,train/aircraft_006790.jpg,work/healed/test/0708_aircraft_006790.png,640,640,3,corrosion,0.023,0,0,0,0,1.4
+709,train,test/aircraft_010146.jpg,work/healed/train/0709_aircraft_010146.png,640,640,1,missing-head,0.066,1,1,0,0,6.8
+710,val,train/aircraft_006860.jpg,work/healed/val/0710_aircraft_006860.png,640,640,34,crack dent missing-head paint-peel-off,0.019,16,0,0,16,1.4
+711,val,train/aircraft_006871.jpg,work/healed/val/0711_aircraft_006871.png,640,640,16,crack dent missing-head scratch,0.021,6,0,0,6,1.4
+712,train,train/aircraft_006958.jpg,work/healed/train/0712_aircraft_006958.png,640,640,13,paint-peel-off scratch,0.037,0,0,0,0,1.3
+713,test,train/aircraft_006960.jpg,work/healed/test/0713_aircraft_006960.png,640,640,3,crack,0.065,0,0,0,0,1.3
+714,val,test/aircraft_000034.jpg,work/healed/val/0714_aircraft_000034.png,640,640,1,dent,0.087,0,0,0,0,1.3
+715,train,train/aircraft_007075.jpg,work/healed/train/0715_aircraft_007075.png,640,640,1,paint-peel-off,0.025,0,0,0,0,1.3
+716,test,train/aircraft_007175.jpg,work/healed/test/0716_aircraft_007175.png,640,640,1,missing-head,0.04,1,1,0,0,1.7
+717,train,train/aircraft_007220.jpg,work/healed/train/0717_aircraft_007220.png,800,800,4,scratch,0.014,0,0,0,0,3.6
+718,val,train/aircraft_007283.jpg,work/healed/val/0718_aircraft_007283.png,800,800,2,scratch,0.014,0,0,0,0,3.5
+719,val,train/aircraft_007444.jpg,work/healed/val/0719_aircraft_007444.png,640,640,1,scratch,0.008,0,0,0,0,1.6
+720,val,train/aircraft_007473.jpg,work/healed/val/0720_aircraft_007473.png,640,640,1,scratch,0.082,0,0,0,0,1.4
+721,val,train/aircraft_007478.jpg,work/healed/val/0721_aircraft_007478.png,800,800,1,scratch,0.007,0,0,0,0,3.5
+722,test,train/aircraft_007500.jpg,work/healed/test/0722_aircraft_007500.png,640,640,3,crack dent,0.178,0,0,0,0,1.5
+723,test,train/aircraft_007578.jpg,work/healed/test/0723_aircraft_007578.png,800,800,9,scratch,0.016,0,0,0,0,3.4
+724,train,train/aircraft_007597.jpg,work/healed/train/0724_aircraft_007597.png,640,640,1,paint-peel-off,0.247,0,0,0,0,1.5
+725,train,train/aircraft_007620.jpg,work/healed/train/0725_aircraft_007620.png,1024,1240,1,crack,0.004,0,0,0,0,8.6
+726,train,train/aircraft_007624.jpg,work/healed/train/0726_aircraft_007624.png,640,640,1,paint-peel-off,0.042,0,0,0,0,1.5
+727,train,train/aircraft_007641.jpg,work/healed/train/0727_aircraft_007641.png,800,800,1,dent,0.051,0,0,0,0,2.4
+728,val,train/aircraft_007654.jpg,work/healed/val/0728_aircraft_007654.png,640,640,1,missing-head,0.092,1,1,0,0,7.5
+729,train,train/aircraft_007658.jpg,work/healed/train/0729_aircraft_007658.png,640,640,2,missing-head,0.051,2,2,0,0,13.3
+730,train,test/aircraft_013704.jpg,work/healed/train/0730_aircraft_013704.png,640,640,1,paint-peel-off,0.067,0,0,0,0,1.3
+731,train,train/aircraft_007808.jpg,work/healed/train/0731_aircraft_007808.png,640,640,1,crack,0.119,0,0,0,0,1.3
+732,test,train/aircraft_007834.jpg,work/healed/test/0732_aircraft_007834.png,640,640,4,paint-peel-off,0.002,0,0,0,0,1.3
+733,train,train/aircraft_007892.jpg,work/healed/train/0733_aircraft_007892.png,640,640,1,scratch,0.046,0,0,0,0,1.3
+734,val,train/aircraft_008037.jpg,work/healed/val/0734_aircraft_008037.png,640,640,28,crack dent missing-head,0.004,19,0,0,19,1.3
+735,train,train/aircraft_008038.jpg,work/healed/train/0735_aircraft_008038.png,640,640,54,dent missing-head paint-peel-off scratch,0.019,35,0,0,35,1.3
+736,train,train/aircraft_008053.jpg,work/healed/train/0736_aircraft_008053.png,640,640,1,missing-head,0.026,1,1,0,0,7.2
+737,train,train/aircraft_008125.jpg,work/healed/train/0737_aircraft_008125.png,640,640,1,paint-peel-off,0.133,0,0,0,0,1.5
+738,train,train/aircraft_008128.jpg,work/healed/train/0738_aircraft_008128.png,640,640,77,crack dent missing-head paint-peel-off scratch,0.03,53,0,2,51,2.6
+739,train,train/aircraft_008166.jpg,work/healed/train/0739_aircraft_008166.png,640,640,1,missing-head,0.038,1,1,0,0,3.4
+740,train,train/aircraft_008204.jpg,work/healed/train/0740_aircraft_008204.png,640,640,5,crack dent missing-head paint-peel-off,0.009,2,0,0,2,1.4
+741,train,test/aircraft_010232.jpg,work/healed/train/0741_aircraft_010232.png,1024,1240,4,crack dent,0.026,0,0,0,0,8.9
+742,test,train/aircraft_008259.jpg,work/healed/test/0742_aircraft_008259.png,640,640,3,corrosion dent,0.044,0,0,0,0,1.5
+743,train,train/aircraft_008353.jpg,work/healed/train/0743_aircraft_008353.png,640,640,2,crack,0.225,0,0,0,0,1.4
+744,train,test/aircraft_000558.jpg,work/healed/train/0744_aircraft_000558.png,640,640,1,crack,0.066,0,0,0,0,1.3
+745,train,train/aircraft_008382.jpg,work/healed/train/0745_aircraft_008382.png,1024,1240,1,dent,0.003,0,0,0,0,8.2
+746,val,train/aircraft_008450.jpg,work/healed/val/0746_aircraft_008450.png,800,800,5,scratch,0.003,0,0,0,0,2.5
+747,test,train/aircraft_008523.jpg,work/healed/test/0747_aircraft_008523.png,640,640,1,corrosion,0.003,0,0,0,0,1.4
+748,val,train/aircraft_008535.jpg,work/healed/val/0748_aircraft_008535.png,640,640,2,dent,0.301,0,0,0,0,1.4
+749,train,train/aircraft_008536.jpg,work/healed/train/0749_aircraft_008536.png,640,640,1,scratch,0.156,0,0,0,0,1.3
+750,test,test/aircraft_006026.jpg,work/healed/test/0750_aircraft_006026.png,640,640,6,missing-head paint-peel-off scratch,0.005,2,0,0,2,1.4
+751,train,train/aircraft_008624.jpg,work/healed/train/0751_aircraft_008624.png,800,800,1,dent,0.16,0,0,0,0,2.4
+752,train,train/aircraft_008718.jpg,work/healed/train/0752_aircraft_008718.png,640,291,1,crack,0.006,0,0,0,0,0.6
+753,train,train/aircraft_008754.jpg,work/healed/train/0753_aircraft_008754.png,640,640,2,missing-head,0.077,2,2,0,0,12.5
+754,test,train/aircraft_008756.jpg,work/healed/test/0754_aircraft_008756.png,800,800,23,scratch,0.043,0,0,0,0,3.5
+755,train,train/aircraft_008783.jpg,work/healed/train/0755_aircraft_008783.png,640,640,15,paint-peel-off,0.011,0,0,0,0,1.5
+756,train,test/aircraft_014243.jpg,work/healed/train/0756_aircraft_014243.png,640,640,2,missing-head,0.12,2,2,0,0,9.9
+757,train,train/aircraft_009074.jpg,work/healed/train/0757_aircraft_009074.png,1024,1240,1,dent,0.044,0,0,0,0,8.3
+758,train,train/aircraft_009082.jpg,work/healed/train/0758_aircraft_009082.png,640,640,1,paint-peel-off,0.019,0,0,0,0,1.4
+759,test,train/aircraft_009091.jpg,work/healed/test/0759_aircraft_009091.png,640,640,2,crack,0.622,0,0,0,0,1.3
+760,train,test/aircraft_011666.jpg,work/healed/train/0760_aircraft_011666.png,800,800,3,dent,0.381,0,0,0,0,1.8
+761,test,train/aircraft_009178.jpg,work/healed/test/0761_aircraft_009178.png,640,640,48,missing-head,0.011,48,0,0,48,1.3
+762,train,train/aircraft_009182.jpg,work/healed/train/0762_aircraft_009182.png,640,640,1,missing-head,0.02,1,1,0,0,7.1
+763,test,train/aircraft_009202.jpg,work/healed/test/0763_aircraft_009202.png,800,800,6,dent scratch,0.024,0,0,0,0,1.8
+764,test,train/aircraft_009230.jpg,work/healed/test/0764_aircraft_009230.png,640,640,1,crack,0.278,0,0,0,0,1.4
+765,val,train/aircraft_009259.jpg,work/healed/val/0765_aircraft_009259.png,800,800,4,scratch,0.018,0,0,0,0,1.8
+767,train,train/aircraft_009357.jpg,work/healed/train/0767_aircraft_009357.png,800,800,6,dent scratch,0.412,0,0,0,0,2.0
+768,train,train/aircraft_009395.jpg,work/healed/train/0768_aircraft_009395.png,640,640,2,missing-head,0.113,2,1,1,0,11.1
+769,train,test/aircraft_000382.jpg,work/healed/train/0769_aircraft_000382.png,640,640,1,crack,0.002,0,0,0,0,1.3
+770,val,train/aircraft_009475.jpg,work/healed/val/0770_aircraft_009475.png,1024,1240,2,corrosion,0.016,0,0,0,0,8.0
+771,train,train/aircraft_009512.jpg,work/healed/train/0771_aircraft_009512.png,640,640,1,missing-head,0.039,1,1,0,0,6.0
+772,test,test/aircraft_003215.jpg,work/healed/test/0772_aircraft_003215.png,800,800,2,dent,0.079,0,0,0,0,2.6
+773,val,train/aircraft_009538.jpg,work/healed/val/0773_aircraft_009538.png,640,640,1,missing-head,0.03,1,1,0,0,6.7
+774,train,train/aircraft_009606.jpg,work/healed/train/0774_aircraft_009606.png,640,640,1,crack,0.028,0,0,0,0,1.3
+775,train,train/aircraft_009641.jpg,work/healed/train/0775_aircraft_009641.png,640,640,1,scratch,0.175,0,0,0,0,1.3
+776,val,train/aircraft_009673.jpg,work/healed/val/0776_aircraft_009673.png,640,640,1,paint-peel-off,0.038,0,0,0,0,1.3
+777,test,train/aircraft_009686.jpg,work/healed/test/0777_aircraft_009686.png,640,640,1,crack,0.026,0,0,0,0,1.5
+778,val,test/aircraft_012622.jpg,work/healed/val/0778_aircraft_012622.png,640,640,11,missing-head,0.077,11,9,2,0,73.1
+779,train,test/aircraft_002372.jpg,work/healed/train/0779_aircraft_002372.png,800,800,6,dent scratch,0.03,0,0,0,0,3.3
+780,train,test/aircraft_002656.jpg,work/healed/train/0780_aircraft_002656.png,1024,1240,3,corrosion dent,0.061,0,0,0,0,8.3
+781,test,train/aircraft_010085.jpg,work/healed/test/0781_aircraft_010085.png,640,640,2,paint-peel-off,0.053,0,0,0,0,1.4
+782,train,train/aircraft_010205.jpg,work/healed/train/0782_aircraft_010205.png,640,640,1,scratch,0.185,0,0,0,0,1.4
+783,train,train/aircraft_010206.jpg,work/healed/train/0783_aircraft_010206.png,800,800,5,scratch,0.008,0,0,0,0,2.9
+784,test,train/aircraft_010249.jpg,work/healed/test/0784_aircraft_010249.png,640,640,2,crack,0.005,0,0,0,0,1.4
+785,train,train/aircraft_010275.jpg,work/healed/train/0785_aircraft_010275.png,640,640,1,missing-head,0.02,1,1,0,0,7.1
+786,test,train/aircraft_010304.jpg,work/healed/test/0786_aircraft_010304.png,640,640,4,dent scratch,0.01,0,0,0,0,1.4
+787,test,train/aircraft_010315.jpg,work/healed/test/0787_aircraft_010315.png,640,640,10,crack dent paint-peel-off,0.015,0,0,0,0,1.5
+788,train,train/aircraft_010349.jpg,work/healed/train/0788_aircraft_010349.png,640,640,1,paint-peel-off,0.578,0,0,0,0,1.4
+789,train,train/aircraft_010395.jpg,work/healed/train/0789_aircraft_010395.png,640,640,6,missing-head,0.045,6,4,2,0,35.7
+790,train,train/aircraft_010499.jpg,work/healed/train/0790_aircraft_010499.png,640,640,2,dent scratch,0.003,0,0,0,0,1.4
+791,train,train/aircraft_010546.jpg,work/healed/train/0791_aircraft_010546.png,640,640,2,missing-head,0.001,2,0,2,0,6.2
+792,test,train/aircraft_010575.jpg,work/healed/test/0792_aircraft_010575.png,640,640,1,crack,0.029,0,0,0,0,1.4
+793,train,test/aircraft_008969.jpg,work/healed/train/0793_aircraft_008969.png,640,640,1,paint-peel-off,0.064,0,0,0,0,1.4
+794,train,train/aircraft_010658.jpg,work/healed/train/0794_aircraft_010658.png,640,640,1,paint-peel-off,0.157,0,0,0,0,1.4
+795,val,test/aircraft_000141.jpg,work/healed/val/0795_aircraft_000141.png,640,640,1,paint-peel-off,0.027,0,0,0,0,1.4
+796,test,train/aircraft_010769.jpg,work/healed/test/0796_aircraft_010769.png,640,640,1,paint-peel-off,0.056,0,0,0,0,1.4
+797,train,train/aircraft_010855.jpg,work/healed/train/0797_aircraft_010855.png,800,800,5,dent scratch,0.039,0,0,0,0,3.6
+798,train,train/aircraft_010907.jpg,work/healed/train/0798_aircraft_010907.png,640,640,1,missing-head,0.024,1,0,1,0,7.8
+799,test,test/aircraft_006667.jpg,work/healed/test/0799_aircraft_006667.png,640,640,1,paint-peel-off,0.072,0,0,0,0,1.5
+801,val,test/aircraft_007969.jpg,work/healed/val/0801_aircraft_007969.png,640,640,1,missing-head,0.02,1,1,0,0,2.4
+802,train,train/aircraft_011146.jpg,work/healed/train/0802_aircraft_011146.png,640,640,4,missing-head,0.017,4,4,0,0,23.7
+803,test,train/aircraft_011208.jpg,work/healed/test/0803_aircraft_011208.png,800,800,8,dent scratch,0.16,0,0,0,0,3.5
+804,val,test/aircraft_011224.jpg,work/healed/val/0804_aircraft_011224.png,640,640,1,paint-peel-off,0.031,0,0,0,0,1.5
+805,train,train/aircraft_011455.jpg,work/healed/train/0805_aircraft_011455.png,800,800,2,scratch,0.009,0,0,0,0,3.1
+806,val,train/aircraft_011558.jpg,work/healed/val/0806_aircraft_011558.png,640,344,1,dent,0.011,0,0,0,0,0.8
+807,val,train/aircraft_011779.jpg,work/healed/val/0807_aircraft_011779.png,640,480,1,crack,0.014,0,0,0,0,1.1
+808,val,train/aircraft_011934.jpg,work/healed/val/0808_aircraft_011934.png,640,640,9,corrosion,0.026,0,0,0,0,2.8
+809,test,train/aircraft_011954.jpg,work/healed/test/0809_aircraft_011954.png,640,640,1,crack,0.068,0,0,0,0,2.2
+810,val,train/aircraft_012058.jpg,work/healed/val/0810_aircraft_012058.png,800,800,1,dent,0.346,0,0,0,0,4.1
+811,test,train/aircraft_012075.jpg,work/healed/test/0811_aircraft_012075.png,640,640,2,scratch,0.557,0,0,0,0,1.8
+812,train,train/aircraft_012279.jpg,work/healed/train/0812_aircraft_012279.png,800,800,1,scratch,0.036,0,0,0,0,3.8
+813,test,test/aircraft_010746.jpg,work/healed/test/0813_aircraft_010746.png,640,640,1,crack,0.053,0,0,0,0,1.8
+814,test,train/aircraft_012492.jpg,work/healed/test/0814_aircraft_012492.png,640,640,8,crack dent missing-head,0.003,1,0,0,1,1.6
+815,train,train/aircraft_012494.jpg,work/healed/train/0815_aircraft_012494.png,800,800,10,scratch,0.186,0,0,0,0,4.0
+816,train,train/aircraft_012506.jpg,work/healed/train/0816_aircraft_012506.png,640,640,20,crack paint-peel-off scratch,0.101,0,0,0,0,1.7
+817,test,train/aircraft_012524.jpg,work/healed/test/0817_aircraft_012524.png,640,640,2,crack,0.588,0,0,0,0,1.6
+818,train,train/aircraft_012600.jpg,work/healed/train/0818_aircraft_012600.png,800,800,5,dent scratch,0.099,0,0,0,0,4.0
+819,val,train/aircraft_012625.jpg,work/healed/val/0819_aircraft_012625.png,640,640,2,paint-peel-off,0.051,0,0,0,0,1.7
+820,train,train/aircraft_012669.jpg,work/healed/train/0820_aircraft_012669.png,800,800,5,scratch,0.014,0,0,0,0,4.0
+821,test,train/aircraft_012774.jpg,work/healed/test/0821_aircraft_012774.png,640,640,3,crack dent,0.01,0,0,0,0,1.6
+822,test,train/aircraft_012845.jpg,work/healed/test/0822_aircraft_012845.png,1024,1240,1,crack,0.236,0,0,0,0,8.2
+823,train,train/aircraft_012937.jpg,work/healed/train/0823_aircraft_012937.png,640,640,55,dent missing-head paint-peel-off,0.121,3,0,0,3,1.5
+824,train,test/aircraft_010636.jpg,work/healed/train/0824_aircraft_010636.png,1024,1240,3,corrosion,0.056,0,0,0,0,8.6
+825,val,train/aircraft_013046.jpg,work/healed/val/0825_aircraft_013046.png,800,800,2,dent,0.087,0,0,0,0,2.6
+826,train,train/aircraft_013170.jpg,work/healed/train/0826_aircraft_013170.png,640,640,1,dent,0.077,0,0,0,0,1.5
+827,val,train/aircraft_013369.jpg,work/healed/val/0827_aircraft_013369.png,640,640,2,paint-peel-off,0.485,0,0,0,0,1.4
+828,train,train/aircraft_013616.jpg,work/healed/train/0828_aircraft_013616.png,640,640,3,crack,0.041,0,0,0,0,1.4
+829,test,train/aircraft_013643.jpg,work/healed/test/0829_aircraft_013643.png,800,800,4,paint-peel-off,0.007,0,0,0,0,2.7
+830,train,train/aircraft_013775.jpg,work/healed/train/0830_aircraft_013775.png,640,640,4,scratch,0.373,0,0,0,0,1.4
+831,test,train/aircraft_013958.jpg,work/healed/test/0831_aircraft_013958.png,640,640,2,missing-head,0.28,2,0,2,0,2.0
+832,train,test/aircraft_007994.jpg,work/healed/train/0832_aircraft_007994.png,640,640,1,paint-peel-off,0.098,0,0,0,0,1.4
+833,train,test/aircraft_007960.jpg,work/healed/train/0833_aircraft_007960.png,640,640,1,paint-peel-off,0.061,0,0,0,0,1.4
+834,train,test/aircraft_012738.jpg,work/healed/train/0834_aircraft_012738.png,640,640,1,missing-head,0.076,1,1,0,0,6.0
+835,val,train/aircraft_014560.jpg,work/healed/val/0835_aircraft_014560.png,640,640,1,scratch,0.236,0,0,0,0,1.4
+836,test,test/aircraft_000657.jpg,work/healed/test/0836_aircraft_000657.png,640,640,5,missing-head paint-peel-off,0.043,4,2,2,0,28.3
+837,val,val/aircraft_000751.jpg,work/healed/val/0837_aircraft_000751.png,640,640,21,crack dent missing-head paint-peel-off scratch,0.106,2,0,0,2,1.5
+838,train,val/aircraft_001298.jpg,work/healed/train/0838_aircraft_001298.png,640,640,4,dent missing-head,0.011,1,0,0,1,1.4
+839,val,val/aircraft_004483.jpg,work/healed/val/0839_aircraft_004483.png,640,640,4,crack dent scratch,0.003,0,0,0,0,1.4
+840,train,val/aircraft_005017.jpg,work/healed/train/0840_aircraft_005017.png,800,800,11,scratch,0.332,0,0,0,0,3.1
+841,train,val/aircraft_006523.jpg,work/healed/train/0841_aircraft_006523.png,640,640,27,dent missing-head paint-peel-off scratch,0.045,8,0,0,8,1.4
+842,val,val/aircraft_006618.jpg,work/healed/val/0842_aircraft_006618.png,640,640,19,missing-head paint-peel-off,0.004,18,0,0,18,1.4
+843,train,val/aircraft_009445.jpg,work/healed/train/0843_aircraft_009445.png,640,640,1,scratch,0.002,0,0,0,0,1.3
+844,train,val/aircraft_009661.jpg,work/healed/train/0844_aircraft_009661.png,640,640,1,dent,0.133,0,0,0,0,1.3
+845,train,test/aircraft_005791.jpg,work/healed/train/0845_aircraft_005791.png,800,800,8,dent scratch,0.253,0,0,0,0,3.2
+846,train,val/aircraft_010070.jpg,work/healed/train/0846_aircraft_010070.png,640,640,1,dent,0.318,0,0,0,0,1.5
+847,test,val/aircraft_010274.jpg,work/healed/test/0847_aircraft_010274.png,640,640,1,dent,0.029,0,0,0,0,1.4
+848,val,val/aircraft_010960.jpg,work/healed/val/0848_aircraft_010960.png,800,800,1,dent,0.003,0,0,0,0,3.0
+849,train,val/aircraft_011622.jpg,work/healed/train/0849_aircraft_011622.png,800,800,1,dent,0.088,0,0,0,0,3.5
+850,train,test/aircraft_005236.jpg,work/healed/train/0850_aircraft_005236.png,640,640,2,paint-peel-off,0.111,0,0,0,0,1.5
+851,train,test/aircraft_002981.jpg,work/healed/train/0851_aircraft_002981.png,640,640,2,missing-head,0.0,2,0,0,2,1.3
+852,test,test/aircraft_003682.jpg,work/healed/test/0852_aircraft_003682.png,800,800,2,dent,0.061,0,0,0,0,3.6
+853,val,test/aircraft_004487.jpg,work/healed/val/0853_aircraft_004487.png,640,640,1,crack,0.011,0,0,0,0,1.6
+854,test,test/aircraft_004624.jpg,work/healed/test/0854_aircraft_004624.png,800,800,1,dent,0.032,0,0,0,0,3.7
+855,train,test/aircraft_006407.jpg,work/healed/train/0855_aircraft_006407.png,640,640,4,dent,0.083,0,0,0,0,1.6
+856,train,test/aircraft_006413.jpg,work/healed/train/0856_aircraft_006413.png,640,640,4,dent,0.237,0,0,0,0,1.4
+857,train,test/aircraft_007070.jpg,work/healed/train/0857_aircraft_007070.png,800,800,10,scratch,0.241,0,0,0,0,3.6
+858,val,test/aircraft_010270.jpg,work/healed/val/0858_aircraft_010270.png,640,640,10,dent missing-head paint-peel-off scratch,0.012,1,0,0,1,1.6
+859,test,test/aircraft_010549.jpg,work/healed/test/0859_aircraft_010549.png,640,640,8,dent missing-head,0.005,1,0,0,1,1.4
+860,train,test/aircraft_013318.jpg,work/healed/train/0860_aircraft_013318.png,800,800,2,dent,0.094,0,0,0,0,3.7

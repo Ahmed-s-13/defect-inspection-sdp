@@ -1,0 +1,182 @@
+{
+ "patches": {
+  "train": 11718,
+  "val": 4456,
+  "test": 4176,
+  "crops": 1288
+ },
+ "colour only": {
+  "val": 0.568,
+  "test": 0.573
+ },
+ "texture, logistic": {
+  "val": 0.648,
+  "test": 0.691
+ },
+ "texture, boosting": {
+  "val": 0.742,
+  "test": 0.808
+ },
+ "texture means (fill vs real, train)": {
+  "hp_mean@0.7": [
+   0.537,
+   0.683
+  ],
+  "hp_std@0.7": [
+   0.768,
+   1.059
+  ],
+  "hp_median@0.7": [
+   0.395,
+   0.447
+  ],
+  "hp_kurt@0.7": [
+   6.076,
+   10.417
+  ],
+  "hp_mean@1.5": [
+   1.096,
+   1.452
+  ],
+  "hp_std@1.5": [
+   1.558,
+   2.215
+  ],
+  "hp_median@1.5": [
+   0.789,
+   0.945
+  ],
+  "hp_kurt@1.5": [
+   5.978,
+   10.063
+  ],
+  "hp_mean@3.0": [
+   1.733,
+   2.376
+  ],
+  "hp_std@3.0": [
+   2.426,
+   3.498
+  ],
+  "hp_median@3.0": [
+   1.253,
+   1.605
+  ],
+  "hp_kurt@3.0": [
+   5.544,
+   8.984
+  ],
+  "lap_var": [
+   46.856,
+   115.312
+  ],
+  "grad": [
+   11.969,
+   15.777
+  ],
+  "jpeg_grid": [
+   1.23,
+   1.208
+  ],
+  "std": [
+   6.398,
+   8.358
+  ]
+ },
+ "texture, logistic coef": {
+  "hp_mean@0.7": -2.259999990463257,
+  "hp_std@0.7": 0.7099999785423279,
+  "hp_median@0.7": 2.5899999141693115,
+  "hp_kurt@0.7": -0.46000000834465027,
+  "hp_mean@1.5": -1.0,
+  "hp_std@1.5": 1.100000023841858,
+  "hp_median@1.5": -0.07000000029802322,
+  "hp_kurt@1.5": -0.3199999928474426,
+  "hp_mean@3.0": 0.3499999940395355,
+  "hp_std@3.0": -0.41999998688697815,
+  "hp_median@3.0": -0.44999998807907104,
+  "hp_kurt@3.0": 0.09000000357627869,
+  "lap_var": -0.7900000214576721,
+  "grad": -0.18000000715255737,
+  "jpeg_grid": 0.009999999776482582,
+  "std": 0.15000000596046448
+ },
+ "cnn, no augmentation": {
+  "runs": [
+   {
+    "clean": {
+     "val": 0.687,
+     "test": 0.734
+    },
+    "augmented": {
+     "val": 0.607,
+     "test": 0.602
+    }
+   },
+   {
+    "clean": {
+     "val": 0.652,
+     "test": 0.702
+    },
+    "augmented": {
+     "val": 0.582,
+     "test": 0.594
+    }
+   },
+   {
+    "clean": {
+     "val": 0.698,
+     "test": 0.746
+    },
+    "augmented": {
+     "val": 0.604,
+     "test": 0.607
+    }
+   }
+  ],
+  "clean val": 0.679,
+  "clean test": 0.727,
+  "augmented val": 0.598,
+  "augmented test": 0.601,
+  "test crops fully separated (last seed)": 0.151
+ },
+ "cnn, augmented training": {
+  "runs": [
+   {
+    "clean": {
+     "val": 0.617,
+     "test": 0.644
+    },
+    "augmented": {
+     "val": 0.586,
+     "test": 0.606
+    }
+   },
+   {
+    "clean": {
+     "val": 0.59,
+     "test": 0.605
+    },
+    "augmented": {
+     "val": 0.57,
+     "test": 0.587
+    }
+   },
+   {
+    "clean": {
+     "val": 0.636,
+     "test": 0.663
+    },
+    "augmented": {
+     "val": 0.6,
+     "test": 0.609
+    }
+   }
+  ],
+  "clean val": 0.614,
+  "clean test": 0.637,
+  "augmented val": 0.585,
+  "augmented test": 0.601,
+  "test crops fully separated (last seed)": 0.072
+ }
+}

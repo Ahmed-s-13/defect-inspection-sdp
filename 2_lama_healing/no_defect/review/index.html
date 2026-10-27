@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Healed Crop Review</title>
+<style>
+  :root {
+    --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #deded9;
+    --keep: #2f7d4f; --reject: #c0392b; --pending: #c98a12; --accent: #2b5d9e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161615; --panel: #20201e; --text: #ececea; --muted: #a0a09a; --line: #34342f;
+      --keep: #4caf74; --reject: #e5604f; --pending: #e0a630; --accent: #6b9be0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, -apple-system, sans-serif; }
+  header { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 1px solid var(--line);
+           padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+  h1 { font-size: 16px; margin: 0 8px 0 0; }
+  .tabs button, .bar button, select { font: inherit; padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px;
+           background: var(--panel); color: var(--text); cursor: pointer; }
+  .tabs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .stats { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+  .help { color: var(--muted); padding: 8px 16px 0; margin: 0; }
+  main { padding: 12px 16px 40px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  .card { background: var(--panel); border: 3px solid var(--line); border-radius: 8px; overflow: hidden; cursor: pointer;
+          user-select: none; position: relative; }
+  .card img { display: block; width: 100%; aspect-ratio: 454 / 224; }
+  .card .meta { padding: 4px 8px 6px; font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; }
+  .card .why { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card.s-keep { border-color: var(--keep); }
+  .card.s-reject { border-color: var(--reject); }
+  .card.s-reject img { opacity: .35; }
+  .card.s-pending { border-color: var(--pending); }
+  .card .tag { position: absolute; top: 6px; right: 6px; font-size: 11px; font-weight: 600; padding: 1px 6px;
+               border-radius: 4px; color: #fff; }
+  .s-keep .tag { background: var(--keep); } .s-reject .tag { background: var(--reject); } .s-pending .tag { background: var(--pending); }
+  .bar { padding: 0 16px 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .saved { color: var(--muted); font-size: 12px; }
+  @media (max-width: 480px) { main { grid-template-columns: 1fr; } .stats { margin-left: 0; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Healed crop review</h1>
+  <div class="tabs" role="group">
+    <button data-tab="review">To review</button>
+    <button data-tab="keep">Auto kept</button>
+    <button data-tab="drop">Dropped</button>
+  </div>
+  <select id="cls" aria-label="Class"><option value="">all classes</option></select>
+  <span class="stats" id="stats"></span>
+</header>
+<p class="help">Each card: original crop (yellow = area LaMa repainted) | healed crop. Click a card to switch keep ↔ reject.
+  Reject it if damage is still visible, the fill is an obvious smear or patch, or it no longer looks like a real surface.
+  Every click is saved.</p>
+<main id="grid"></main>
+<div class="bar">
+  <button id="prev">← Previous</button><span id="page"></span><button id="next">Next →</button>
+  <button id="keepRest" title="Every undecided card on this page becomes keep">Keep all undecided on this page</button>
+  <span class="saved" id="saved"></span>
+</div>
+<script>
+const PER = 48;
+let crops = [], dec = {}, tab = "review", cls = "", page = 0;
+const $ = (id) => document.getElementById(id);
+
+function state(c) {                 // what the crop ends up as
+  if (dec[c.id]) return dec[c.id];
+  return c.auto === "keep" ? "keep" : c.auto === "drop" ? "reject" : "pending";
+}
+function shown() { return crops.filter(c => c.auto === tab && (!cls || c.cls === cls)); }
+
+async function save(upd) {
+  Object.entries(upd).forEach(([k, v]) => v === null ? delete dec[k] : dec[k] = v);
+  render();
+  try {
+    const r = await fetch("/api/decide", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(upd) });
+    const j = await r.json();
+    $("saved").textContent = `saved (${j.saved} decisions on disk)`;
+  } catch (e) { $("saved").textContent = "NOT SAVED: is review_server.py running?"; }
+}
+
+function render() {
+  const list = shown(), pages = Math.max(1, Math.ceil(list.length / PER));
+  page = Math.min(page, pages - 1);
+  document.querySelectorAll(".tabs button").forEach(b => {
+    const n = crops.filter(c => c.auto === b.dataset.tab).length;
+    b.setAttribute("aria-pressed", b.dataset.tab === tab);
+    b.textContent = { review: "To review", keep: "Auto kept", drop: "Dropped" }[b.dataset.tab] + ` (${n})`;
+  });
+  const all = crops.map(state);
+  const pend = crops.filter(c => c.auto === "review" && !dec[c.id]).length;
+  $("stats").textContent = `kept ${all.filter(s => s === "keep").length} · rejected ${all.filter(s => s === "reject").length} · undecided ${pend}`;
+  $("page").textContent = `page ${page + 1} / ${pages} (${list.length} crops)`;
+  $("grid").innerHTML = list.slice(page * PER, (page + 1) * PER).map(c => {
+    const s = state(c);
+    return `<div class="card s-${s}" data-id="${c.id}" title="${c.id}\n${c.route}\ndetail ${c.detail_ratio} · colour ${c.colour_diff} · seam ${c.seam_ratio}">
+      <span class="tag">${s}</span><img loading="lazy" src="/thumbs/${c.id}.jpg" alt="">
+      <div class="meta"><span>${c.cls} · ${c.split}</span><span class="why">${c.why || ""}</span></div></div>`;
+  }).join("");
+}
+
+$("grid").addEventListener("click", e => {
+  const card = e.target.closest(".card"); if (!card) return;
+  const c = crops.find(x => x.id === card.dataset.id);
+  save({ [c.id]: state(c) === "reject" ? "keep" : "reject" });
+});
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { tab = b.dataset.tab; page = 0; render(); scrollTo(0, 0); });
+$("cls").onchange = e => { cls = e.target.value; page = 0; render(); };
+$("prev").onclick = () => { page = Math.max(0, page - 1); render(); scrollTo(0, 0); };
+$("next").onclick = () => { page += 1; render(); scrollTo(0, 0); };
+$("keepRest").onclick = () => {
+  const upd = {};
+  shown().slice(page * PER, (page + 1) * PER).forEach(c => { if (state(c) === "pending") upd[c.id] = "keep"; });
+  if (Object.keys(upd).length) save(upd);
+};
+
+fetch("/api/crops").then(r => r.json()).then(j => {
+  crops = j.crops; dec = j.decisions;
+  [...new Set(crops.map(c => c.cls))].sort().forEach(k => $("cls").insertAdjacentHTML("beforeend", `<option>${k}</option>`));
+  render();
+});
+</script>
+</body>
+</html>
