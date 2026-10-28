@@ -26,8 +26,8 @@ class ModelEntry:
     leak_free: bool
     features_cache: Path | None
     summary: Path | None
-    calibration: Path | None   # architecture A's fitted numbers (None: the repo's default, calibration.json)
-    split: str                 # what the report is computed on: d1_grouped or d1_gc7
+    calibration: Path | None   # the decision layer's fitted numbers (calibration_gc7.json = architecture B; None: calibration.json)
+    split: str                 # what the report is computed on: d1_grouped, d1_gc7 or d1_gc7_fix
 
     @classmethod
     def from_yaml(cls, mid, d, base):

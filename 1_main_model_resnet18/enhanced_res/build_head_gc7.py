@@ -1,6 +1,8 @@
 """gc7, step 2: build the full enhanced_res head on the 7-class backbone, test it once, compare it with v2.
 
   python enhanced_res/build_head_gc7.py        (from 1_main_model_resnet18/; ~15 min on an M-series Mac)
+  python enhanced_res/build_head_gc7.py --name gc7_fix --data d1_gc7_fix     the same on D1 with the 27 Oct box
+                                               corrections (runs/gc7_fix -> data/work/enhanced_res/gc7_fix, results/gc7_fix)
 
 Needs data/work/enhanced_res/runs/gc7/backbone.pt (train_backbone.py --data d1_gc7 --out gc7), the d1_gc7 crops, and
 the v2 model (data/work/enhanced_res/, for the comparison). The head is build_head.py's h4, unchanged: pooled
@@ -35,8 +37,6 @@ from model import (BACKBONE_FILE, EWORK, HEAD_FILE, MAIN, MODELS, RESULTS, Enhan
 from klshift.common import CropDataset, pick_device
 from train_mlp import plot_confusion
 
-RUN = EWORK / "runs/gc7/backbone.pt"
-OUT = RESULTS / "gc7"
 HEALER_ND = MAIN.parent / "2_lama_healing/no_defect"
 ND = 6                       # index of no-defect
 MISS = [0.01, 0.02, 0.05]    # val defect-miss targets for the p(no-defect) cut
@@ -84,9 +84,15 @@ def head_proba(pc, X, n_classes, device):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--name", default="gc7", help="run name under runs/, and the model / results folder")
+    ap.add_argument("--data", default="d1_gc7", choices=["d1_gc7", "d1_gc7_fix"])
+    a = ap.parse_args()
+    RUN, OUT = EWORK / f"runs/{a.name}/backbone.pt", RESULTS / a.name
     device = pick_device()
     OUT.mkdir(parents=True, exist_ok=True)
-    crops = load_split("d1_gc7")
+    crops = load_split(a.data)
     ck = torch.load(RUN, map_location="cpu", weights_only=False)
     classes = ck["classes"]
     assert classes[ND] == "no-defect" and set(classes) == set(crops.cls)
@@ -96,14 +102,14 @@ def main():
     extra["crop_path"] = [str(MAIN / p) for p in extra.crop_path]
     dec = decoy_set()
 
-    bh.BACKBONES["gc7"] = RUN
+    bh.BACKBONES[a.name] = RUN
     n, ne = len(crops), len(extra)
     paths = list(crops.crop_path) + list(extra.crop_path) + list(dec.crop_path) + list(dec.original)
-    plain, tta, aug = bh.extract("gc7", paths, device, list(crops.crop_path[sp == "train"]))
+    plain, tta, aug = bh.extract(a.name, paths, device, list(crops.crop_path[sp == "train"]))
     F = dict(plain=plain[:n], tta=tta[:n], aug=aug, ext_plain=plain[n:n + ne], ext_tta=tta[n:n + ne])
     prob, pc = bh.run_head("h4", F, y, sp, extra, classes, device)
 
-    dst = MODELS["gc7"]
+    dst = MODELS[a.name]
     dst.mkdir(parents=True, exist_ok=True)
     shutil.copy(RUN, dst / BACKBONE_FILE)
     torch.save(dict(classes=classes, backbone=BACKBONE_FILE, **pc,
@@ -122,7 +128,7 @@ def main():
     p_org = head_proba(pc, tta[n + ne + nd_:], len(classes), device) if nd_ else np.zeros((0, len(classes)))
     yd = dec.cls.map(cidx).values
 
-    S = dict(model="gc7", classes=classes, head=dict(knn_weight=pc["alpha"], tau=pc["tau"]),
+    S = dict(model=a.name, data=a.data, classes=classes, head=dict(knn_weight=pc["alpha"], tau=pc["tau"]),
              backbone_epoch=int(ck["epoch"]))
     S["val"] = dict(accuracy=r((pv.argmax(1) == y[va]).mean()), macro_f1=r(f1_score(y[va], pv.argmax(1), average="macro")))
     lo, hi = group_bootstrap_ci(yt, at, crops.src_group.values[te])
@@ -163,8 +169,8 @@ def main():
                            mean_p_no_defect=dict(decoy=r(p_dec[:, ND].mean()), original=r(p_org[:, ND].mean())),
                            right_class=dict(decoy=r((p_dec.argmax(1) == yd).mean()), original=r((p_org.argmax(1) == yd).mean())))
     (OUT / "summary.json").write_text(json.dumps(S, indent=1))
-    plot_confusion(confusion_matrix(yt, at, labels=list(range(len(classes)))), classes, "gc7: d1_gc7 test",
-                   OUT / "confusion_gc7.png")
+    plot_confusion(confusion_matrix(yt, at, labels=list(range(len(classes)))), classes, f"{a.name}: {a.data} test",
+                   OUT / f"confusion_{a.name}.png")
     print(json.dumps(S, indent=1))
 
 

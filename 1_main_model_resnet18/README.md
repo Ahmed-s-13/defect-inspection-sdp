@@ -53,8 +53,9 @@ python predict.py photo.jpg --raw                    # the raw top-2 ranking, wi
 python predict.py photo.jpg --legacy                 # the legacy ResNet-18 + MLP head (original D1 split)
 ```
 
-Output is one of `crack_01.jpg:  CRACK 88.0%`, `NO-DEFECT 92.9%`, `AMBIGUOUS: crack 52.1%   dent 33.0%`, `BAD IMAGE: re-take (blurry)`,
-`CAN'T ASSESS: re-aim (not aircraft skin)` or `UNCLEAR: re-inspect`
+Output (gc7, architecture B) is one of `crack_01.jpg:  CRACK 88.0%`, `(nothing shown: no damage)`,
+`POSSIBLE DENT: check`, `AMBIGUOUS: crack 52.1%   dent 33.0%`, `CAN'T ASSESS: re-aim (not aircraft skin)` or
+`UNCLEAR: re-inspect`; `--model v2` (architecture A) can also say `BAD IMAGE: re-take (blurry)`
 (see [`enhanced_res/arch_a/README.md`](enhanced_res/arch_a/README.md)).
 `samples/` holds 5 grouped-test crops per class plus `labels.csv` (one per source group, never trained on).
 The legacy model scores higher on them (0.97 vs 0.80) only because D1's original split put copies of these
@@ -110,7 +111,7 @@ python evaluate_mlp.py  # a few seconds: re-tests the MLP head on D1-test and D1
 | **`d1_gc7/`** | **the main model's dataset**: d1_grouped + the no-defect class (`no_defect.csv`), how it is built |
 | **`d1_grouped/`** | **the leak-free D1 split** (`groups.csv`) d1_gc7 builds on, its code and audit sheets |
 | **`enhanced_res/`** | **the main model** (gc7, and the 6-class v2): training, MLP head, D5 outside test, evaluation, results |
-| **`enhanced_res/arch_a/`** | **the main architecture's decision layer**: gates, temperature, conformal set; `calibration_gc7.json` (gc7) and `calibration.json` (v2), the study behind it |
+| **`enhanced_res/arch_a/`** | **the main architecture's decision layer**: gates, temperature, conformal set; `calibration_gc7.json` (B, gc7) and `calibration.json` (A, v2), the study behind it |
 | `train.py` | step 3+4: D1 split by phash groups and training of the legacy ResNet-18 |
 | `embed.py` | step 5: 512-d embeddings for every dataset |
 | `shift.py` | step 6: KL divergence (Gaussian + k-NN), figures, `summary.md` |

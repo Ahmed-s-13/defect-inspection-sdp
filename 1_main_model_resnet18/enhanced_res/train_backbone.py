@@ -19,6 +19,7 @@ The three backbones build_head.py compares (run from 1_main_model_resnet18/, ~30
 
 The main model, gc7 (7 classes: the six defects + no-defect, data ../d1_gc7):
   python enhanced_res/train_backbone.py --data d1_gc7 --out gc7          # ~25 min, best epoch 5 of 10
+  python enhanced_res/train_backbone.py --data d1_gc7_fix --out gc7_fix  # the same on D1 with the 27 Oct box corrections
   --data d1_gc7: classes = the six defects in alphabetical order, then "no-defect" (index 6); the same sampler weights
   over all 7 classes (no-defect gets ~14% of the draws); len(D1 train) / 0.7 draws per epoch, so the six defect
   classes get about as many draws as before; best epoch by val 7-class macro-F1. Then build_head_gc7.py.
@@ -67,7 +68,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--sampler", choices=["base", "groupclass"], default="groupclass")
     ap.add_argument("--recipe", choices=["base", "enhanced"], default="enhanced")
-    ap.add_argument("--data", choices=["d1_grouped", "d1_gc7"], default="d1_grouped")
+    ap.add_argument("--data", choices=["d1_grouped", "d1_gc7", "d1_grouped_fix", "d1_gc7_fix"], default="d1_grouped")
     ap.add_argument("--out", required=True, help="run name under data/work/enhanced_res/runs/")
     ap.add_argument("--epochs", type=int, default=30)
     ap.add_argument("--patience", type=int, default=5)
@@ -86,7 +87,7 @@ def main():
     device = pick_device()
 
     crops = load_split(a.data)
-    classes = sorted(set(crops.cls) - {"no-defect"}) + (["no-defect"] if a.data == "d1_gc7" else [])
+    classes = sorted(set(crops.cls) - {"no-defect"}) + (["no-defect"] if a.data.startswith("d1_gc7") else [])
     cidx = {c: i for i, c in enumerate(classes)}
     tr = crops[crops.split == "train"].reset_index(drop=True)
     va = crops[crops.split == "val"].reset_index(drop=True)
@@ -95,7 +96,7 @@ def main():
     ds_tr = CropDataset(tr.crop_path, ytr, train_transform())
     if a.sampler == "groupclass":
         w = sample_weights(tr)
-        n_draw = len(tr) if a.data == "d1_grouped" else int(round((tr.cls != "no-defect").sum() / 0.7))
+        n_draw = len(tr) if a.data.startswith("d1_grouped") else int(round((tr.cls != "no-defect").sum() / 0.7))
         sampler = WeightedRandomSampler(torch.as_tensor(w, dtype=torch.double), n_draw, replacement=True,
                                         generator=torch.Generator().manual_seed(a.seed))
         dl_tr = DataLoader(ds_tr, sampler=sampler, drop_last=True, **kw)

@@ -33,28 +33,53 @@ from klshift.common import build_model, pick_device   # noqa: E402
 from klshift.mlp import knn_proba, l2n                 # noqa: E402
 
 WORK = MAIN / "data/work"
+WORK_FIX = MAIN / "data/work_fix"                       # D1 re-cut with the 27 Oct box corrections (prepare.py --work)
+FIX_PACK = MAIN / "d1_grouped/label_corrections/crops/crops.csv"   # the corrected photos' crops (in git), if no work_fix
 EWORK = WORK / "enhanced_res"                          # weights, runs, caches (git-ignored)
 GROUPS = MAIN / "d1_grouped/groups.csv"                # the leak-free split (in git)
 NO_DEFECT = MAIN / "d1_gc7/no_defect.csv"              # d1_gc7's 7th class (in git; crops in data/work/crops/no_defect/)
+NO_DEFECT_DROPPED = MAIN / "d1_gc7/no_defect_dropped_fix.csv"   # no-defect crops left out of d1_gc7_fix (they show a defect)
 RESULTS = HERE / "results"
 BACKBONE_FILE, HEAD_FILE = "enhanced_res_backbone.pt", "enhanced_res_head.pt"
-MODELS = {"gc7": EWORK / "gc7", "v2": EWORK}           # weights folder of each trained version
+MODELS = {"gc7": EWORK / "gc7", "gc7_fix": EWORK / "gc7_fix", "v2": EWORK}   # weights folder of each trained version
 MAIN_MODEL = "gc7"
+
+
+def fixed_crops():
+    """D1's crops after the 27 Oct box corrections: data/work_fix (the full re-cut) if it is there, else data/work's
+    crops with the 47 corrected photos' crops swapped in from d1_grouped/label_corrections/crops/ (in git)."""
+    if (WORK_FIX / "crops/D1.csv").exists():
+        return pd.read_csv(WORK_FIX / "crops/D1.csv")
+    c = pd.read_csv(WORK / "crops/D1.csv")
+    pack = pd.read_csv(FIX_PACK)
+    stem = lambda s: s.rsplit(".", 1)[0]  # noqa: E731
+    fixed = set(pack.image.map(stem))
+    c = c.assign(_order=range(len(c)))
+    first = c[c.image.map(stem).isin(fixed)].groupby("image")._order.min()   # keep each photo where it was
+    pack = pack.assign(_order=pack.image.map(first) + pack.groupby("image").cumcount() / 1000)
+    assert pack._order.notna().all(), "data/work/crops/D1.csv lacks a photo of label_corrections/crops/crops.csv"
+    c = pd.concat([c[~c.image.map(stem).isin(fixed)], pack[c.columns]]).sort_values("_order", kind="stable")
+    return c.drop(columns="_order").reset_index(drop=True)
 
 
 def load_split(data="d1_grouped"):
     """Every crop with its source group and its split (a crop follows its source image).
     d1_grouped: the D1 defect crops. d1_gc7: the same + the no-defect crops (d1_gc7/no_defect.csv), class
-    "no-defect"; a "source" column says d1 / healed / clean_cropper."""
-    if data == "d1_gc7":
-        c = load_split("d1_grouped").assign(source="d1")
+    "no-defect"; a "source" column says d1 / healed / clean_cropper.
+    d1_grouped_fix / d1_gc7_fix: the same, with D1 re-cut after the 27 Oct box corrections (data/work_fix,
+    d1_grouped/label_corrections/); d1_gc7_fix also leaves out the no-defect crops in d1_gc7/no_defect_dropped_fix.csv."""
+    if data in ("d1_gc7", "d1_gc7_fix"):
+        c = load_split("d1_grouped" + data[len("d1_gc7"):]).assign(source="d1")
         nd = pd.read_csv(NO_DEFECT)
+        if data == "d1_gc7_fix" and NO_DEFECT_DROPPED.exists():
+            nd = nd[~nd.crop_path.isin(pd.read_csv(NO_DEFECT_DROPPED).crop_path)]
         nd["crop_path"] = [str(MAIN / p) for p in nd.crop_path]
         return pd.concat([c, nd[c.columns]], ignore_index=True)
-    assert data == "d1_grouped", data
-    f = EWORK / "split.csv"
+    assert data in ("d1_grouped", "d1_grouped_fix"), data
+    fix = data.endswith("_fix")                         # _fix: D1 re-cut after the 27 Oct box corrections
+    f = EWORK / ("split_fix.csv" if fix else "split.csv")
     if not f.exists():
-        c = pd.read_csv(WORK / "crops/D1.csv")
+        c = fixed_crops() if fix else pd.read_csv(WORK / "crops/D1.csv")
         g = pd.read_csv(GROUPS).rename(columns={"group": "src_group"})
         c["key"] = c.image.str.replace("content/Aircraft_dataset/images/", "", regex=False)
         c = c.merge(g[["key", "src_group", "new_split"]], on="key", how="left", validate="many_to_one")

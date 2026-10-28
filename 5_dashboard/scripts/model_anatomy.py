@@ -45,7 +45,7 @@ def main():
     OUT_PUB.mkdir(parents=True, exist_ok=True)
     a = registry.active()
     m, bb = a.m, a.m.backbone
-    split = load_split(registry.entry().split)
+    split = load_split("d1_gc7")    # the model's own training split: its kNN bank is these train crops, in order
     row = split[(split.key == CROP) & (split.cls != "no-defect")].iloc[0]
     crop = Image.open(row.crop_path).convert("RGB")
     x = to_batch([crop]).to(m.device)

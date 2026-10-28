@@ -4,10 +4,12 @@
 > their softmax %" display. **It is not a new model:** nothing is retrained. Architecture A adds two checks before
 > the model's answer and a calibrated, conformal way of choosing how many classes to show. Its numbers are fitted
 > per model version and live in git:
-> - [`calibration_gc7.json`](calibration_gc7.json): **the main model, gc7** (7 classes incl. no-defect), fitted on d1_gc7;
-> - [`calibration.json`](calibration.json): the 6-class v2, fitted on d1_grouped. `trt_enhanced_res` reads this one.
+> - [`calibration.json`](calibration.json): **architecture A**, the 6-class v2 on d1_grouped (quality gate on).
+>   `trt_enhanced_res` reads this one.
+> - [`calibration_gc7.json`](calibration_gc7.json): **architecture B**, the main model gc7 (7 classes incl.
+>   no-defect) on d1_gc7_fix, quality gate off. See **"Architecture B"** below.
 >
-> The study and the results below were done on v2. What changes with gc7 is in **"gc7: a 7th class"**.
+> The study and the results below the B section were done on v2 (architecture A).
 
 `predict.py` and `trt_enhanced_res/predict_trt.py` use it by default (`--raw` gives the old top-2 output).
 
@@ -36,51 +38,52 @@ would change.
 - **"No damage":** with v2, architecture A can't say a crop is undamaged. gc7 adds that as a 7th class, and
   architecture A treats it like any other class (next section).
 
-## gc7: a 7th class (no-defect)
+## Architecture B: gc7 (no-defect class), quality gate off
 
-**Adding a class doesn't break architecture A.** `runtime.py` reads the class list from the calibration file,
-and split conformal prediction works for any number of classes. What changes are the fitted numbers, so a new model
-needs `calibrate.py` (`python enhanced_res/arch_a/calibrate.py` for gc7, `--model v2` for v2). For gc7:
-- **Temperature** is fitted on d1_gc7 val, including its no-defect crops.
-- **The cal/test halves** are cal_split.csv's: each no-defect crop goes to its photo family's half.
-- **The unfamiliar-input gate** uses gc7's kNN bank, which holds the no-defect train crops.
-- **The quality gate's reference** is d1_gc7 val.
+**B = the 7-class enhanced_res gc7 (the six defects + no-defect) with this same layer.** The model is Ahmed's gc7
+(Release v3.0-gc7); nothing in the layer's method changed. The no-defect class does change two things: what the
+visor shows, and that the quality gate is left out. Numbers in [`calibration_gc7.json`](calibration_gc7.json);
+full report in [`results/archB/README.md`](results/archB/README.md).
 
-Test half: 2,752 crops in 87 families, 335 of them no-defect. α = 0.10. These gc7 numbers were fitted with the
-earlier gates (kNN distance only at α 0.10, sharpness checked on the low side only). **`calibration_gc7.json` is
-the one place the earlier gate remains**: re-running `calibrate.py` (default `--model gc7`) moves gc7 to the final
-gate. It needs the d1_gc7 no-defect crops (`d1_gc7_no_defect_crops.zip`, team Drive) and the gc7 weights.
-
-| | v2 | **gc7** |
+| | B | why |
 |---|---|---|
-| T | 1.34 | 1.06 |
-| CP coverage per crop / per family (target 90%) | 91.5% / 91.7% | **92.0% / 92.2%** |
-| mean set size / single-class answers | 1.65 / 65% | **1.70 / 65%** |
-| single wrong class shown without warning | 6.7% | **5.3%** |
-| inspector needed (re-take, re-aim, ambiguous) | 38.5% | **46.3%** |
-| no-defect coverage | n/a | 98% |
-| defects shown as a single "no-defect" (a silent miss) | n/a | **0.3%** |
+| model | gc7, 7 classes | the good class |
+| crops it is calibrated and reported on | `d1_gc7_fix`: d1_gc7 with the 27 Oct D1 box corrections (`../../d1_grouped/label_corrections/`) | the right labels |
+| quality gate | **off** (legacy; `calibrate.py --quality` turns it back on) | it flags 22% of clean, plain panels as "blurry"; B must stay silent on clean skin |
+| OOD gate | kNN distance + AoN on gc7's features, Bonferroni, α 0.08 | AoN's positives now include the 2,868 no-defect train crops; v2's bank sent 30–44% of clean crops to re-aim, gc7's ~4% |
+| temperature | T 1.06 (gc7 val) | |
+| CP set | global family-weighted LAC, α 0.10, fitted on the cal-half crops that pass the OOD gate | only those reach the set |
+| visor | set = {no-defect} → **nothing shown**; {defect(s), no-defect} → **"POSSIBLE DENT: check"**; otherwise as in A; re-aim wins over everything | SAQR: show nothing when there is no damage |
 
-Gates on the test half, by crop source:
+**Results** (test half, 2,752 crops, 87 families, 335 no-defect; report only; 95% intervals over families):
 
-| | re-take (quality) | re-aim (unfamiliar) |
-|---|---|---|
-| defects | 14.1% | 3.9% |
-| healed no-defect | 6.8% | 6.8% |
-| clean no-defect | **21.8%** | 4.0% |
+| | B |
+|---|---:|
+| **silent miss** (a defect shown as nothing) | **0.3%** (0.1–0.6%) |
+| **visor speaks on clean D1 crops** (any message, incl. re-aim) | **26.9%** (21.4–33.1%); 760 never-trained clean crops: 27.2% |
+| CP coverage / mean set size / single answers | 90.4% / 1.48 / 71% |
+| single wrong defect class shown without warning | 6.7% |
+| inspector needed | 30.0% (A: 38.5%) |
+| **FGVC undamaged skin patches**: shown as a defect / re-aim / nothing | 16.0% / 80.1% / 3.9% (A: 24.2% shown as a defect) |
+| off-target photos the AoN never saw, shown as a defect | 3.2% (runway 10.5%) |
+| D5 (other photos): coverage / silent miss | 91.6% / 2.2% |
 
-**What the study found** (`../results/gc7/conformal_study.json`):
-- **Keeping v2's numbers for gc7 is not unsafe, but it is wasteful.** The old T over-softens gc7: coverage is
-  94%, sets triple to 3.3 classes, and only 19% of answers name one class.
-- **v2's unfamiliar-input bank would block clean surface.** It holds no clean crops, so it sends 30–44% of them to
-  "re-aim". gc7's bank flags 4–7%.
-- **Over 100 random cal/test splits,** coverage at α = 0.10 averages 91.3% (5th–95th percentile 87–94%).
-  Scratch and corrosion stay below 90% (79% and 84%), as they did with v2.
+**Choices, all made inside the cal half** ([`results/archB/choices.md`](results/archB/choices.md)):
+- **Model: Ahmed's gc7**, not our retrain on the corrected boxes (gc7_fix). On val they are within noise (macro-F1
+  0.704 vs 0.698, defects called no-defect 3.2% vs 3.1%); one run each
+  ([`../results/gc7_fix/compare.md`](../results/gc7_fix/compare.md)). The corrections still matter for evaluation:
+  on the corrected test crops gc7 scores 0.752 macro-F1 (0.747 on the old ones).
+- **OOD α 0.08.** 0.13 would stop more wallpapers and static, but the visor would speak on more clean crops.
+- **Miss guard: not adopted.** At α_miss 0.05–0.10 it never changes a decision; at 0.02 it is below what the
+  calibration families can resolve and blocks every "nothing". Plain LAC gives 0.5% silent misses in the halvings.
+- **Plain-surface negatives for AoN: tried and left out** ([`results/archB/plain_negatives.md`](results/archB/plain_negatives.md)):
+  3,880 Places365 plain-scene and DTD texture crops did not fix runway and made people and hangars worse.
+- **Quality gate stays off, also on the silent path** (decided): damaged defect crops are shown as nothing 2–5% of
+  the time vs 0.9% clean.
 
-**Known limit: plain panels look "blurry".** The quality gate flags 22% of clean-cropper crops, most of them for low
-sharpness: a featureless panel has a low Laplacian variance, the same signal as a blurred photo. Including no-defect
-crops in the reference didn't fix this. Options: a sharpness test that compares edges with texture, or a separate
-reference for crops the model calls no-defect.
+**Known limits:** clean skin from other cameras (FGVC) still looks unfamiliar: the visor speaks on 97% of those
+photos, mostly re-aim. Global LAC does not bound "defect shown as nothing" directly, and 88 calibration families
+can't certify any rate below about 1%. Defects that never become a crop are misses no layer can see.
 
 ## Results (d1_grouped, test half: 2,417 crops, 87 photo families; α = 0.10)
 
@@ -131,12 +134,12 @@ Calibration uses the other half of d1_grouped's test split (1,838 crops, 88 fami
 From `1_main_model_resnet18/`:
 
 ```bash
-python predict.py samples/                       # gc7 + architecture A answers (+ accuracy and actions: samples/ has labels)
-python predict.py samples/ --model v2            # the 6-class v2 with calibration.json
+python predict.py samples/                       # gc7 + architecture B (+ accuracy and actions: samples/ has labels)
+python predict.py samples/ --model v2            # architecture A: the 6-class v2 with calibration.json
 python predict.py photo.jpg --box 375 326 486 411 --details    # also the gate p-values and the full ranking
 python predict.py photo.jpg --alpha 0.05         # larger sets, fewer misses (0.05 / 0.10 / 0.20 are calibrated)
 python predict.py photo.jpg --raw                # the old top-2 output, no architecture A
-python enhanced_res/evaluate.py --split test     # gc7 check + architecture A check on the test half (--model v2 for v2)
+python enhanced_res/evaluate.py --split test     # gc7 check + architecture B check on the test half (--model v2: A)
 ```
 
 In code:
@@ -147,9 +150,9 @@ from enhanced_res.arch_a.runtime import CALIBRATIONS, ArchA
 model, arch = EnhancedRes(MODELS["gc7"]), ArchA(CALIBRATIONS["gc7"])   # v2: EnhancedRes(), ArchA()
                                                            # ArchA(..., alpha=0.05) for another calibrated alpha
 f = model.features(x)                                      # x: (N, 3, 224, 224) normalised crops
-dec = arch.decide(model.proba_from_features(f).cpu().numpy(), crops=pil_crops,
-                  knn_dist=model.knn_distance(f).cpu().numpy())
-print(dec[0].text(), dec[0].action, dec[0].classes, dec[0].scores)
+dec = arch.decide(model.proba_from_features(f).cpu().numpy(), crops=pil_crops,   # crops: used only if the quality gate is on
+                  knn_dist=model.knn_distance(f).cpu().numpy(), feats=f.cpu().numpy())   # feats: needed for AoN
+print(dec[0].text() or "(nothing shown)", dec[0].action)
 ```
 
 **TensorRT** (`trt_enhanced_res/predict_trt.py`) still runs **v2** with `calibration.json`; moving it to gc7 needs a
@@ -158,7 +161,8 @@ new ONNX export of the gc7 weights (7 outputs) and `ArchA(CALIBRATIONS["gc7"])`.
 **Re-calibrate** whenever the model weights, the labels or the split change. It retrains nothing:
 
 ```bash
-python enhanced_res/arch_a/calibrate.py          # ~10 min the first time; writes calibration.json
+python enhanced_res/arch_a/calibrate.py --model gc7 --data d1_gc7_fix   # B -> calibration_gc7.json (quality gate off)
+python enhanced_res/arch_a/calibrate.py --model v2                     # A -> calibration.json (quality gate on)
 ```
 
 ## Files
@@ -166,8 +170,8 @@ python enhanced_res/arch_a/calibrate.py          # ~10 min the first time; write
 | file | what it is |
 |---|---|
 | `runtime.py` | the decision layer: gates, temperature, CP set, `ArchA.decide()` (numpy + PIL only) |
-| `calibrate.py` | fits T, the CP thresholds and the gates' calibration scores; writes `calibration_gc7.json` (default) or `calibration.json` (`--model v2`) with the expected test-half numbers |
-| `calibration_gc7.json` | everything `runtime.py` needs for gc7, fitted on d1_gc7 (`ArchA(CALIBRATIONS["gc7"])`) |
+| `calibrate.py` | fits T, the CP thresholds, the gates' calibration scores and AoN; writes `calibration_gc7.json` (B) or `calibration.json` (A, `--model v2`) with the expected test-half numbers. Options: `--data`, `--quality/--no-quality`, `--alpha-ood`, `--miss-guard`, `--plain-negatives` |
+| `calibration_gc7.json` | architecture B: everything `runtime.py` needs for gc7, fitted on d1_gc7_fix, quality gate off (`ArchA(CALIBRATIONS["gc7"])`) |
 | `calibration.json` | everything `runtime.py` needs for v2, fitted on d1_grouped (`ArchA()`, `trt_enhanced_res`) |
 | `cal_split.csv` | which d1_grouped test crops are the calibration half (88 families) vs the test half (87); seed 0, balanced by class. gc7's no-defect crops follow their family |
 | `experiments/` | the study behind every choice (run from `1_main_model_resnet18/`, results cached in `data/work/enhanced_res/calibration/`) |
@@ -192,5 +196,9 @@ Inside `experiments/` and `results/`:
 | OOD α checked without the test half | `archA_alpha_check.py` | [`results/archA/alpha_check/`](results/archA/alpha_check/README.md) |
 | false accept / false reject per category, held out and deployed | `archA_rates.py` | [`results/archA/offtarget/rates.md`](results/archA/offtarget/rates.md) |
 | the deployed gate on every off-target set, undamaged aircraft, D5 and the user photo | `archA_offtarget_check.py` | [`results/archA/offtarget/deployed.md`](results/archA/offtarget/deployed.md) |
+| **B**: gc7 vs gc7 retrained on the corrected boxes, same crops | `../compare_gc7_fix.py` | [`../results/gc7_fix/compare.md`](../results/gc7_fix/compare.md) |
+| **B**: OOD α, miss guard, damaged images on the silent path (cal half only) | `archB_choose.py` | [`results/archB/choices.md`](results/archB/choices.md) |
+| **B**: the report (test half once, extra_eval, FGVC, off-target, D5, next to A) | `archB_report.py` | [`results/archB/README.md`](results/archB/README.md) |
+| **B**: plain-surface negatives for AoN (tried, left out) | `offtarget_data.py --add-plain`, `calibrate.py --plain-negatives` | [`results/archB/plain_negatives.md`](results/archB/plain_negatives.md) |
 
 Methods: split conformal prediction and LAC (Vovk et al. 2005; Sadinle et al. 2019), APS/RAPS (Romano et al. 2020; Angelopoulos et al. 2021), temperature scaling (Guo et al. 2017), kNN OOD (Sun et al. 2022), conformal outlier p-values (Bates et al. 2023), variance of the Laplacian (Pech-Pacheco et al. 2000).

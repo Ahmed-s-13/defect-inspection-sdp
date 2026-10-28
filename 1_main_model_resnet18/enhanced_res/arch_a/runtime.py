@@ -13,6 +13,13 @@ Per crop (both gates are checked; if both fire, the visor says "re-aim"):
   5. CP set (LAC)        every class with tempered p >= 1 - q[alpha]                  -> 1 class: that class
                                                                                          2+: "AMBIGUOUS"
                                                                                          0: "UNCLEAR"
+Models with a "no-defect" class (architecture B, gc7): the quality gate can be switched off in the calibration file
+(it is legacy there), and the set is read for the visor as
+  {no-defect}                -> nothing shown (SAQR: no message when there is no damage)
+  {defect(s) + no-defect}    -> "POSSIBLE <DEFECT>: check"
+  defects only               -> as above
+An optional miss guard (calibration "miss_guard") only allows "nothing shown" when a one-sided conformal test on
+the defect calibration crops rejects "this is a defect"; otherwise the crop is shown as "POSSIBLE".
 numpy + PIL only (no PyTorch, no OpenCV), so trt_enhanced_res/predict_trt.py can use it too.
 
   from enhanced_res.arch_a.runtime import ArchA
@@ -27,12 +34,15 @@ from pathlib import Path
 import numpy as np
 
 CALIBRATION = Path(__file__).resolve().parent / "calibration.json"             # v2 (6 classes; trt_enhanced_res uses it)
-CALIBRATIONS = {"v2": CALIBRATION, "gc7": CALIBRATION.with_name("calibration_gc7.json")}   # one per model version
+CALIBRATIONS = {"v2": CALIBRATION, "gc7": CALIBRATION.with_name("calibration_gc7.json"),
+                "gc7_fix": CALIBRATION.with_name("calibration_gc7_fix.json")}   # one per model version
 STATS = ("sharpness", "brightness", "clipped_hi", "clipped_lo")
 SIDES = {"sharpness": "low", "brightness": "both", "clipped_hi": "high", "clipped_lo": "high"}
 
 SHOW, AMBIGUOUS, UNCLEAR, RETAKE, REAIM = "show class", "ambiguous", "unclear", "re-take", "re-aim"
-ACTIONS = (SHOW, AMBIGUOUS, UNCLEAR, RETAKE, REAIM)
+NOTHING, POSSIBLE = "nothing shown", "possible defect"     # models with a "no-defect" class only
+ACTIONS = (SHOW, AMBIGUOUS, UNCLEAR, RETAKE, REAIM, NOTHING, POSSIBLE)
+NO_DEFECT = "no-defect"
 
 
 # ------------------------------------------------------------------ quality statistics
@@ -120,6 +130,10 @@ class Decision:
             return f"CAN'T ASSESS: re-aim ({self.reason or 'unlike any training crop'})"
         if self.action == UNCLEAR:
             return "UNCLEAR: re-inspect"
+        if self.action == NOTHING:
+            return ""
+        if self.action == POSSIBLE:
+            return "POSSIBLE " + " / ".join(c.upper() for c in self.classes if c != NO_DEFECT) + ": check"
         ranked = "   ".join(f"{c} {s * 100:.1f}%" for c, s in zip(self.classes, self.scores))
         return ranked.upper() if self.action == SHOW else f"AMBIGUOUS: {ranked}"
 
@@ -140,12 +154,18 @@ class ArchA:
         if key not in c["cp"]["q"]:
             raise SystemExit(f"alpha {self.alpha} is not calibrated; choose one of {sorted(c['cp']['q'])}")
         self.q = c["cp"]["q"][key]
-        qg, og = c["quality_gate"], c["ood_gate"]
-        self.alpha_q, self.alpha_ood = qg["alpha"], og["alpha"]
-        self.sides = qg.get("sides", SIDES)
-        self.ref = {s: np.asarray(qg["reference"][s]) for s in STATS}
-        self.median = {s: float(np.median(self.ref[s])) for s in STATS}
-        self.q_cal, self.q_groups = np.asarray(qg["cal_scores"]), np.asarray(qg["cal_groups"])
+        qg, og = c.get("quality_gate") or {"enabled": False}, c["ood_gate"]
+        self.use_quality = qg.get("enabled", True)          # legacy in architecture B: off unless re-enabled
+        self.alpha_ood = og["alpha"]
+        self.alpha_q = qg["alpha"] if self.use_quality else None
+        if self.use_quality:
+            self.sides = qg.get("sides", SIDES)
+            self.ref = {s: np.asarray(qg["reference"][s]) for s in STATS}
+            self.median = {s: float(np.median(self.ref[s])) for s in STATS}
+            self.q_cal, self.q_groups = np.asarray(qg["cal_scores"]), np.asarray(qg["cal_groups"])
+        self.nd = self.classes.index(NO_DEFECT) if NO_DEFECT in self.classes else None
+        mg = c.get("miss_guard")                            # optional; see the module docstring
+        self.guard = None if mg is None else (float(mg["alpha"]), np.asarray(mg["cal_scores"]), np.asarray(mg["cal_groups"]))
         self.o_cal, self.o_groups = np.asarray(og["cal_scores"]), np.asarray(og["cal_groups"])
         self.k = og["k"]
         lr = og.get("aon", og.get("aircraft_or_not"))   # optional second score; older files call it "aircraft_or_not"
@@ -182,7 +202,7 @@ class ArchA:
         p = temper(probs, self.T)
         return p, p >= 1 - self.q
 
-    def _reason(self, stat, value):
+    def _reason(self, stat, value):  # quality gate only
         if stat == "sharpness":
             return "blurry" if value < self.median["sharpness"] else "noisy / grainy"
         if stat == "brightness":
@@ -190,12 +210,23 @@ class ArchA:
         return "glare / blown-out highlights" if stat == "clipped_hi" else "black areas"
 
     # ---- everything
+    def silence_allowed(self, p):
+        """Miss guard: True where "nothing shown" is allowed. p: tempered probabilities. Without a guard, always.
+        With one: the conformal p-value of "this is a defect" (defect calibration crops scored by their tempered
+        p(no-defect); a high p(no-defect) is unusual for a defect) must be <= alpha_miss."""
+        if self.guard is None:
+            return np.ones(len(p), bool)
+        a, cal, g = self.guard
+        return pvalue(cal, g, p[:, self.nd]) <= a
+
     def decide(self, probs, crops=None, knn_dist=None, feats=None):
         """One Decision per crop. probs: [N, n_classes] enhanced_res probabilities (untempered). crops: the 224 px
         crops (quality gate skipped when None). knn_dist: EnhancedRes.knn_distance(f); feats: EnhancedRes.features(x)
         as numpy (the OOD gate uses whichever of the two is given; skipped when both are None)."""
         probs = np.asarray(probs, float)
         n = len(probs)
+        if not self.use_quality:
+            crops = None
         pq = np.ones(n) if crops is None else None
         why, stats = None, None
         if crops is not None:
@@ -203,6 +234,7 @@ class ArchA:
         use_ood = knn_dist is not None or (feats is not None and self.lr is not None)
         po, part = self.ood(knn_dist, feats) if use_ood else (np.ones(n), None)
         p, S = self.sets(probs)
+        silent_ok = self.silence_allowed(p) if self.nd is not None else None
         out = []
         for i in range(n):
             d = Decision(action="", p_quality=float(pq[i]) if crops is not None else float("nan"),
@@ -219,6 +251,16 @@ class ArchA:
                 idx = [k for k in np.argsort(-p[i]) if S[i, k]]
                 d.classes, d.scores = [self.classes[k] for k in idx], [float(p[i, k]) for k in idx]
                 d.action = SHOW if len(idx) == 1 else AMBIGUOUS if idx else UNCLEAR
+                if self.nd is not None and self.nd in idx:          # architecture B: the no-defect class
+                    if len(idx) == 1:
+                        if silent_ok[i]:
+                            d.action = NOTHING
+                        else:                                       # the miss guard keeps it on the visor
+                            k = int(np.argmax(np.where(np.arange(p.shape[1]) == self.nd, -1, p[i])))
+                            d.classes, d.scores = [self.classes[k], NO_DEFECT], [float(p[i, k]), float(p[i, self.nd])]
+                            d.action = POSSIBLE
+                    else:
+                        d.action = POSSIBLE
             out.append(d)
         return out
 
@@ -234,6 +276,14 @@ def summarise(decisions, arch, probs, y, groups):
     act = np.array([d.action for d in decisions])
     shown = act == SHOW
     right = np.array([arch.classes[t] in d.classes for d, t in zip(decisions, y)])
+    extra = {}
+    if arch.nd is not None:                                 # architecture B: what "nothing shown" costs and gains
+        defect, clean = y != arch.nd, y == arch.nd
+        extra = {"silent_miss": float((act[defect] == NOTHING).mean()),
+                 "silent_miss_by_class": {arch.classes[k]: float((act[y == k] == NOTHING).mean())
+                                          for k in range(len(arch.classes)) if k != arch.nd and (y == k).any()},
+                 "no_defect_nothing_shown": float((act[clean] == NOTHING).mean()) if clean.any() else float("nan"),
+                 "no_defect_false_alarm": float((act[clean] != NOTHING).mean()) if clean.any() else float("nan")}
     return {
         "alpha": arch.alpha,
         "accuracy": float((p.argmax(1) == y).mean()),
@@ -242,8 +292,9 @@ def summarise(decisions, arch, probs, y, groups):
         "cp_mean_set_size": float(S.sum(1).mean()),
         "cp_single_class": float((S.sum(1) == 1).mean()),
         "actions": {k: float((act == k).mean()) for k in ACTIONS},
-        "human_attention": float(1 - shown.mean()),
+        "human_attention": float(1 - (shown | (act == NOTHING)).mean()),
         "gates_false_reject": float(np.isin(act, (RETAKE, REAIM)).mean()),
         "gates_false_reject_family": float((np.bincount(inv, np.isin(act, (RETAKE, REAIM))) / np.bincount(inv)).mean()),
         "single_class_wrong": float((shown & ~right).mean()),
+        **extra,
     }

@@ -40,7 +40,7 @@ export function macroF1(p: Pair[], classes: string[]): number {
   return rows.length ? rows.reduce((a, r) => a + r.f1, 0) / rows.length : NaN;
 }
 
-/** The answer the inspector saw: architecture A's set, or the top class for a model without it. */
+/** The answer the inspector saw: architecture B's set, or the top class for a model without it. */
 interface Answered { state: string; answer: string[]; top: string }
 const shownAnswer = (r: Answered) => (r.state === "unrated" ? [r.top] : r.answer);
 

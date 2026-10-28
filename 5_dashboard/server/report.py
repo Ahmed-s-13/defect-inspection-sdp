@@ -1,6 +1,6 @@
-"""The Model-view report, computed from a model's cached 8-view features on its split (d1_gc7 for the main model,
-d1_grouped for the 6-class v2), plus architecture A (the team's calibrated decision layer) on the test half it was
-not calibrated on."""
+"""The Model-view report, computed from a model's 8-view features on its split (d1_gc7_fix for the main model: d1_gc7
+with the 27 Oct D1 box corrections), plus architecture B (the team's calibrated decision layer on gc7, quality gate
+off) on the test half it was not calibrated on."""
 import json
 import os
 import threading
@@ -13,7 +13,7 @@ from sklearn.metrics import balanced_accuracy_score, confusion_matrix, f1_score,
 from server.paths import CACHE
 
 TARGET_MACRO_F1 = 0.85  # NFR2, SDP Report Part II
-REPORT_VERSION = "v4"   # bump when the report's shape or meaning changes, so cached reports are rebuilt
+REPORT_VERSION = "v6"   # bump when the report's shape or meaning changes, so cached reports are rebuilt
 _mem = {}
 _lock = threading.Lock()
 _splits = {}
@@ -23,6 +23,7 @@ class ReportUnavailable(Exception):
     """The data the report needs is not on this computer; the message says which download gives it."""
 ND = "no-defect"
 V2_SUMMARY = "enhanced_res/results/summary.json"  # the 6-class v2's report, in the repo
+FIX_SUMMARY = "enhanced_res/results/gc7_fix/summary.json"  # v2 scored on the corrected (d1_gc7_fix) defect crops
 
 
 def _load_split(name="d1_grouped"):
@@ -78,7 +79,8 @@ def silent_errors(decisions, probs_t, y, rows, groups, classes, most=12):
     return out
 
 
-# the team's gate tests (enhanced_res/arch_a/results/archA/): share of each kind of bad input stopped by both gates
+# architecture A's (v2) gate tests, a fallback only (enhanced_res/arch_a/results/archA/): share of each kind of bad input stopped by both gates.
+# Architecture B's own results (results/archB/gates.json) are used instead when they are there.
 GATE_SETS = [("off-target", "Patches of non-aircraft photos"), ("dark s2", "Very dark"),
              ("glare s2", "Strong glare"), ("overexposed s2", "Overexposed"), ("jpeg s2", "Heavy JPEG artefacts"),
              ("noise s2", "Heavy sensor noise"), ("motion blur s2", "Motion blur"), ("blur s2", "Out of focus")]
@@ -89,13 +91,20 @@ STATIC_SETS = ("colour static", "grey static", "gaussian static", "salt & pepper
 def gate_tests(root, alpha_ood):
     """Read the team's published gate results at the served alpha; None when the files are missing."""
     import pandas as pd
+    b = root.parent / "archB/gates.json"
+    if b.exists():
+        g = json.loads(b.read_text())
+        if abs(g.get("alpha_ood", -1) - alpha_ood) < 1e-9:
+            return {"sets": sorted(g["sets"], key=lambda r: -r["stopped"]), "source": g["source"]}
     try:
         ops = pd.read_csv(root / "step2/operating_points.csv", index_col=0)
         rates = pd.read_csv(root / "static/rates.csv")
     except OSError:
         return None
     col = f"both a={alpha_ood:g}"
-    out = [{"set": k, "label": label, "stopped": float(ops.loc[k, col])} for k, label in GATE_SETS if k in ops.index]
+    if col not in ops.columns:   # the study has no column for this alpha
+        return None
+    out =[{"set": k, "label": label, "stopped": float(ops.loc[k, col])} for k, label in GATE_SETS if k in ops.index]
     opt = rates[rates.option.str.contains(f"OOD {alpha_ood:.2f}", regex=False)]
     static = opt[opt.set.isin(STATIC_SETS)]["false accept (passes both gates)"]
     if len(static):
@@ -104,30 +113,31 @@ def gate_tests(root, alpha_ood):
     return {"sets": sorted(out, key=lambda r: -r["stopped"]), "source": "enhanced_res/arch_a/results/archA/"}
 
 
-def arch_a_report(adapter, split, probs, dists, y):
-    """Architecture A on the half of the test split it was not calibrated on (enhanced_res/arch_a/cal_split.csv),
-    at every calibrated alpha. Gates run on the saved 224 px crops, as in the team's own check. With a no-defect
-    class, a single-class answer is split into "no defect" and "defect", and the gates are also given per crop
-    source (D1 defects, healed, clean cropper)."""
+def arch_a_report(adapter, split, probs, dists, y, feats=None):
+    """The decision layer (architecture B for gc7) on the half of the test split it was not calibrated on
+    (enhanced_res/arch_a/cal_split.csv), at every calibrated alpha. The quality gate runs on the saved 224 px crops
+    only if it is on. With a no-defect class, "clear" is the share shown nothing (the set is only no-defect), and the
+    gate is also given per crop source (D1 defects, healed, clean cropper)."""
     import pandas as pd
     from PIL import Image
-    from enhanced_res.arch_a.runtime import REAIM, RETAKE, SHOW, ArchA, summarise, temper
+    from enhanced_res.arch_a.runtime import NOTHING, REAIM, RETAKE, SHOW, ArchA, summarise, temper
     cal = pd.read_csv(adapter.calibration.parent / "cal_split.csv")
     half = dict(zip(cal.src_group, cal.split))  # whole photo families go to one half (crop file numbers can differ)
     rows = np.flatnonzero(((split.split == "test") & (split.src_group.map(half) == "test")).values)
     groups = split.src_group.values[rows]
-    crops = [Image.open(split.crop_path.iloc[i]).convert("RGB") for i in rows]
+    crops = [Image.open(split.crop_path.iloc[i]).convert("RGB") for i in rows] if adapter.arch.use_quality else None
     p, d, yt = probs[rows], dists[rows], y[rows]
+    f = None if feats is None else feats[rows]
     pt = temper(p, adapter.arch.T)
     by_alpha, default = {}, None
     classes = adapter.classes
     nd = classes.index(ND) if ND in classes else None
     for key in sorted(adapter.arch.cal["cp"]["q"]):
         arch = ArchA(adapter.calibration, alpha=float(key))
-        dec = arch.decide(p, crops=crops, knn_dist=d)
+        dec = arch.decide(p, crops=crops, knn_dist=d, feats=f)
         by_alpha[key] = summarise(dec, arch, p, yt, groups) | {"set_threshold": float(1 - arch.q)}
-        if nd is not None:  # single answers that say "no defect", and defects answered that way (a silent miss)
-            clear = np.array([x.action == SHOW and x.classes == [ND] for x in dec])
+        if nd is not None:  # crops shown nothing (no defect), and defects answered that way (a silent miss)
+            clear = np.array([x.action == NOTHING or (x.action == SHOW and x.classes == [ND]) for x in dec])
             by_alpha[key] |= {"clear": float(clear.mean()), "defect_called_clear": float(clear[yt != nd].mean()),
                               "clear_right": float(clear[yt == nd].mean())}
         if abs(arch.alpha - adapter.arch.alpha) < 1e-9:
@@ -152,7 +162,7 @@ def arch_a_report(adapter, split, probs, dists, y):
         "expected": c.get("expected_test_half"),
         "silent_errors": silent_errors(default, pt, yt, rows, groups, adapter.classes),
         "gates_by_source": by_source,
-        # the team's gate tests were run with the 6-class v2 (enhanced_res/arch_a/results/archA/)
+        # architecture B's own tests (results/archB/gates.json); A's (6-class v2) only as a fallback
         "gate_tests": gate_tests(adapter.calibration.parent / "results/archA", adapter.arch.alpha_ood),
     }
 
@@ -194,7 +204,7 @@ def _key(entry):
 def _features(entry, adapter, split, rows):
     """The 8-view features of the given rows: from the team's cache (models.yaml features_cache) when it is there,
     else computed once with the model from the saved crops and kept in cache/ (only the rows the report reads)."""
-    if entry.features_cache and entry.features_cache.exists():
+    if entry.features_cache and entry.features_cache.exists() and entry.split == "d1_gc7":   # its rows are d1_gc7's
         return np.load(entry.features_cache)["tta" if adapter.uses_tta else "plain"][rows]
     stamp = "|".join(f"{p.name}:{p.stat().st_size}" for p in sorted(entry.weights.glob("*.pt")))
     f = CACHE / f"feats_{entry.id}_{entry.split}.npz"
@@ -221,9 +231,10 @@ def build_report(entry, adapter):
         raise ReportUnavailable(f"The Model page needs the validation and test crops ({len(missing):,} missing, e.g. "
                                 f"{missing[0]}): unzip main_model_data_work.zip and d1_gc7_no_defect_crops.zip (team "
                                 "Drive) in the repo root")
-    p_sub, d_sub = adapter.cached(_features(entry, adapter, split, rows))
+    p_sub, d_sub, f_sub = adapter.cached(_features(entry, adapter, split, rows))
     probs, dists = np.zeros((len(split), len(classes))), np.zeros(len(split))
-    probs[rows], dists[rows] = p_sub, d_sub
+    feats = np.zeros((len(split), f_sub.shape[1]), np.float32)
+    probs[rows], dists[rows], feats[rows] = p_sub, d_sub, f_sub
     y = np.array([classes.index(c) for c in split.cls])
     pred, conf = probs.argmax(1), probs.max(1)
     correct = pred == y
@@ -233,8 +244,12 @@ def build_report(entry, adapter):
     gc7 = ND in classes
     if gc7:  # gc7's summary; the comparison is the 6-class v2 on the same defect crops
         from server.paths import REPO_MAIN
-        fin, ci = summ.get("test", {}), summ.get("test", {}).get("macro_f1_ci")
+        fin = summ.get("test", {})
+        from enhanced_res.model import group_bootstrap_ci   # on the crops scored here (the published one is d1_gc7's)
+        ci = [float(v) for v in group_bootstrap_ci(y[test], pred[test], split.src_group.values[test])]
         v2 = json.loads((REPO_MAIN / V2_SUMMARY).read_text())["test"]["final"]
+        if entry.split.endswith("_fix"):   # the 6-class v2 on the same corrected defect crops (gc7_fix's report)
+            summ = summ | {"test_defects": json.loads((REPO_MAIN / FIX_SUMMARY).read_text())["test_defects"]}
         base = {"accuracy": summ["test_defects"]["v2"]["accuracy"], "macro_f1": summ["test_defects"]["v2"]["macro_f1"],
                 "recall": v2["recall"] | {ND: 0.0}, "label": "the 6-class model (v2)", "defects_only": True}
     else:
@@ -259,7 +274,7 @@ def build_report(entry, adapter):
         "no_defect": no_defect_report(split, probs, y, classes, summ) if gc7 else None,
         "backbone_epoch": summ.get("backbone_epoch"), "head": summ.get("head"), "val_macro_f1": summ.get("val", {}).get("macro_f1"),
         "published": {"accuracy": fin.get("accuracy"), "macro_f1": fin.get("macro_f1")},
-        "arch_a": arch_a_report(adapter, split, probs, dists, y),
+        "arch_a": arch_a_report(adapter, split, probs, dists, y, feats),
         "d5": None if not d5 else {"accuracy": d5["final_acc"], "base_accuracy": d5["base_acc"], "n": d5["n"],
                                     "counts": d5["counts"]},
         "provenance": {"weights": [{"file": p.name, "bytes": p.stat().st_size,

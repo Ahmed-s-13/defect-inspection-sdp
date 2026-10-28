@@ -41,14 +41,17 @@ from enhanced_res.model import EWORK, MAIN, MODELS, EnhancedRes, load_split
 from klshift.common import CropDataset
 
 SPLIT = HERE / "cal_split.csv"
-CACHE = {"v2": EWORK / "arch_a_outputs.npz", "gc7": EWORK / "arch_a_outputs_gc7.npz"}   # git-ignored
+CACHE = {"v2": EWORK / "arch_a_outputs.npz", "gc7": EWORK / "arch_a_outputs_gc7.npz",
+         "gc7_fix": EWORK / "arch_a_outputs_gc7_fix.npz"}   # git-ignored
+DATA = {"v2": "d1_grouped", "gc7": "d1_gc7", "gc7_fix": "d1_gc7_fix"}
+RELEASE = {"v2": "v2.0-enhanced-res", "gc7": "v3.0-gc7", "gc7_fix": "local (gc7 retrained on the corrected D1 boxes)"}
 ALPHA, ALPHAS = 0.10, (0.05, 0.10, 0.20)
 ALPHA_Q, ALPHA_OOD, K = 0.05, 0.08, 5      # quality 0.05 (28 Oct; experiments/archA_quality_alpha.py). OOD: kNN + AoN, Bonferroni (0.04 each). Checked without the test
                                            # half: 500 halvings of the cal half stop 12.9% of families (budget 15%;
                                            # experiments/archA_alpha_check.py). Worst case by the union bound: 0.05 + 0.08 = 13%.
 QUALITY_SIDES = {**R.SIDES, "sharpness": "both"}     # also flag far-too-sharp crops (noise), 2026-10-27
 OFFTARGET = EWORK / "offtarget/manifest.csv"
-OFF_CACHE = {"v2": EWORK / "arch_a_offtarget_feats.npz", "gc7": EWORK / "arch_a_offtarget_feats_gc7.npz"}
+OFF_CACHE = {m: EWORK / ("arch_a_offtarget_feats.npz" if m == "v2" else f"arch_a_offtarget_feats_{m}.npz") for m in DATA}
 
 
 def outputs(m, paths, cache):
@@ -71,6 +74,9 @@ def outputs(m, paths, cache):
     return feats, probs, dist
 
 
+PLAIN_NEGATIVES = False
+
+
 def fit_aon(m, old, model):
     """Logistic regression on the 768-d features: D1 train crops (0) vs off-target crops (1)."""
     from sklearn.linear_model import LogisticRegression
@@ -81,6 +87,8 @@ def fit_aon(m, old, model):
         return {k: v for k, v in old.items() if k != "cal_scores"}
     man = pd.read_csv(OFFTARGET)
     man = man[man.role.isin(["fit", "test"]) & (man.source != "user")]
+    if not PLAIN_NEGATIVES:                             # plain surfaces (28 Oct) made B's held-out categories worse
+        man = man[~man.source.isin(["places365-plain", "dtd"])]       # (results/archB/README.md); off by default
     neg, _, _ = outputs(m, [str(MAIN / p) for p in man.crop_path], OFF_CACHE[model])
     head = torch.load(MODELS[model] / "enhanced_res_head.pt", map_location="cpu")
     pos = head["knn_bank"].float().numpy()                      # the model's train crops' features
@@ -117,9 +125,26 @@ def halves(test_crops):
 def main():
     import argparse
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--model", choices=["gc7", "v2"], default="gc7")
-    model = ap.parse_args().model
-    crops = load_split("d1_gc7" if model == "gc7" else "d1_grouped")
+    ap.add_argument("--model", choices=list(DATA), default="gc7")
+    ap.add_argument("--quality", action=argparse.BooleanOptionalAction, default=None,
+                    help="quality gate on/off (default: on for v2 = architecture A, off for the 7-class models = B, "
+                         "where it is legacy)")
+    ap.add_argument("--alpha-ood", type=float, default=ALPHA_OOD)
+    ap.add_argument("--miss-guard", type=float, default=None, metavar="ALPHA",
+                    help="7-class models: only show nothing when the defect test rejects at this alpha")
+    ap.add_argument("--data", choices=sorted(set(DATA.values())), default=None,
+                    help="crops to calibrate and report on (default: the model's own; B uses d1_gc7_fix, whose D1 "
+                         "labels carry the 27 Oct box corrections)")
+    ap.add_argument("--plain-negatives", action="store_true",
+                    help="also give AoN the 28 Oct plain-surface negatives (Places365 plain scenes, DTD); tested, "
+                         "made the held-out categories worse, so off by default")
+    args = ap.parse_args()
+    global PLAIN_NEGATIVES
+    PLAIN_NEGATIVES = args.plain_negatives
+    model = args.model
+    data = args.data or DATA[model]
+    use_q = (model == "v2") if args.quality is None else args.quality
+    crops = load_split(data)
     va = crops[crops.split == "val"].reset_index(drop=True)
     te = crops[crops.split == "test"].reset_index(drop=True)
     te["half"] = halves(te)
@@ -143,19 +168,6 @@ def main():
     T = float(np.exp(r.x))
     print(f"T = {T:.3f}  (val NLL {nll(P[sl['val']], y['val']):.3f} -> {r.fun:.3f})")
 
-    # CP thresholds on the cal half
-    Pc = R.temper(P[sl["cal"]], T)
-    q = {f"{a:.2f}": R.family_threshold(Pc, y["cal"], g["cal"], a) for a in ALPHAS}
-
-    # quality gate: reference = val crops, calibration scores = cal half
-    def stats(df):
-        st = [R.quality_stats(Image.open(p).convert("RGB")) for p in df.crop_path]
-        return {s: np.array([d[s] for d in st]) for s in R.STATS}
-    print("  quality statistics ...", flush=True)
-    ref = {s: np.sort(v) for s, v in stats(va).items()}
-    ref = {s: np.asarray(g9(v)) for s, v in ref.items()}         # exactly what the JSON will hold
-    q_cal, _ = R.quality_score(ref, stats(cal), QUALITY_SIDES)
-
     # unfamiliar-input gate, second part: AoN
     path = R.CALIBRATIONS[model]
     og = json.loads(path.read_text())["ood_gate"] if path.exists() else {}
@@ -164,32 +176,67 @@ def main():
     z = (Fe[sl["cal"]] - np.asarray(lr["mu"])) / np.asarray(lr["sd"])
     lr["cal_scores"] = g9(1 / (1 + np.exp(-(z @ np.asarray(lr["coef"]) + lr["intercept"]))))
 
+    # CP thresholds on the cal half. With a no-defect class (B) only on the cal crops the OOD gate lets through,
+    # because only those reach the set at prediction time.
+    Pc = R.temper(P[sl["cal"]], T)
+    nd = classes.index("no-defect") if "no-defect" in classes else None
+    passed = np.ones(nc, bool)
+    if nd is not None:
+        p_o = np.minimum(1, 2 * np.minimum(R.pvalue(D[sl["cal"]], g["cal"], D[sl["cal"]]),
+                                           R.pvalue(lr["cal_scores"], g["cal"], lr["cal_scores"])))
+        passed = p_o > args.alpha_ood
+        print(f"  CP fitted on the {passed.sum()} of {nc} cal crops that pass the OOD gate")
+    q = {f"{a:.2f}": R.family_threshold(Pc[passed], y["cal"][passed], g["cal"][passed], a) for a in ALPHAS}
+
+    # quality gate (legacy in B): reference = val crops, calibration scores = cal half
+    if use_q:
+        def stats(df):
+            st = [R.quality_stats(Image.open(p).convert("RGB")) for p in df.crop_path]
+            return {s: np.array([d[s] for d in st]) for s in R.STATS}
+        print("  quality statistics ...", flush=True)
+        ref = {s: np.sort(v) for s, v in stats(va).items()}
+        ref = {s: np.asarray(g9(v)) for s, v in ref.items()}         # exactly what the JSON will hold
+        q_cal, _ = R.quality_score(ref, stats(cal), QUALITY_SIDES)
+        quality = {"enabled": True, "alpha": ALPHA_Q, "stats": list(R.STATS), "sides": QUALITY_SIDES,
+                   "score": "-log(min over stats of the tail probability vs the val reference)",
+                   "reference": {s: list(v) for s, v in ref.items()},
+                   "cal_scores": g9(q_cal), "cal_groups": [int(v) for v in g["cal"]]}
+    else:
+        quality = {"enabled": False, "note": "legacy: switched off (it flags plain clean panels as blurry); "
+                                              "calibrate.py --quality turns it back on"}
+
+    # miss guard (B, optional): defect cal crops that pass the gate, scored by their tempered p(no-defect)
+    guard = None
+    if nd is not None and args.miss_guard is not None:
+        dm = passed & (y["cal"] != nd)
+        guard = {"alpha": args.miss_guard, "score": "tempered p(no-defect) of defect calibration crops",
+                 "cal_scores": g9(Pc[dm, nd]), "cal_groups": [int(v) for v in g["cal"][dm]]}
+
     cfg = {
         "about": "architecture A for enhanced_res: quality gate and OOD gate (in parallel; re-aim wins if both fire) -> temperature -> LAC CP set. Written by "
                  "enhanced_res/arch_a/calibrate.py; read by enhanced_res/arch_a/runtime.py.",
         "created": str(date.today()),
         "model": {"version": model,
-                  "backbone": ("gc7/" if model == "gc7" else "") + "enhanced_res_backbone.pt",
-                  "head": ("gc7/" if model == "gc7" else "") + "enhanced_res_head.pt",
-                  "release": "v3.0-gc7" if model == "gc7" else "v2.0-enhanced-res",
-                  "knn_alpha": m.alpha, "tau": m.tau},
-        "data": {"split": "d1_gc7" if model == "gc7" else "d1_grouped", "cal_split": "enhanced_res/arch_a/cal_split.csv",
+                  "backbone": ("" if model == "v2" else f"{model}/") + "enhanced_res_backbone.pt",
+                  "head": ("" if model == "v2" else f"{model}/") + "enhanced_res_head.pt",
+                  "release": RELEASE[model], "knn_alpha": m.alpha, "tau": m.tau},
+        "data": {"split": data, "cal_split": "enhanced_res/arch_a/cal_split.csv",
                  "val_crops": nv, "cal_crops": nc, "cal_families": int(cal.src_group.nunique()),
                  "test_half_crops": len(tst), "test_half_families": int(tst.src_group.nunique())},
         "classes": classes,
         "temperature": {"kind": "probability temperature: p ** (1/T), renormalised; fitted on val by NLL", "T": T},
         "cp": {"score": "LAC: 1 - tempered probability of the true class",
                "weighting": "every calibration family carries weight 1", "alpha": ALPHA, "q": q,
-               "rule": "set = every class with tempered probability >= 1 - q[alpha]"},
-        "quality_gate": {"alpha": ALPHA_Q, "stats": list(R.STATS), "sides": QUALITY_SIDES,
-                         "score": "-log(min over stats of the tail probability vs the val reference)",
-                         "reference": {s: list(v) for s, v in ref.items()},
-                         "cal_scores": g9(q_cal), "cal_groups": [int(v) for v in g["cal"]]},
-        "ood_gate": {"alpha": ALPHA_OOD, "combine": "Bonferroni: p = 2 x min(p_knn, p_aon)",
+               "rule": "set = every class with tempered probability >= 1 - q[alpha]",
+               "fitted_on": "all cal-half crops" if nd is None else "cal-half crops that pass the OOD gate"},
+        "quality_gate": quality,
+        "ood_gate": {"alpha": args.alpha_ood, "combine": "Bonferroni: p = 2 x min(p_knn, p_aon)",
                      "k": K, "score": "1 - mean cosine similarity to the k nearest train features",
                      "cal_scores": g9(D[sl["cal"]]), "cal_groups": [int(v) for v in g["cal"]],
                      "aon": lr},
     }
+    if guard is not None:
+        cfg["miss_guard"] = guard
     path.write_text(json.dumps(cfg))
 
     # expected results on the test half (enhanced_res/evaluate.py compares against these)

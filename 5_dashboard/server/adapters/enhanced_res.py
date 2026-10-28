@@ -1,6 +1,6 @@
 """The main model: enhanced_res (ResNet-18 features over 8 views -> MLP ensemble + kNN head), answered through
-architecture A (enhanced_res/arch_a: quality gate, unfamiliar-input gate, temperature, conformal set). The entry
-names the weights folder (gc7 or v2) and its calibration file."""
+architecture B (enhanced_res/arch_a with calibration_gc7.json: the unfamiliar-input gate (kNN distance + AoN),
+temperature and a conformal set; the quality gate is off). The entry names the weights folder and its calibration."""
 import numpy as np
 import torch
 
@@ -19,7 +19,7 @@ class EnhancedResAdapter:
             return f"missing {', '.join(missing)} in {entry.weights}: unzip {zipname} in the repo root"
         cal = entry.calibration or CALIBRATION
         if not cal.exists():
-            return f"missing {cal}: pull the Project Code repo (architecture A's calibration is in git)"
+            return f"missing {cal}: pull the Project Code repo (the calibration file is in git)"
         return None
 
     def __init__(self, entry, device):
@@ -33,11 +33,12 @@ class EnhancedResAdapter:
 
     @torch.no_grad()
     def predict(self, x, crops):
-        """x: normalised crops, crops: the same 224 px crops as PIL images (for the quality gate).
-        Returns the model's probabilities (N, C) and architecture A's decision for each crop."""
+        """x: normalised crops, crops: the same 224 px crops as PIL images (used only if the quality gate is on).
+        Returns the model's probabilities (N, C) and the decision layer's answer for each crop."""
         f = self.m.features(x)
         p = self.m.proba_from_features(f).cpu().numpy()
-        return p, self.arch.decide(p, crops=crops, knn_dist=self.m.knn_distance(f).cpu().numpy())
+        return p, self.arch.decide(p, crops=crops, knn_dist=self.m.knn_distance(f).cpu().numpy(),
+                                   feats=f.cpu().numpy())
 
     @torch.no_grad()
     def raw_features(self, paths, batch=64):
@@ -50,10 +51,11 @@ class EnhancedResAdapter:
 
     @torch.no_grad()
     def cached(self, F, chunk=4096):
-        """From the model's own cached features: probabilities and the unfamiliar-input score (kNN distance)."""
-        probs, dists = [], []
+        """From the model's own cached features: probabilities, the kNN distance and the model's features (for AoN)."""
+        probs, dists, feats = [], [], []
         for i in range(0, len(F), chunk):
             f = torch.from_numpy(np.ascontiguousarray(F[i:i + chunk])).float().to(self.device)[:, self.m.cols]
             probs.append(self.m.proba_from_features(f).cpu().numpy())
             dists.append(self.m.knn_distance(f).cpu().numpy())
-        return np.concatenate(probs), np.concatenate(dists)
+            feats.append(f.cpu().numpy())
+        return np.concatenate(probs), np.concatenate(dists), np.concatenate(feats)

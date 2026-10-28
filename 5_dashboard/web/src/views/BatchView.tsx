@@ -137,7 +137,7 @@ export function BatchView({ classes, onOpen }: { classes: string[]; onOpen(id: s
         <div className="summary-cell">
           <span className="summary-label">Needs a person</span>
           <span className="summary-fig"><AnimatedNumber value={done.filter((i) => i.result!.state !== "detected" && i.result!.state !== "clear").length} format={(v) => int(Math.round(v))} /></span>
-          <span className="summary-sub">{count("ambiguous") + count("unclear")} ambiguous · {count("retake")} bad image · {count("cannot_assess")} cannot assess</span>
+          <span className="summary-sub">{count("ambiguous") + count("unclear")} ambiguous{count("retake") > 0 ? ` · ${count("retake")} bad image` : ""} · {count("cannot_assess")} cannot assess</span>
         </div>
         <div className="summary-cell">
           <span className="summary-label">Time per image</span>
@@ -149,7 +149,7 @@ export function BatchView({ classes, onOpen }: { classes: string[]; onOpen(id: s
       <div className="batch-body">
         <div className="enter" style={{ "--i": 2 } as React.CSSProperties}>
           <div className="seg" role="radiogroup" aria-label="Show">
-            {FILTERS.filter((f) => (f.id !== "unclear" || count("unclear") > 0) && (f.id !== "clear" || classes.includes("no-defect"))).map((f) => (
+            {FILTERS.filter((f) => (f.id !== "unclear" || count("unclear") > 0) && (f.id !== "retake" || count("retake") > 0) && (f.id !== "clear" || classes.includes("no-defect"))).map((f) => (
               <button key={f.id} role="radio" aria-checked={filter === f.id} className="seg-btn" onClick={() => setFilter(f.id)}>{f.label}</button>
             ))}
             {row != null && <button className="seg-clear" onClick={() => setRow(null)}>True class: {className(classes[row])} ×</button>}

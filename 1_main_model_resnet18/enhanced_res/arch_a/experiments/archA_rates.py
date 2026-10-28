@@ -43,6 +43,7 @@ def main():
     a = R.ArchA(R.CALIBRATIONS["v2"])
     m = EnhancedRes(MODELS["v2"])
     man = pd.read_csv(OC.OFF / "manifest.csv")
+    man = man[~man.source.isin(["places365-plain", "dtd"])].reset_index(drop=True)   # B-only rows (28 Oct)
     paths = [str(MAIN / p) for p in man.crop_path]
     x = OC.features(OC.ER(m), "bench", paths)
     f, P = x[:, :768], x[:, 768:]

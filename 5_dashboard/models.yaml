@@ -6,18 +6,19 @@ models:
   enhanced_res:
     label: enhanced_res
     adapter: enhanced_res
-    description: ResNet-18 + MLP-ensemble + kNN head with a 7th "no defect" class, features averaged over 8 rotated and flipped views, answered through architecture A
+    description: ResNet-18 + MLP-ensemble + kNN head with a 7th "no defect" class, features averaged over 8 rotated and flipped views, answered through architecture B
     weights: "../1_main_model_resnet18/data/work/enhanced_res/gc7"
-    # the team's 8-view features of every d1_gc7 crop (rows align with load_split("d1_gc7")); optional: without it
-    # the server computes the validation and test crops' features once, into cache/ (a few minutes)
+    # the team's 8-view features of every d1_gc7 crop (rows align with load_split("d1_gc7")); used only while split is
+    # d1_gc7. With d1_gc7_fix the server computes the validation and test crops' features once, into cache/ (minutes)
     features_cache: "../1_main_model_resnet18/data/work/enhanced_res/cache/feats_gc7.npz"
     summary: "../1_main_model_resnet18/enhanced_res/results/gc7/summary.json"
     calibration: "../1_main_model_resnet18/enhanced_res/arch_a/calibration_gc7.json"
-    split: d1_gc7
+    split: d1_gc7_fix
     trained_on: d1_gc7 (the leak-free split, plus healed and clean no-defect crops)
     leak_free: true
-    # gc7 (Release v3.0-gc7). Its answers come from architecture A refitted for 7 classes (calibration_gc7.json):
-    # quality gate, unfamiliar-input gate, temperature and a conformal set, all fitted by the team on d1_gc7
+    # gc7 (Release v3.0-gc7). Its answers come from architecture B (calibration_gc7.json): the unfamiliar-input gate
+    # (kNN distance + AoN), temperature and a conformal set, fitted on d1_gc7_fix (d1_gc7 with the 27 Oct D1 box
+    # corrections); the quality gate is off. The report is scored on the same corrected crops.
   legacy:
     label: legacy ResNet-18 + MLP
     adapter: legacy

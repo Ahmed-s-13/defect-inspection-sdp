@@ -1,0 +1,21 @@
+{
+ "alpha_ood": 0.08,
+ "source": "enhanced_res/arch_a/results/archB/",
+ "sets": [
+  {
+   "set": "off-target held out",
+   "label": "People, hands, helmets, hangars, runways (never trained on)",
+   "stopped": 0.968232044198895
+  },
+  {
+   "set": "wallpapers",
+   "label": "Patches of non-aircraft photos",
+   "stopped": 0.8275
+  },
+  {
+   "set": "static",
+   "label": "Random static, solid colours, gradients",
+   "stopped": 0.96875
+  }
+ ]
+}

@@ -78,7 +78,7 @@ function Headline({ rep }: { rep: Report }) {
       </div>
       <dl className="headline-facts">
         <div className="rv" style={{ "--i": 2 } as React.CSSProperties}><dt>Macro-F1, every class counting equally{nd ? ` (all ${rep.classes.length})` : ""}</dt><dd><span className="fig big">{t.macro_f1.toFixed(3)}</span>{t.ci && <span className="sub"> 95% interval {t.ci[0].toFixed(3)}–{t.ci[1].toFixed(3)}{nd ? ` · balanced accuracy ${pct(t.balanced_accuracy)}` : ""}</span>}<TargetBar value={t.macro_f1} ci={t.ci} target={rep.target_macro_f1} reveal={rv} /></dd></div>
-        <div className="rv" style={{ "--i": 3 } as React.CSSProperties}><dt>What the inspector sees, through architecture A</dt><dd>The answer holds the true class <span className="fig big">{pct(served(rep).cp_coverage)}</span><span className="sub"> of the time (target {pct(1 - rep.arch_a.alpha, 0)}); a single wrong class with no warning on {pct(served(rep).single_class_wrong)}, against {pct(1 - served(rep).accuracy)} if it always showed its top class</span></dd></div>
+        <div className="rv" style={{ "--i": 3 } as React.CSSProperties}><dt>What the inspector sees, through architecture B</dt><dd>The answer holds the true class <span className="fig big">{pct(served(rep).cp_coverage)}</span><span className="sub"> of the time (target {pct(1 - rep.arch_a.alpha, 0)}); a single wrong class with no warning on {pct(served(rep).single_class_wrong)}, against {pct(1 - served(rep).accuracy)} if it always showed its top class</span></dd></div>
         {!nd && <div className="rv" style={{ "--i": 3 } as React.CSSProperties}><dt>Balanced accuracy</dt><dd><span className="fig big">{pct(t.balanced_accuracy)}</span></dd></div>}
         {nd && <div className="rv" style={{ "--i": 3 } as React.CSSProperties}><dt>Intact surface it recognises</dt><dd><span className="fig big">{pct(nd.recall)}</span><span className="sub"> of {int(nd.n)} no-defect test crops; {pct(nd.defects_called_clear)} of defects called no defect. The 6-class model called every clean crop a defect.</span></dd></div>}
         {nd && base && <div className="rv" style={{ "--i": 4 } as React.CSSProperties}><dt>Against {base.label}, on the same defect crops</dt><dd>Accuracy <span className="fig">{nd.defects_best.accuracy.toFixed(3)}</span> · macro-F1 <span className="fig">{nd.defects_best.macro_f1.toFixed(3)}</span><span className="sub"> (v2: {base.accuracy.toFixed(3)} · {base.macro_f1.toFixed(3)}). The 7th class cost nothing on defects. Over all {int(t.n)} test crops, no defect included, its top answer is right {pct(t.accuracy)} of the time.</span></dd></div>}
@@ -146,7 +146,7 @@ function NoDefectSection({ rep, nd }: { rep: Report; nd: NoDefect }) {
         {nd.dial && (
           <div className="nd-cell rv" style={{ "--i": 3 } as React.CSSProperties}>
             <h3 className="nd-h3">Fewer misses, chosen on validation</h3>
-            <p className="nd-sub">Say no defect only when p(no defect) passes a cut set on validation.{served?.defect_called_clear != null ? <> Through architecture A, only {pct(served.defect_called_clear)} of defects are shown as a single <b>No defect</b>.</> : null}</p>
+            <p className="nd-sub">Say no defect only when p(no defect) passes a cut set on validation.{served?.defect_called_clear != null ? <> Through architecture B, only {pct(served.defect_called_clear)} of defects are shown as <b>No defect</b> (nothing on the visor).</> : null}</p>
             <table className="nd-dial">
               <thead><tr><th scope="col">Cut set to miss, val</th><th scope="col">Defects missed, test</th><th scope="col">Clean crops caught</th></tr></thead>
               <tbody>
@@ -182,17 +182,18 @@ function NdCell({ i, rv, title, sub, bars, tone }: { i: number; rv: Reveal; titl
   );
 }
 
-/** Architecture A at the alpha the dashboard serves. */
+/** Architecture B at the alpha the dashboard serves. */
 const served = (rep: Report) => rep.arch_a.by_alpha[rep.arch_a.alpha.toFixed(2)];
 
 type MixState = "detected" | "clear" | "ambiguous" | "unclear" | "retake" | "cannot_assess";
 /** The answer types, in the order the bar stacks them. With a no-defect class, a single answer is split into a
  *  defect and "no defect". */
 function mixOf(r: AlphaResult, nd: boolean): [MixState, string, number][] {
-  const one = r.actions["show class"], clear = nd ? r.clear ?? 0 : 0;
+  const nothing = r.actions["nothing shown"] ?? 0, possible = r.actions["possible defect"] ?? 0;
+  const clear = nd ? r.clear ?? 0 : 0, one = r.actions["show class"] - Math.max(0, clear - nothing);
   return ([
-    ["detected", nd ? "One defect" : "One class", one - clear], ...(nd ? [["clear", "No defect", clear]] : []),
-    ["ambiguous", "Ambiguous", r.actions.ambiguous], ["unclear", "Unclear", r.actions.unclear],
+    ["detected", nd ? "One defect" : "One class", one], ...(nd ? [["clear", "No defect", clear]] : []),
+    ["ambiguous", nd ? "Ambiguous or possible" : "Ambiguous", r.actions.ambiguous + possible], ["unclear", "Unclear", r.actions.unclear],
     ["retake", "Bad image", r.actions["re-take"]], ["cannot_assess", "Cannot assess", r.actions["re-aim"]],
   ] as [MixState, string, number][]).filter(([, , v]) => v > 0);
 }
@@ -212,7 +213,7 @@ function Confidence({ rep }: { rep: Report }) {
         <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>Is its confidence honest?</h2>
         <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>
           {raw && <>Raw, when the model said over 90% it was right {pct(raw.accuracy, 0)} of the time. </>}
-          Architecture A softens every percentage with one temperature (T = {a.temperature.toFixed(2)}, fitted on validation photos), so stated confidence matches how often it is right: calibration error <span className="fig">{a.ece.raw.toFixed(3)}</span> → <span className="fig">{a.ece.tempered.toFixed(3)}</span>. The top class never changes.
+          Architecture B softens every percentage with one temperature (T = {a.temperature.toFixed(2)}, fitted on validation photos), so stated confidence matches how often it is right: calibration error <span className="fig">{a.ece.raw.toFixed(3)}</span> → <span className="fig">{a.ece.tempered.toFixed(3)}</span>. The top class never changes.
         </p>
         <ReliabilityChart bins={a.reliability.tempered} before={a.reliability.raw} reveal={honest} label="Reliability on the test half: accuracy against stated confidence, before and after calibration" />
         <p className="chart-key rv" style={{ "--i": 2 } as React.CSSProperties}><span className="key-swatch key-bar" /> Calibrated <span className="key-raw" /> Raw, before calibration <span className="key-line key-dash" /> Perfectly honest · {int(a.test_half.n)} test crops, bands with 20+</p>
@@ -220,7 +221,7 @@ function Confidence({ rep }: { rep: Report }) {
       <div className="panel" ref={sets.ref} data-shown={sets.shown}>
         <RuleDraw />
         <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>How many classes to show</h2>
-        <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>Instead of always naming its top class, the model keeps every class whose calibrated percentage passes a cut-off set by conformal prediction. One class left is a <b>Defect detected</b>{nd ? <>, or <b>No defect</b> when that class is no defect</> : null}; two or more is <b>Ambiguous</b> and goes to a person. The cut-off is chosen so the answer holds the true class {pct(1 - a.alpha, 0)} of the time.</p>
+        <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>Instead of always naming its top class, the model keeps every class whose calibrated percentage passes a cut-off set by conformal prediction. One class left is a <b>Defect detected</b>{nd ? <>, or <b>No defect</b> (nothing on the visor) when that class is no defect</> : null}; two or more is <b>Ambiguous</b>{nd ? <> (<b>Possible</b> when one of them is no defect)</> : null} and goes to a person. The cut-off is chosen so the answer holds the true class {pct(1 - a.alpha, 0)} of the time.</p>
         <div className="seg rv" style={{ "--i": 2 } as React.CSSProperties} role="radiogroup" aria-label="Error rate alpha">
           {alphas.map((k) => (
             <button key={k} role="radio" aria-checked={k === key} className="seg-btn" onClick={() => setKey(k)}>
@@ -251,7 +252,7 @@ function Confidence({ rep }: { rep: Report }) {
 }
 
 function Refusals({ rep }: { rep: Report }) {
-  const a = rep.arch_a, r = served(rep), g = a.gate_tests;
+  const a = rep.arch_a, r = served(rep), g = a.gate_tests, q = a.alpha_quality != null;
   const rv = useReveal<HTMLDivElement>(0.8);
   const normal = r.actions["re-take"] + r.actions["re-aim"];
   const src = a.gates_by_source ?? [], clean = src.find((x) => x.source === "clean_cropper"), d1 = src.find((x) => x.source === "d1");
@@ -263,12 +264,12 @@ function Refusals({ rep }: { rep: Report }) {
       <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>What it refuses to answer</h2>
       <div className="refuse">
         <div>
-          <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>Two checks run before any class is shown. Each compares the crop with normal photos the model was calibrated on.</p>
+          <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>{q ? "Two checks run before any class is shown. Each compares the crop with normal photos the model was calibrated on." : "One check runs before any class is shown. It compares the crop with normal photos the model was calibrated on. Architecture B has no image-quality check: it flagged plain, clean panels as blurry."}</p>
           <ul className="legend rv" style={{ "--i": 2 } as React.CSSProperties}>
-            <li><StateGlyph state="retake" size={18} /><span><b>Image quality</b>: sharpness, brightness and blown-out or black pixels. Too unusual, and the answer is <b>Bad image: re-take</b>.</span></li>
-            <li><StateGlyph state="cannot_assess" size={18} /><span><b>Unfamiliar input</b>: how far the crop's features are from its 5 nearest training crops. Too far, and the answer is <b>Cannot assess: re-aim</b>. Without it the model names a defect on anything, confidently.</span></li>
+            {q && <li><StateGlyph state="retake" size={18} /><span><b>Image quality</b>: sharpness, brightness and blown-out or black pixels. Too unusual, and the answer is <b>Bad image: re-take</b>.</span></li>}
+            <li><StateGlyph state="cannot_assess" size={18} /><span><b>Unfamiliar input</b>: how far the crop's features are from its 5 nearest training crops, and whether they look like aircraft skin at all (a check trained on photos of people, vehicles and scenes). Too far or not skin, and the answer is <b>Cannot assess: re-aim</b>. Without it the model names a defect on anything, confidently.</span></li>
           </ul>
-          <p className="coverage-ref rv" style={{ "--i": 3 } as React.CSSProperties}>The price: they also stop {pct(normal, 0)} of normal test crops ({pct(r.actions["re-take"], 0)} quality, {pct(r.actions["re-aim"], 0)} unfamiliar). Blur mostly gets through.{clean && d1 ? <> Plain panels look blurry to the quality check: it sends {pct(clean.retake, 0)} of clean-cropper crops to re-take, against {pct(d1.retake, 0)} of defect crops.</> : null}</p>
+          <p className="coverage-ref rv" style={{ "--i": 3 } as React.CSSProperties}>{q ? <>The price: they also stop {pct(normal, 0)} of normal test crops ({pct(r.actions["re-take"], 0)} quality, {pct(r.actions["re-aim"], 0)} unfamiliar). Blur mostly gets through.</> : <>The price: it also stops {pct(normal, 0)} of normal test crops{clean && d1 ? <> ({pct(d1.reaim, 0)} of defect crops, {pct(clean.reaim, 0)} of clean-cropper crops)</> : null}. Blurred, dark or glary photos are not stopped.</>}{q && clean && d1 ? <> Plain panels look blurry to the quality check: it sends {pct(clean.retake, 0)} of clean-cropper crops to re-take, against {pct(d1.retake, 0)} of defect crops.</> : null}</p>
         </div>
         <div className="rv" style={{ "--i": 2 } as React.CSSProperties}>
           <ol className="gate-bars" aria-label="Share of each kind of input stopped by the two checks">
@@ -281,7 +282,7 @@ function Refusals({ rep }: { rep: Report }) {
               </li>
             ))}
           </ol>
-          {g && <p className="chart-key">Share stopped by the two checks. From the team's tests of architecture A with the 6-class model ({g.source}); the last row is measured here on {rep.label}.</p>}
+          {g && <p className="chart-key">{q ? <>Share stopped by the two checks, from the team's tests ({g.source})</> : <>Share not shown as a defect (stopped, or left silent), from the team's tests of architecture B ({g.source})</>}; the last row is measured here on {rep.label}.</p>}
         </div>
       </div>
     </div>
@@ -295,7 +296,7 @@ function Evidence({ rep }: { rep: Report }) {
     <div className="panel" ref={rv.ref} data-shown={rv.shown}>
       <RuleDraw />
       <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>Mistakes it still shows without a warning</h2>
-      <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>Test crops that passed both checks and got a single, wrong class, most confident first (at most two per photo group). These are the {pct(served(rep).single_class_wrong)} an inspector would not be warned about.{served(rep).defect_called_clear != null ? <> The worst kind, a defect shown as <b>No defect</b>, happens to {pct(served(rep).defect_called_clear ?? 0)} of defect crops.</> : null}</p>
+      <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>Test crops that passed the checks and got a single, wrong class, most confident first (at most two per photo group). These are the {pct(served(rep).single_class_wrong)} an inspector would not be warned about.{served(rep).defect_called_clear != null ? <> The worst kind, a defect shown as <b>No defect</b> (nothing on the visor), happens to {pct(served(rep).defect_called_clear ?? 0)} of defect crops.</> : null}</p>
       <div className="mistakes">
         {errors.map((e, i) => {
           const d = rv.t(0.07) * i;
@@ -325,7 +326,7 @@ function Provenance({ rep }: { rep: Report }) {
     <footer className="provenance">
       <span>Split: {rep.provenance.split} (validation {int(rep.val.n)} crops, test {int(rep.test.n)})</span>
       <span>Weights: {rep.provenance.weights.map((w) => `${w.file} (${w.modified})`).join(", ")}</span>
-      <span>Architecture A: temperature fitted on validation, cut-off and checks calibrated by the team on {int(rep.arch_a.cal.crops)} test crops ({rep.arch_a.cal.families} photo groups, {rep.arch_a.cal.created}), measured here on the other {int(rep.arch_a.test_half.n)} · report computed {rep.computed_at.slice(0, 10)}</span>
+      <span>Architecture B: temperature fitted on validation, cut-off and check calibrated by the team on {int(rep.arch_a.cal.crops)} test crops ({rep.arch_a.cal.families} photo groups, {rep.arch_a.cal.created}), measured here on the other {int(rep.arch_a.test_half.n)} · report computed {rep.computed_at.slice(0, 10)}</span>
     </footer>
   );
 }

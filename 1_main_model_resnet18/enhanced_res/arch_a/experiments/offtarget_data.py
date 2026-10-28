@@ -54,6 +54,16 @@ PLACES = {  # scene: role (100 validation images each)
     "/g/garage/indoor": "fit", "/i/industrial_area": "fit", "/l/loading_dock": "fit",
     "/a/auto_factory": "fit", "/e/engine_room": "fit",
 }
+# Added 28 Oct for architecture B (python offtarget_data.py --add-plain): plain surfaces, which a model with a
+# no-defect class may confuse with clean skin. B's AoN uses them; A's calibration.json leaves them out (unchanged).
+PLACES_PLAIN = {
+    "/p/parking_lot": "fit", "/h/highway": "fit", "/a/airfield": "fit", "/p/parking_garage/indoor": "fit",
+    "/d/driveway": "fit", "/s/sky": "fit", "/d/desert/sand": "fit", "/l/landing_deck": "fit",
+    "/s/street": "test", "/c/construction_site": "test",
+}
+DTD_URL = "https://thor.robots.ox.ac.uk/dtd/dtd-r1.0.1.tar.gz"     # Describable Textures Dataset (Cimpoi et al. 2014)
+N_DTD = 20                                                          # images per texture category
+B_ONLY_SOURCES = ("places365-plain", "dtd")
 PLACES_VAL = "http://data.csail.mit.edu/places/places365/val_256.tar"
 PLACES_LIST = "http://data.csail.mit.edu/places/places365/filelist_places365-standard.tar"
 EGOHANDS = "http://vision.soic.indiana.edu/egohands_files/egohands_data.zip"
@@ -66,6 +76,8 @@ SOURCES_MD = """# Off-target benchmark sources (local only, not for git)
 | Places365 (MIT CSAIL), validation set | research / non-commercial use | hangar, warehouse, airport, runway, garage, industrial scenes |
 | FGVC-Aircraft 2013b (Oxford VGG) | research / non-commercial use | whole aircraft, undamaged skin (D6) |
 | Open Images "Fixed-wing aircraft" | CC BY 2.0 / CC BY 4.0 | whole aircraft, undamaged skin (D9) |
+| Places365 (MIT CSAIL), validation set, plain scenes (added 28 Oct) | research / non-commercial use | parking lots, highways, airfields, sky, sand, streets, construction sites (architecture B only) |
+| DTD, Describable Textures Dataset (Oxford VGG, Cimpoi et al. 2014) | research use | 47 texture categories (architecture B only) |
 """
 
 
@@ -137,21 +149,22 @@ def openimages(rows, rng):
 
 
 # ------------------------------------------------------------------ Places365
-def places(rows, rng):
+def places(rows, rng, scenes=None, source="places365"):
+    PLACES_ = scenes or PLACES
     lst = fetch(PLACES_LIST, SRC / "places/filelist_places365-standard.tar")
     with tarfile.open(lst) as t:
         cats = t.extractfile(next(m for m in t.getmembers() if m.name.endswith("categories_places365.txt"))).read().decode()
         val = t.extractfile(next(m for m in t.getmembers() if m.name.endswith("places365_val.txt"))).read().decode()
     idx = {line.split()[0]: int(line.split()[1]) for line in cats.splitlines()}
-    missing = [s for s in PLACES if s not in idx]
+    missing = [s for s in PLACES_ if s not in idx]
     assert not missing, f"Places365 has no class {missing}"
     want = {}
     for line in val.splitlines():
         f, k = line.split()
-        for scene, role in PLACES.items():
+        for scene, role in PLACES_.items():
             if int(k) == idx[scene]:
                 want[f] = (scene, role)
-    print(f"Places365: {len(want)} validation images in {len(PLACES)} scenes (downloading the ~500 MB set) ...", flush=True)
+    print(f"Places365: {len(want)} validation images in {len(PLACES_)} scenes (downloading the ~500 MB set) ...", flush=True)
     tar = fetch(PLACES_VAL, SRC / "places/val_256.tar")
     with tarfile.open(tar) as t:
         for m in t:
@@ -160,7 +173,7 @@ def places(rows, rng):
                 data = t.extractfile(m).read()
                 scene, role = want[name]
                 img = Image.open(io.BytesIO(data)).convert("RGB")
-                save_pair(img, Path(name).stem, "places365", scene.split("/", 2)[2], role, rows, rng=rng, digest=sha1(data))
+                save_pair(img, Path(name).stem, source, scene.split("/", 2)[2], role, rows, rng=rng, digest=sha1(data))
 
 
 # ------------------------------------------------------------------ EgoHands
@@ -209,7 +222,40 @@ def aircraft(rows, rng):
         save_pair(img, p.stem, "user", "helmet photo (user)", "test", rows, rng=rng, digest=sha1(data))
 
 
+def dtd(rows, rng):
+    """DTD: 47 texture categories, alternately fit / held-out test (sorted by name), N_DTD images each."""
+    tar = fetch(DTD_URL, SRC / "dtd/dtd-r1.0.1.tar.gz")
+    with tarfile.open(tar) as t:
+        members = [m for m in t.getmembers() if m.isfile() and "/images/" in m.name and m.name.endswith(".jpg")]
+        cats = sorted({Path(m.name).parent.name for m in members})
+        role = {c: ("fit" if i % 2 == 0 else "test") for i, c in enumerate(cats)}
+        for c in cats:
+            ms = [m for m in members if Path(m.name).parent.name == c]
+            for k in rng.choice(len(ms), min(N_DTD, len(ms)), replace=False):
+                data = t.extractfile(ms[k]).read()
+                img = Image.open(io.BytesIO(data)).convert("RGB")
+                save_pair(img, Path(ms[k].name).stem, "dtd", f"texture: {c}", role[c], rows, rng=rng, digest=sha1(data))
+    print(f"DTD: {len(cats)} texture categories, {N_DTD} images each", flush=True)
+
+
+def add_plain():
+    """Append the plain-surface negatives (Places365 plain scenes + DTD) to the existing manifest; nothing else changes."""
+    man = pd.read_csv(OUT / "manifest.csv", keep_default_na=False)
+    man = man[~man.source.isin(B_ONLY_SOURCES)]                       # re-running replaces only these rows
+    rng = np.random.default_rng(SEED + 1)
+    rows = []
+    places(rows, rng, PLACES_PLAIN, "places365-plain")
+    dtd(rows, rng)
+    m = pd.concat([man, pd.DataFrame(rows)], ignore_index=True)
+    h = m[m.sha1 != ""].groupby("sha1").role.nunique()
+    assert (h <= 1).all(), f"{(h > 1).sum()} images appear in two roles"
+    m.to_csv(OUT / "manifest.csv", index=False)
+    print(pd.DataFrame(rows).groupby(["role", "source"]).size().to_string())
+
+
 def main():
+    if "--add-plain" in sys.argv:
+        return add_plain()
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "SOURCES.md").write_text(SOURCES_MD)
     rng = np.random.default_rng(SEED)

@@ -15,9 +15,12 @@ MLP-ensemble + kNN head. d1_gc7 test: 91% of clean crops called no-defect, 3.9% 
 accuracy 0.805 when it names a defect (v2: 0.804). Weights: data/work/enhanced_res/gc7/ (enhanced_res_gc7_model.zip,
 GitHub Release v3.0-gc7). --model v2: the 6-class enhanced_res (enhanced_res_model.zip, Release v2.0-enhanced-res).
 
-Architecture A (enhanced_res/arch_a/README.md) turns its probabilities into one of five answers, with numbers fitted
-on the model's own data (arch_a/calibration_gc7.json; calibration.json for v2); the model itself is unchanged:
-  BAD IMAGE: re-take          quality gate: blurry, noisy, too dark / bright, glare
+The calibrated decision layer (enhanced_res/arch_a/README.md) turns its probabilities into one answer, with numbers
+fitted on the model's own data. gc7 runs architecture B (arch_a/calibration_gc7.json: no quality gate, a no-defect
+class); --model v2 runs architecture A (calibration.json). The model itself is unchanged:
+  (nothing shown)             B: the set is only no-defect (no damage)
+  POSSIBLE DENT: check        B: the set holds a defect and no-defect
+  BAD IMAGE: re-take          A only (quality gate): blurry, noisy, too dark / bright, glare
   CAN'T ASSESS: re-aim        unfamiliar-input gate: not aircraft skin, or unlike any training crop
                               (the two gates stop about 7% of normal photo families together)
   CRACK 88.0%                 one class in the conformal set; the % is temperature-calibrated
@@ -27,9 +30,7 @@ The set contains the true class about 90% of the time on normal crops (alpha 0.1
 
 The model was trained on square crops around a defect (box + 25% margin, 224 px), so --box gives the most faithful
 result. Without it the centre square of the image is used, which works for crops and close-ups but not for wide
-shots. "NO-DEFECT 95.0%" means intact surface; a set holding no-defect next to a defect ("AMBIGUOUS: no-defect 60%
-crack 30%") is for the inspector to check. v2 has no such class: on a clean surface its answer means "if this is a
-defect, which one".
+shots. v2 has no no-defect class: on a clean surface its answer means "if this is a defect, which one".
 
 If a folder contains labels.csv (file,cls), accuracy and how often the answer holds the true class are printed.
 """
@@ -175,7 +176,7 @@ def main():
                 best = int(prob[j].argmax())
                 if arch:
                     d = dec[j]
-                    line = f"{p.name}:  {d.text()}"
+                    line = f"{p.name}:  {d.text() or '(nothing shown: no damage)'}"
                     if a.details:
                         line += (f"   | quality p {d.p_quality:.3f}, unfamiliar p {d.p_ood:.3f} | calibrated: "
                                  + ranked(arch.sets(prob[j:j + 1])[0][0], classes, len(classes)))
@@ -208,7 +209,7 @@ def main():
             acts, holds = np.array(acts), np.array(holds)
             share = {k: (acts == k).mean() for k in ACTIONS}
             amb = acts == AMBIGUOUS
-            print("architecture A: " + ", ".join(f"{k} {v * 100:.0f}%" for k, v in share.items() if v)
+            print(f"architecture {'B' if arch.nd is not None else 'A'}: " + ", ".join(f"{k} {v * 100:.0f}%" for k, v in share.items() if v)
                   + f" | single class right {(holds & (acts == SHOW)).mean() * 100:.0f}%, "
                   f"wrong {(~holds & (acts == SHOW)).mean() * 100:.0f}%"
                   + (f" | ambiguous sets holding the truth {holds[amb].mean() * 100:.0f}%" if amb.any() else ""))

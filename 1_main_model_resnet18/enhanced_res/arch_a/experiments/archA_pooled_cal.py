@@ -207,8 +207,9 @@ def off_target_sets():
     head = torch.load(MODELS["v2"] / "enhanced_res_head.pt", map_location="cpu")
     bank = head["knn_bank"].float().numpy()
     bank /= np.linalg.norm(bank, axis=1, keepdims=True)
-    man = pd.read_csv(OC.OFF / "manifest.csv")
-    man = man[man.role.isin(["fit", "test"])]
+    man0 = pd.read_csv(OC.OFF / "manifest.csv")
+    man0 = man0[~man0.source.isin(["places365-plain", "dtd"])].reset_index(drop=True)   # B-only rows (28 Oct)
+    man = man0[man0.role.isin(["fit", "test"])]
     d5, _ = A5.d5_crops()
     Dg = G.prepare()
     sets = {"off-target photos": [str(MAIN / p) for p in man.crop_path], "D5": list(d5.crop_path),
@@ -219,7 +220,7 @@ def off_target_sets():
     out = {}
     for name, items in sets.items():
         if name == "off-target photos":                  # the check script cached all benchmark crops as "bench"
-            allp = [str(MAIN / p) for p in pd.read_csv(OC.OFF / "manifest.csv").crop_path]
+            allp = [str(MAIN / p) for p in man0.crop_path]
             x = OC.features(ext, "bench", allp)
             x = x[np.isin(allp, items)]
         else:

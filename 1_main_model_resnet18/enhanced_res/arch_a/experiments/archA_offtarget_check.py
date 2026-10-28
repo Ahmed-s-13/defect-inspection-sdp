@@ -81,6 +81,7 @@ def main():
     bank = head["knn_bank"].float().numpy()
     bank /= np.linalg.norm(bank, axis=1, keepdims=True)
     man = pd.read_csv(OFF / "manifest.csv")
+    man = man[~man.source.isin(["places365-plain", "dtd"])].reset_index(drop=True)   # B-only rows (28 Oct)
     man["path"] = [str(MAIN / p) for p in man.crop_path]
     d5, _ = A5.d5_crops()
     D = G.prepare()

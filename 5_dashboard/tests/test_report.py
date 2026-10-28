@@ -13,23 +13,22 @@ def rep_and_parts():
 
 
 def test_reproduces_published_numbers(rep_and_parts):
-    # gc7 on d1_gc7 test: 4,255 defect crops + 615 no-defect crops (enhanced_res/results/gc7/summary.json)
+    # gc7 on the corrected d1_gc7_fix test: 4,253 defect crops + 615 no-defect crops
+    # (1_main_model_resnet18/enhanced_res/results/gc7_fix/compare.md, "gc7 on corrected crops")
     rep, _, _ = rep_and_parts
-    assert rep["test"]["n"] == 4870 and rep["test"]["groups"] == 175
-    assert abs(rep["test"]["accuracy"] - rep["published"]["accuracy"]) < 5e-4
-    assert abs(rep["test"]["macro_f1"] - rep["published"]["macro_f1"]) < 5e-4
+    assert rep["test"]["n"] == 4868 and rep["test"]["groups"] == 175
+    assert abs(rep["test"]["accuracy"] - 0.8038) < 5e-4 and abs(rep["test"]["macro_f1"] - 0.7517) < 5e-4
 
 
 def test_no_defect_numbers_match_the_teams_report(rep_and_parts):
     nd = rep_and_parts[0]["no_defect"]
-    assert nd["n"] == 615 and nd["n_defects"] == 4255
-    assert abs(nd["recall"] - 0.9106) < 5e-4 and abs(nd["defects_called_clear"] - 0.0385) < 5e-4
-    assert abs(nd["defects_best"]["accuracy"] - 0.8047) < 5e-4 and abs(nd["defects_best"]["macro_f1"] - 0.7423) < 5e-4
+    assert nd["n"] == 615 and nd["n_defects"] == 4253
+    assert abs(nd["recall"] - 0.9106) < 5e-4 and abs(nd["defects_called_clear"] - 0.0346) < 5e-4
     assert abs(nd["recall_by_source"]["healed"] - 0.88) < 5e-4 and abs(nd["recall_by_source"]["clean_cropper"] - 0.9315) < 5e-4
 
 
-def test_architecture_a_matches_the_teams_own_check(rep_and_parts):
-    # same test half, same gates and sets as enhanced_res/arch_a/calibrate.py's expected_test_half
+def test_architecture_b_matches_the_teams_own_check(rep_and_parts):
+    # same test half, gate and sets as enhanced_res/arch_a/calibrate.py's expected_test_half (calibration_gc7.json)
     a = rep_and_parts[0]["arch_a"]
     got, exp = a["by_alpha"][f"{a['alpha']:.2f}"], a["expected"]
     assert a["test_half"] == {"n": 2752, "families": 87}

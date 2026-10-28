@@ -3,7 +3,7 @@ import pytest
 
 from server.report import ece, reliability_bins
 from server.states import STATE, describe
-from enhanced_res.arch_a.runtime import AMBIGUOUS, REAIM, RETAKE, SHOW, UNCLEAR, ArchA, Decision, temper
+from enhanced_res.arch_a.runtime import AMBIGUOUS, NOTHING, POSSIBLE, REAIM, RETAKE, SHOW, UNCLEAR, ArchA, Decision, temper
 
 
 @pytest.fixture(scope="module")
@@ -11,9 +11,10 @@ def arch():
     return ArchA()
 
 
-def test_every_architecture_a_answer_has_a_state():
-    assert set(STATE) == {SHOW, AMBIGUOUS, UNCLEAR, RETAKE, REAIM}
-    assert len(set(STATE.values())) == 5
+def test_every_answer_has_a_state():
+    assert set(STATE) == {SHOW, AMBIGUOUS, UNCLEAR, RETAKE, REAIM, NOTHING, POSSIBLE}
+    assert len(set(STATE.values())) == 6
+    assert STATE[NOTHING] == "clear" and STATE[POSSIBLE] == "ambiguous"     # architecture B's two extra answers
 
 
 def test_describe_shows_tempered_percentages_and_the_set(arch):

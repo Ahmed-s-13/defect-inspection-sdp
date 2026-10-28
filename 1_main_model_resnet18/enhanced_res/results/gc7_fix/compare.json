@@ -1,0 +1,226 @@
+{
+ "gc7|d1_gc7|val": {
+  "crops": 4818,
+  "accuracy": 0.772104607721046,
+  "macro_f1": 0.7030404354711459,
+  "defects_called_no_defect": 0.03235783963835356,
+  "no_defect_recall": 0.9040650406504065,
+  "no_defect_recall_healed": 0.8821138211382114,
+  "no_defect_recall_clean": 0.9186991869918699,
+  "recall": {
+   "corrosion": 0.6543535620052771,
+   "crack": 0.6931905126243305,
+   "dent": 0.8511972633979475,
+   "missing-head": 0.8327759197324415,
+   "paint-peel-off": 0.6577946768060836,
+   "scratch": 0.472636815920398,
+   "no-defect": 0.9040650406504065
+  },
+  "called_no_defect_by_class": {
+   "corrosion": 0.036939313984168866,
+   "crack": 0.030604437643458302,
+   "dent": 0.029646522234891677,
+   "missing-head": 0.016722408026755852,
+   "paint-peel-off": 0.015209125475285171,
+   "scratch": 0.1044776119402985
+  }
+ },
+ "gc7|d1_gc7|test": {
+  "crops": 4870,
+  "accuracy": 0.797741273100616,
+  "macro_f1": 0.7465257784454139,
+  "defects_called_no_defect": 0.03854289071680376,
+  "no_defect_recall": 0.9105691056910569,
+  "no_defect_recall_healed": 0.88,
+  "no_defect_recall_clean": 0.9315068493150684,
+  "recall": {
+   "corrosion": 0.6216931216931217,
+   "crack": 0.7444698703279939,
+   "dent": 0.8520204894706886,
+   "missing-head": 0.936046511627907,
+   "paint-peel-off": 0.7169811320754716,
+   "scratch": 0.525,
+   "no-defect": 0.9105691056910569
+  },
+  "called_no_defect_by_class": {
+   "corrosion": 0.018518518518518517,
+   "crack": 0.057971014492753624,
+   "dent": 0.02902675014228799,
+   "missing-head": 0.03197674418604651,
+   "paint-peel-off": 0.007547169811320755,
+   "scratch": 0.085
+  },
+  "macro_f1_ci": [
+   0.7045363894470077,
+   0.7807088267008728
+  ]
+ },
+ "gc7|d1_gc7_fix|val": {
+  "crops": 4818,
+  "accuracy": 0.7729348277293483,
+  "macro_f1": 0.703830391252147,
+  "defects_called_no_defect": 0.03188198905543659,
+  "no_defect_recall": 0.9040650406504065,
+  "no_defect_recall_healed": 0.8821138211382114,
+  "no_defect_recall_clean": 0.9186991869918699,
+  "recall": {
+   "corrosion": 0.6543535620052771,
+   "crack": 0.6938931297709924,
+   "dent": 0.8527397260273972,
+   "missing-head": 0.8327759197324415,
+   "paint-peel-off": 0.6577946768060836,
+   "scratch": 0.475,
+   "no-defect": 0.9040650406504065
+  },
+  "called_no_defect_by_class": {
+   "corrosion": 0.036939313984168866,
+   "crack": 0.030534351145038167,
+   "dent": 0.02910958904109589,
+   "missing-head": 0.016722408026755852,
+   "paint-peel-off": 0.015209125475285171,
+   "scratch": 0.1
+  }
+ },
+ "gc7|d1_gc7_fix|test": {
+  "crops": 4868,
+  "accuracy": 0.8038208709942481,
+  "macro_f1": 0.7517024192248031,
+  "defects_called_no_defect": 0.03456383729132377,
+  "no_defect_recall": 0.9105691056910569,
+  "no_defect_recall_healed": 0.88,
+  "no_defect_recall_clean": 0.9315068493150684,
+  "recall": {
+   "corrosion": 0.6216931216931217,
+   "crack": 0.7612509534706331,
+   "dent": 0.852589641434263,
+   "missing-head": 0.9505813953488372,
+   "paint-peel-off": 0.7169811320754716,
+   "scratch": 0.5303030303030303,
+   "no-defect": 0.9105691056910569
+  },
+  "called_no_defect_by_class": {
+   "corrosion": 0.018518518518518517,
+   "crack": 0.05186880244088482,
+   "dent": 0.027888446215139442,
+   "missing-head": 0.01744186046511628,
+   "paint-peel-off": 0.007547169811320755,
+   "scratch": 0.07575757575757576
+  },
+  "macro_f1_ci": [
+   0.7092972178570973,
+   0.7867995658406222
+  ]
+ },
+ "gc7_fix|d1_gc7|val": {
+  "crops": 4818,
+  "accuracy": 0.7725197177251972,
+  "macro_f1": 0.6968246219064987,
+  "defects_called_no_defect": 0.03164406376397811,
+  "no_defect_recall": 0.8926829268292683,
+  "no_defect_recall_healed": 0.8658536585365854,
+  "no_defect_recall_clean": 0.9105691056910569,
+  "recall": {
+   "corrosion": 0.6226912928759895,
+   "crack": 0.7077276205049732,
+   "dent": 0.8728620296465223,
+   "missing-head": 0.8193979933110368,
+   "paint-peel-off": 0.5741444866920152,
+   "scratch": 0.4228855721393035,
+   "no-defect": 0.8926829268292683
+  },
+  "called_no_defect_by_class": {
+   "corrosion": 0.0395778364116095,
+   "crack": 0.023718439173680182,
+   "dent": 0.029646522234891677,
+   "missing-head": 0.016722408026755852,
+   "paint-peel-off": 0.022813688212927757,
+   "scratch": 0.11940298507462686
+  }
+ },
+ "gc7_fix|d1_gc7|test": {
+  "crops": 4870,
+  "accuracy": 0.8006160164271047,
+  "macro_f1": 0.7441799820674916,
+  "defects_called_no_defect": 0.02561692126909518,
+  "no_defect_recall": 0.9008130081300812,
+  "no_defect_recall_healed": 0.856,
+  "no_defect_recall_clean": 0.9315068493150684,
+  "recall": {
+   "corrosion": 0.5952380952380952,
+   "crack": 0.7551487414187643,
+   "dent": 0.877632327831531,
+   "missing-head": 0.938953488372093,
+   "paint-peel-off": 0.6566037735849056,
+   "scratch": 0.455,
+   "no-defect": 0.9008130081300812
+  },
+  "called_no_defect_by_class": {
+   "corrosion": 0.018518518518518517,
+   "crack": 0.02135774218154081,
+   "dent": 0.02105862265224815,
+   "missing-head": 0.03197674418604651,
+   "paint-peel-off": 0.018867924528301886,
+   "scratch": 0.105
+  },
+  "macro_f1_ci": [
+   0.7037762686140642,
+   0.7775839090572441
+  ]
+ },
+ "gc7_fix|d1_gc7_fix|val": {
+  "crops": 4818,
+  "accuracy": 0.7733499377334994,
+  "macro_f1": 0.6975965082936862,
+  "defects_called_no_defect": 0.030930287889602663,
+  "no_defect_recall": 0.8926829268292683,
+  "no_defect_recall_healed": 0.8658536585365854,
+  "no_defect_recall_clean": 0.9105691056910569,
+  "recall": {
+   "corrosion": 0.6226912928759895,
+   "crack": 0.7083969465648855,
+   "dent": 0.8744292237442922,
+   "missing-head": 0.8193979933110368,
+   "paint-peel-off": 0.5741444866920152,
+   "scratch": 0.425,
+   "no-defect": 0.8926829268292683
+  },
+  "called_no_defect_by_class": {
+   "corrosion": 0.0395778364116095,
+   "crack": 0.02366412213740458,
+   "dent": 0.028538812785388126,
+   "missing-head": 0.016722408026755852,
+   "paint-peel-off": 0.022813688212927757,
+   "scratch": 0.115
+  }
+ },
+ "gc7_fix|d1_gc7_fix|test": {
+  "crops": 4868,
+  "accuracy": 0.8066967953985209,
+  "macro_f1": 0.7493346394326599,
+  "defects_called_no_defect": 0.02186691747002116,
+  "no_defect_recall": 0.9008130081300812,
+  "no_defect_recall_healed": 0.856,
+  "no_defect_recall_clean": 0.9315068493150684,
+  "recall": {
+   "corrosion": 0.5952380952380952,
+   "crack": 0.7719298245614035,
+   "dent": 0.8782014797951053,
+   "missing-head": 0.9534883720930233,
+   "paint-peel-off": 0.6566037735849056,
+   "scratch": 0.4595959595959596,
+   "no-defect": 0.9008130081300812
+  },
+  "called_no_defect_by_class": {
+   "corrosion": 0.018518518518518517,
+   "crack": 0.015255530129672006,
+   "dent": 0.020489470688673878,
+   "missing-head": 0.01744186046511628,
+   "paint-peel-off": 0.018867924528301886,
+   "scratch": 0.09595959595959595
+  },
+  "macro_f1_ci": [
+   0.7093320494829999,
+   0.783200820033394
+  ]
+ }
+}

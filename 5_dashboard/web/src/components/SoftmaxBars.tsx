@@ -5,7 +5,7 @@ import { className } from "../lib/format";
 import { AnimatedNumber } from "./AnimatedNumber";
 
 /** Rows keep their identity across predictions, so values and order morph from the previous result.
- *  With architecture A, the tick on each track is the set's cut-off: every class past it is in the answer.
+ *  With the calibrated layer (architecture B), the tick on each track is the set's cut-off: every class past it is in the answer.
  *  When a gate stopped the crop, the bars stay as a faint record of what the model would have said. */
 export function SoftmaxBars({ ranked, state, answer, threshold }: {
   ranked: Ranked[]; state: StateId; answer: string[]; threshold: number | null;

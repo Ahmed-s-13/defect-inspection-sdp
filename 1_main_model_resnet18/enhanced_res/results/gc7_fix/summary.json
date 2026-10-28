@@ -1,0 +1,119 @@
+{
+ "model": "gc7_fix",
+ "data": "d1_gc7_fix",
+ "classes": [
+  "corrosion",
+  "crack",
+  "dent",
+  "missing-head",
+  "paint-peel-off",
+  "scratch",
+  "no-defect"
+ ],
+ "head": {
+  "knn_weight": 0.25,
+  "tau": 0.0
+ },
+ "backbone_epoch": 5,
+ "val": {
+  "accuracy": 0.7733,
+  "macro_f1": 0.6976
+ },
+ "test": {
+  "accuracy": 0.8067,
+  "macro_f1": 0.7493,
+  "macro_f1_ci": [
+   0.7093,
+   0.7832
+  ],
+  "recall": {
+   "corrosion": 0.5952,
+   "crack": 0.7719,
+   "dent": 0.8782,
+   "missing-head": 0.9535,
+   "paint-peel-off": 0.6566,
+   "scratch": 0.4596,
+   "no-defect": 0.9008
+  }
+ },
+ "test_defects": {
+  "n": 4253,
+  "v2": {
+   "accuracy": 0.8105,
+   "macro_f1": 0.7415
+  },
+  "gc7_top_answer": {
+   "accuracy": 0.7931,
+   "macro_f1": 0.7335
+  },
+  "gc7_best_defect_class": {
+   "accuracy": 0.8046,
+   "macro_f1": 0.7372
+  },
+  "called_no_defect": 0.0219,
+  "called_no_defect_by_class": {
+   "corrosion": 0.0185,
+   "crack": 0.0153,
+   "dent": 0.0205,
+   "missing-head": 0.0174,
+   "paint-peel-off": 0.0189,
+   "scratch": 0.096
+  }
+ },
+ "test_no_defect": {
+  "n": 615,
+  "recall": 0.9008,
+  "recall_by_source": {
+   "healed": 0.856,
+   "clean_cropper": 0.9315
+  },
+  "v2_calls": {
+   "corrosion": 0.0715,
+   "crack": 0.0699,
+   "dent": 0.535,
+   "missing-head": 0.0211,
+   "paint-peel-off": 0.0585,
+   "scratch": 0.2439
+  }
+ },
+ "extra_no_defect": {
+  "n": 760,
+  "recall": 0.8895,
+  "recall_by_source": {
+   "healed": 0.8725,
+   "clean_cropper": 0.9009
+  }
+ },
+ "dial": [
+  {
+   "val_miss_target": 0.01,
+   "cut": 0.7479,
+   "test_defects_missed": 0.008,
+   "test_defect_accuracy": 0.8013,
+   "test_no_defect_recall": 0.8407,
+   "healed_recall": 0.796,
+   "clean_recall": 0.8712,
+   "extra_recall": 0.8132
+  },
+  {
+   "val_miss_target": 0.02,
+   "cut": 0.5643,
+   "test_defects_missed": 0.0136,
+   "test_defect_accuracy": 0.7976,
+   "test_no_defect_recall": 0.8748,
+   "healed_recall": 0.84,
+   "clean_recall": 0.8986,
+   "extra_recall": 0.8711
+  },
+  {
+   "val_miss_target": 0.05,
+   "cut": 0.2073,
+   "test_defects_missed": 0.0419,
+   "test_defect_accuracy": 0.7787,
+   "test_no_defect_recall": 0.9301,
+   "healed_recall": 0.884,
+   "clean_recall": 0.9616,
+   "extra_recall": 0.9303
+  }
+ ]
+}

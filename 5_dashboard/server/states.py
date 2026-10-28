@@ -1,16 +1,18 @@
-"""Map a prediction to the helmet's own states. For the main model these are architecture A's answers
-(enhanced_res/arch_a): its gates, temperature and conformal set, all fitted by the team on d1_gc7. A single
-"no-defect" answer is its own state, "clear"."""
+"""Map a prediction to the helmet's own states. For the main model these are architecture B's answers
+(enhanced_res/arch_a, calibration_gc7.json): its unfamiliar-input gate, temperature and conformal set (no quality
+gate). "Nothing shown" (the set is only no-defect) is the state "clear"; "possible" (a defect and no-defect) shows as
+"ambiguous"."""
 from server import paths  # noqa: F401  (puts the repo on sys.path)
-from enhanced_res.arch_a.runtime import AMBIGUOUS, REAIM, RETAKE, SHOW, UNCLEAR, temper
+from enhanced_res.arch_a.runtime import AMBIGUOUS, NOTHING, POSSIBLE, REAIM, RETAKE, SHOW, UNCLEAR, temper
 
-# architecture A's action -> the state the UI shows
-STATE = {SHOW: "detected", AMBIGUOUS: "ambiguous", UNCLEAR: "unclear", RETAKE: "retake", REAIM: "cannot_assess"}
+# the decision layer's action -> the state the UI shows (NOTHING / POSSIBLE: architecture B, models with no-defect)
+STATE = {SHOW: "detected", AMBIGUOUS: "ambiguous", UNCLEAR: "unclear", RETAKE: "retake", REAIM: "cannot_assess",
+         NOTHING: "clear", POSSIBLE: "ambiguous"}
 NO_DEFECT = "no-defect"
 
 
 def describe(classes, probs, decision=None, arch=None):
-    """One crop's answer. `probs` are the model's own probabilities. With architecture A they are shown
+    """One crop's answer. `probs` are the model's own probabilities. With the decision layer they are shown
     tempered (the calibrated %), `answer` is the conformal set, and a gate can stop the crop before any class
     is shown. Without it (the legacy model) the raw ranking is shown, unrated."""
     shown = list(temper([probs], arch.T)[0]) if arch else list(probs)

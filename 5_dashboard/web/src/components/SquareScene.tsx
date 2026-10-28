@@ -7,7 +7,7 @@ import { RuleDraw } from "./RuleDraw";
 import { SoftmaxBars } from "./SoftmaxBars";
 import { STATE_WORDS, StateGlyph } from "./StateBadge";
 
-/** scripts/sweep_crops.py: architecture A's answer for every 224 px square on one photo, 16 px apart. */
+/** scripts/sweep_crops.py: architecture B's answer for every 224 px square on one photo, 16 px apart. */
 interface Sweep {
   photo: string; w: number; h: number; side: number; stride: number; cols: number; rows: number;
   classes: string[]; states: StateId[]; set_threshold: number;

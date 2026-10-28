@@ -1,6 +1,6 @@
 """The one-per-class sample photos on the Inspect page: d1_gc7 test crops (never trained on, one per photo group)
 that the served model answers clearly, so a demo shows each class working. Chosen by eye from the test crops whose
-architecture A answer is the true class alone with both checks passed comfortably (p > 0.3); this script copies
+architecture B answer is the true class alone (no defect: shown nothing) with the check passed comfortably (p > 0.1); this script copies
 them and checks that is still true. They are picked for clarity, so they say nothing about accuracy: the Batch
 page's 35 samples are the random ones (the repo's make_samples.py + scripts/no_defect_samples.py).
 Writes samples/inspect/<class>.jpg + samples/inspect/labels.csv.
@@ -44,11 +44,13 @@ def main():
         c = crop(img, default_square(*img.size))           # exactly what Inspect does with the file
         probs, (dec,) = a.predict(to_batch([c]), [c])
         r = describe(a.classes, probs[0].tolist(), dec, a.arch)
-        assert r["answer"] == [cls] and r["p_quality"] > 0.1 and r["p_ood"] > 0.1, (cls, r["state"], r["answer"])
+        assert r["answer"] == [cls] and (r["p_quality"] is None or r["p_quality"] > 0.1) and r["p_ood"] > 0.1, \
+            (cls, r["state"], r["answer"])
         name = f"{cls}.jpg"
         shutil.copy(REPO_MAIN / rel, OUT / name)
         rows.append(dict(file=name, cls=cls, source_crop=rel))
-        print(f"{cls:15s} {r['state']:9s} {r['confidence']:.3f}  quality p {r['p_quality']:.2f}  unfamiliar p {r['p_ood']:.2f}")
+        q = "off" if r["p_quality"] is None else f"{r['p_quality']:.2f}"
+        print(f"{cls:15s} {r['state']:9s} {r['confidence']:.3f}  quality p {q}  unfamiliar p {r['p_ood']:.2f}")
     pd.DataFrame(rows).to_csv(OUT / "labels.csv", index=False)
 
 

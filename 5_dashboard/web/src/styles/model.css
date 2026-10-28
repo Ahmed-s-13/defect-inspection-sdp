@@ -58,7 +58,7 @@
 .mix-facts dd { margin: 4px 0 0; font: 700 var(--t-h1) var(--font-fig); }
 .mix-facts small { display: block; font: 400 var(--t-micro) var(--font-ui); color: var(--ink-3); }
 
-/* What it refuses: the two checks on the left, how much of each kind of bad input they stop on the right */
+/* What it refuses: the checks on the left, how much of each kind of bad input they stop on the right */
 .refuse { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: calc(var(--gap) * 1.5); align-items: start; }
 .refuse .legend { margin: 0 0 14px; }
 .gate-bars { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 10px; }

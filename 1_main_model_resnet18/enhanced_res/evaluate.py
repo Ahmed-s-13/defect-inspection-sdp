@@ -71,7 +71,9 @@ def check_arch_a(d, prob, dist, feats, classes, model):
     ok = True
     for k in ("cp_coverage", "cp_family_coverage", "cp_mean_set_size", "cp_single_class", "human_attention",
               "single_class_wrong", "gates_false_reject_family"):
-        same = abs(m[k] - exp[k]) <= 0.005 * (3 if k == "cp_mean_set_size" else 1)
+        if k not in exp:                                 # older calibration files don't store every metric
+            continue
+        same =abs(m[k] - exp[k]) <= 0.005 * (3 if k == "cp_mean_set_size" else 1)
         ok &= same
         print(f"  {k:20s} {m[k]:8.4f} {exp[k]:9.4f}  {'match' if same else 'DIFFERENT'}")
     print("  visor actions: " + ", ".join(f"{k} {v * 100:.1f}%" for k, v in m["actions"].items()))
@@ -135,6 +137,11 @@ def main():
             cm = pd.DataFrame(confusion_matrix(y, p, labels=lab), index=classes, columns=classes)
             print("  confusion matrix (rows = true, columns = predicted):")
             print("\n".join("    " + line for line in cm.to_string().splitlines()))
+            cal_split = json.loads(CALIBRATIONS[a.model].read_text())["data"]["split"]
+            if cal_split != ("d1_gc7" if a.model == "gc7" else "d1_grouped"):   # calibrated on other crops (B: _fix)
+                d = load_split(cal_split)
+                d = d[d.split == "test"]
+                prob, dist, feats = run(model, list(d.crop_path), a.batch, a.workers)
             ok &= check_arch_a(d, prob, dist, feats, classes, a.model)
     src = "results/gc7/summary.json" if a.model == "gc7" else "results/ablation.csv"
     print(f"\nOK: results match the original enhanced_res {a.model} run (and architecture A's calibration)." if ok else

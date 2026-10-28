@@ -1,4 +1,4 @@
-"""Slide the model's 224 px square over one photo and record architecture A's answer at every position.
+"""Slide the model's 224 px square over one photo and record architecture B's answer at every position.
 Feeds the "Where the square sits" scene on the Model page (web/public/sweep/).
 
     python scripts/sweep_crops.py

@@ -1,13 +1,14 @@
 # 5. Dashboard: the model, the data and a test bench in the browser
 
-A local web app for the project's main model (**enhanced_res gc7 + architecture A**). It runs on your own computer:
+A local web app for the project's main model (**enhanced_res gc7 + architecture B**: the calibrated decision layer
+with a no-defect class and no image-quality check). It runs on your own computer:
 a small Python server loads the model, and the page opens in your browser at http://127.0.0.1:8765.
 
 | page | what it shows | needs |
 |---|---|---|
 | **Model** | the test results of the main model: accuracy, how it works (7 swipeable cards), per-class recall, the no-defect class, calibration, conformal sets, the sliding-window demo, refusals, its worst silent mistakes | gc7 weights + the D1 and no-defect crops |
 | **Data** | how we went from D1 (leaky, 6 classes) to d1_gc7 (leak-free, 7 classes): grouping, the healer, the clean cropper, cropping | nothing (built into the page) |
-| **Inspect** | drop or paste one photo, drag the model's 224 px square, see architecture A's answer, the calibrated %, the 8 views and both checks | gc7 weights |
+| **Inspect** | drop or paste one photo, drag the model's 224 px square, see architecture B's answer, the calibrated %, the 8 views and the unfamiliar-input check | gc7 weights |
 | **Batch** | drop a folder (or run the 35 samples): accuracy with a 95% interval, confusion matrix, CSV export | gc7 weights |
 
 Keys: `1` `2` `3` `4` switch pages · `P` presentation mode (`←` `→` step through a page) · `⌘V`/`Ctrl+V` paste an
@@ -26,7 +27,7 @@ source .venv/bin/activate            # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**2. Node.js 20 or newer** (https://nodejs.org), only to build the web page the first time. `node -v` checks it.
+**2. Node.js 20 or newer** (https://nodejs.org), to build the web page (the first time and after updates). `node -v` checks it.
 
 **3. The model and the data.** Download these and unzip each one **in the repo root** (each zip already holds the
 right folders, see the top-level README, "Getting the data and trained models"):
@@ -50,8 +51,9 @@ cd 5_dashboard
 ./run.sh
 ```
 
-`run.sh` uses the repo's `.venv` (or the Python in `PYTHON=...`), builds the web page the first time (`npm install`
-+ `npm run build`, about a minute), starts the server and opens the browser. Stop it with `Ctrl+C`.
+`run.sh` uses the repo's `.venv` (or the Python in `PYTHON=...`), builds the web page the first time and again
+whenever `web/` changed, e.g. after a `git pull` (`npm install` + `npm run build`, about a minute), starts the server
+and opens the browser. Stop it with `Ctrl+C`.
 
 Windows (PowerShell, from the repo root, with the `.venv` active):
 
@@ -60,12 +62,14 @@ cd 5_dashboard\web; npm install; npm run build; cd ..
 python -m uvicorn server.app:app --host 127.0.0.1 --port 8765
 ```
 
-then open http://127.0.0.1:8765.
+then open http://127.0.0.1:8765. After a `git pull`, run the `npm` line again so the page matches the server.
 
 **The first start on a new computer:** the Model page shows "Computing the report…" for about 2 minutes while the
-model reads the 9,688 validation and test crops once. The result is kept in `5_dashboard/cache/`, so later starts
-take seconds. (On Ahmed's computer it reads the team's feature cache instead and is instant; both give the same
-numbers.) The model runs on CUDA, Apple MPS or the CPU, whichever is there.
+model reads the 9,686 validation and test crops once (the corrected crops, d1_gc7_fix, that architecture B is
+calibrated on; the 155 crops whose boxes were corrected on 27 Oct come with the repo, in
+`1_main_model_resnet18/d1_grouped/label_corrections/crops/`, so no extra download is needed). The result is kept in
+`5_dashboard/cache/`, so later starts take seconds. The model runs on CUDA,
+Apple MPS or the CPU, whichever is there.
 
 The top-right chip shows the model and its state (green: ready). If it is red, click it: it says which file is
 missing and which zip gives it.
@@ -77,10 +81,11 @@ photo group), so its accuracy figure is honest. All of them come from the test s
 ## Check that it works
 
 - Batch → **Run the 35 samples**: 35 held-out test crops (5 per class, `no-defect_*` included). The top class is right
-  for 31 of 35 (88.6%), including all 5 no-defect samples (3 are answered **No defect** outright; the other two go
-  to a person, as architecture A intends when it is less sure).
-- Model page: the headline reads **80.5%** (the right defect class on 4,255 unseen defect crops), macro-F1
-  **0.747** over all 7 classes, the answer holds the true class **92.0%** of the time.
+  for 31 of 35 (88.6%), including all 5 no-defect samples (3 are answered **No defect**, so the visor shows nothing;
+  the other two are **Possible …: check** and go to a person, as architecture B intends when it is less sure).
+- Model page: the headline reads **81.1%** (the right defect class on 4,253 unseen defect crops, corrected labels),
+  macro-F1 **0.752** over all 7 classes, the answer holds the true class **90.4%** of the time, and 0.3% of defects
+  are shown as no defect.
 - Tests (optional):
 
 ```bash
@@ -110,7 +115,7 @@ cd web && npm test               # 39 tests: labels, metrics, geometry, format, 
 │   ├── app.py        the API (/api/predict, /api/batch, /api/report, /api/samples, ...) and the built page
 │   ├── adapters/     one class per model type (enhanced_res, legacy)
 │   ├── report.py     the Model page's numbers, from the model's own features; checked against the team's results
-│   ├── states.py     architecture A's answer -> what the page shows (Defect detected, No defect, Ambiguous, ...)
+│   ├── states.py     architecture B's answer -> what the page shows (Defect detected, No defect, Ambiguous, ...)
 │   └── preprocess.py the 224 px crop, exactly as predict.py cuts it
 ├── web/              the page: React + Vite + Motion (web/src), its pictures (web/public)
 ├── samples/          Batch: 5 no-defect test crops (the 30 defect ones come from 1_main_model_resnet18/samples/);
@@ -122,7 +127,8 @@ cd web && npm test               # 39 tests: labels, metrics, geometry, format, 
 ```
 
 - Every number on the Model page is recomputed from the model, not typed in. The tests check that it matches the team's
-  published results (`enhanced_res/results/gc7/summary.json` and `arch_a/calibration_gc7.json`).
+  results (gc7 on the corrected crops, `enhanced_res/results/gc7_fix/compare.md`, and architecture B's
+  `arch_a/calibration_gc7.json`).
 - Nothing is chosen on the test split. The thresholds, temperature and cut-offs all come from validation or calibration
   data, as in the team's code.
 - The server only reads the other folders; it writes only to `5_dashboard/cache/`.

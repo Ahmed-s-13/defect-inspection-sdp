@@ -1,11 +1,11 @@
 import { chunkWithOffsets } from "../lib/requests";
-/** Architecture A's answers: one defect class, "no defect" alone (clear), a set of 2+, an empty set, or a gate that
+/** Architecture B's answers: one defect class, "no defect" alone (clear, nothing on the visor), a set of 2+, an empty set, or a gate that
  *  stopped the crop. */
 export type StateId = "detected" | "clear" | "ambiguous" | "unclear" | "retake" | "cannot_assess" | "unrated";
 export type UiState = StateId | "system_fault";
 export interface Square { left: number; top: number; side: number }
 export interface Ranked { cls: string; p: number }
-/** probs/ranked are architecture A's calibrated (tempered) percentages; `answer` is its conformal set, empty
+/** probs/ranked are architecture B's calibrated (tempered) percentages; `answer` is its conformal set, empty
  *  when a gate stopped the crop. p_quality / p_ood are the gates' p-values (null when the gate did not run). */
 export interface Prediction {
   classes: string[]; probs: number[]; ranked: Ranked[]; top: string; confidence: number; state: StateId;
@@ -51,16 +51,16 @@ export interface NoDefect {
   train: Record<"train" | "val" | "test", number>;
 }
 
-/** Architecture A on one calibrated alpha, measured on the test half (no gates for the cp_* numbers). With a
- *  no-defect class, `clear` is the share of single "no defect" answers (inside "show class"). */
+/** Architecture B on one calibrated alpha, measured on the test half (no gates for the cp_* numbers). With a
+ *  no-defect class, `clear` is the share shown nothing (only "no defect" kept). */
 export interface AlphaResult {
   alpha: number; accuracy: number; cp_coverage: number; cp_family_coverage: number; cp_mean_set_size: number;
-  cp_single_class: number; actions: Record<"show class" | "ambiguous" | "unclear" | "re-take" | "re-aim", number>;
+  cp_single_class: number; actions: Record<"show class" | "ambiguous" | "unclear" | "re-take" | "re-aim", number> & Partial<Record<"nothing shown" | "possible defect", number>>;
   human_attention: number; single_class_wrong: number; set_threshold: number;
   clear?: number; defect_called_clear?: number; clear_right?: number;
 }
 export interface ArchA {
-  alpha: number; temperature: number; alpha_quality: number; alpha_ood: number;
+  alpha: number; temperature: number; alpha_quality: number | null; alpha_ood: number;
   cal: { crops: number; families: number; created: string | null };
   test_half: { n: number; families: number };
   ece: { raw: number; tempered: number };

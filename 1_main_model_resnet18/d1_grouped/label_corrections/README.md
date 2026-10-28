@@ -75,3 +75,19 @@ The D1 crops, `d1_grouped/groups.csv` (which uses box counts) and everything tra
 with the **old** boxes. To use the corrections, run `prepare.py` again for D1, then re-run what depends on the crops
 (enhanced_res evaluation; architecture A's `calibrate.py`). The 54 lines are about 0.2% of D1's 29,464 boxes, so the
 headline numbers should barely move.
+
+## The corrected crops without the raw photos
+
+The splits `d1_grouped_fix` / `d1_gc7_fix` (architecture B's calibration and the dashboard's Model page) use the
+corrected crops. `crops/` holds the 155 corrected crops of the 47 changed photos (about 1.8 MB, in git), so nothing
+extra is needed: `enhanced_res/model.py::load_split` takes the team's `data/work/crops/D1.csv` and swaps these in.
+A full re-cut is used instead when it is there:
+
+```bash
+python d1_grouped/label_corrections/apply_corrections.py        # on data/raw/D1
+python prepare.py --work data/work_fix --datasets D1             # the re-cut, in data/work_fix/
+python d1_grouped/label_corrections/make_crop_pack.py           # refresh crops/ from it
+```
+
+Both give the same 28,634 crops in the same order, pixel for pixel (checked 28 Oct). After changing either, delete the
+cached split `data/work/enhanced_res/split_fix.csv`.

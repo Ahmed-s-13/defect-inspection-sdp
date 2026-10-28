@@ -9,11 +9,11 @@ import { ViewsStrip } from "./ViewsFan";
 
 /** What the answer can't tell you: the 6-class legacy model has no "no defect" class; gc7 has one. */
 const caveat = (classes: string[]) => (classes.includes("no-defect")
-  ? "No defect speaks for this square only. When no defect is kept next to a defect class, a person should look."
+  ? "No defect speaks for this square only. When the answer is \u201cPossible\u201d, a defect and no defect are both kept: a person should look."
   : 'This model assumes damage is present and names its type. It has no "no defect" class.');
 const glide = { type: "spring" as const, stiffness: 380, damping: 36 };
 
-/** One sentence on how far to trust this answer: architecture A's guarantee, or which gate stopped it. */
+/** One sentence on how far to trust this answer: the decision layer's guarantee, or which check stopped it. */
 function trustLine(r: Prediction) {
   const cover = r.alpha != null ? Math.round((1 - r.alpha) * 100) : 90;
   if (r.state === "retake") return <>The image-quality check stopped this crop before any class was shown. Only <span className="fig">{pct(r.p_quality ?? 0, 0)}</span> of normal photos look this unusual.</>;
@@ -42,13 +42,13 @@ export function Readout({ item, fanning, classes, onTruth, session }: {
           <motion.div key="legend" className="readout-stack" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.2 } }} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}>
         <h2 className="readout-title">What the answers mean</h2>
         <ul className="legend">
-          <li><StateGlyph state="retake" size={18} /><span><b>Bad image</b>: blurry, too dark, too bright or glare. Re-take it.</span></li>
+          {!classes.includes("no-defect") && <li><StateGlyph state="retake" size={18} /><span><b>Bad image</b>: blurry, too dark, too bright or glare. Re-take it.</span></li>}
           <li><StateGlyph state="cannot_assess" size={18} /><span><b>Cannot assess</b>: unlike any training photo. Re-aim.</span></li>
           <li><StateGlyph state="detected" size={18} /><span><b>Defect detected</b>: only one defect class is likely enough to keep.</span></li>
-          {classes.includes("no-defect") && <li><StateGlyph state="clear" size={18} /><span><b>No defect</b>: only &ldquo;no defect&rdquo; is likely enough to keep. The surface in the square looks intact.</span></li>}
-          <li><StateGlyph state="ambiguous" size={18} /><span><b>Ambiguous</b>: two or more classes are kept. A person should check.</span></li>
+          {classes.includes("no-defect") && <li><StateGlyph state="clear" size={18} /><span><b>No defect</b>: only &ldquo;no defect&rdquo; is likely enough to keep. The visor shows nothing.</span></li>}
+          <li><StateGlyph state="ambiguous" size={18} /><span><b>Ambiguous</b>: two or more classes are kept{classes.includes("no-defect") ? <>; <b>Possible</b> when one of them is &ldquo;no defect&rdquo;</> : null}. A person should check.</span></li>
         </ul>
-        <p className="legend-note">On normal photos the answer holds the true class about 90% of the time. To catch most bad images, each check also stops about 1 in 10 normal photos.</p>
+        <p className="legend-note">On normal photos the answer holds the true class about 90% of the time. {classes.includes("no-defect") ? "The unfamiliar-input check also stops about 3 in 100 normal photos; there is no image-quality check." : "To catch most bad images, each check also stops about 1 in 10 normal photos."}</p>
         <p className="caveat">{caveat(classes)}</p>
           </motion.div>
         ) : (
@@ -81,7 +81,7 @@ export function Readout({ item, fanning, classes, onTruth, session }: {
       <ViewsStrip itemId={item.id} run={item.run} views={item.detail?.views ?? null} fanning={fanning} />
 
       <motion.dl layout="position" className="facts" transition={glide}>
-        {r && r.state !== "unrated" && <div><dt>Image-quality check</dt><dd>{gate(r.p_quality, r.alpha_quality)}</dd></div>}
+        {r && r.state !== "unrated" && r.alpha_quality != null && <div><dt>Image-quality check</dt><dd>{gate(r.p_quality, r.alpha_quality)}</dd></div>}
         {r && r.state !== "unrated" && <div><dt>Unfamiliar-input check</dt><dd>{gate(r.p_ood, r.alpha_ood)}</dd></div>}
         {r && <div><dt>Time</dt><dd className="fig">{Math.round(r.ms)} ms</dd></div>}
         <div>

@@ -1,7 +1,7 @@
 import type { Prediction, UiState } from "../api/client";
 import { className } from "../lib/format";
 
-/** The visor's words for each of architecture A's answers. */
+/** The visor's words for each of the decision layer's answers. */
 export const STATE_WORDS: Record<UiState, string> = {
   detected: "Defect detected", clear: "No defect", ambiguous: "Ambiguous", unclear: "Unclear", retake: "Bad image",
   cannot_assess: "Cannot assess", unrated: "Not calibrated", system_fault: "System fault",
@@ -12,6 +12,7 @@ export function actionLine(r: Prediction): string {
   if (r.state === "retake") return `Re-take the photo${r.reason ? `: ${r.reason}` : ""}.`;
   if (r.state === "cannot_assess") return "Re-aim: this looks unlike any training photo.";
   if (r.state === "unclear") return "No class is likely enough. Re-inspect.";
+  if (r.state === "ambiguous" && r.answer.includes("no-defect")) return "A defect may be there. A person should check.";
   if (r.state === "ambiguous") return `Could be ${r.answer.map((c) => className(c).toLowerCase()).join(" or ")}. A person should check.`;
   return "";
 }
@@ -20,6 +21,8 @@ export function actionLine(r: Prediction): string {
 export function answerText(r: Prediction): string {
   if (r.state === "unrated") return className(r.top);
   if (r.state === "clear") return "Intact surface";
+  if (r.state === "ambiguous" && r.answer.includes("no-defect"))      // architecture B: "POSSIBLE DENT: check"
+    return "Possible " + r.answer.filter((c) => c !== "no-defect").map((c) => className(c).toLowerCase()).join(" or ");
   return r.answer.map(className).join(" or ");
 }
 

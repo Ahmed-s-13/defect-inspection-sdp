@@ -91,7 +91,7 @@ Other checks:
   - caches the train quality statistics;
   - fits the AoN regression per model, on that model's own kNN bank and features.
 - **Teammate's work merged.** Ahmed's commits (gc7 as the main model; renumbered folders) were pulled and our work re-applied, with conflicts resolved in favour of both sides.
-- **gc7 (architecture B) is still on the old gates.** Its `calibration_gc7.json` uses kNN-only at α 0.10, sharpness on the low side only, and calibration on the cal half alone. It needs:
+- **gc7 (architecture B) was still on the old gates at the time** (since recalibrated: see `../../archB/README.md`). Its `calibration_gc7.json` uses kNN-only at α 0.10, sharpness on the low side only, and calibration on the cal half alone. It needs:
   - the gc7 weights: GitHub Release `v3.0-enhanced_res_gc7`;
   - the no-defect crops: `d1_gc7_no_defect_crops.zip` on the team Drive. They aren't on this Mac yet.
 

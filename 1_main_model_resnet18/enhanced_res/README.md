@@ -6,11 +6,11 @@
 > architecture and recipe as before; the earlier 6-class version (**v2**) is kept and still loads with
 > `EnhancedRes()`. The earlier model (`../train.py` + `../train_mlp.py`) is kept as the legacy baseline.
 >
-> **Its output goes through [architecture A](arch_a/README.md)** (`arch_a/`): a quality gate, an unfamiliar-input
-> gate, temperature scaling and a conformal prediction set, refitted for gc7 (`arch_a/calibration_gc7.json`; still on the earlier kNN-only gate until it is recalibrated
-> with the final gate).
-> `predict.py` shows its answer ("NO-DEFECT 92.9%", "CRACK 88.0%", "AMBIGUOUS: crack 52% dent 31%", "BAD IMAGE:
-> re-take", ...).
+> **Its output goes through architecture B** ([`arch_a/`](arch_a/README.md), section "Architecture B"): an
+> unfamiliar-input gate, temperature scaling and a conformal prediction set fitted for gc7
+> (`arch_a/calibration_gc7.json`; the quality gate is legacy and off). `predict.py` shows nothing when the set is
+> only no-defect, "POSSIBLE DENT: check" when it mixes a defect with no-defect, otherwise "CRACK 88.0%",
+> "AMBIGUOUS: crack 52% dent 31%" or "CAN'T ASSESS: re-aim".
 
 ## gc7: the 7-class model (d1_gc7 test: 4,255 defect crops + 615 no-defect crops, 175 source groups)
 
@@ -31,8 +31,11 @@
   same crops untouched: 4.7% vs 3.0% of 301 crops (`../../2_lama_healing/no_defect/decoys.py`).
 - **Training:** best epoch 5 of 10 (val 7-class macro-F1 0.685). It was already at 0.680 at epoch 3, then flat
   within ±0.003 while the train loss kept falling. v2's backbone behaved the same way.
-- **Architecture A** works with 7 classes once recalibrated: coverage 92.0% at α = 0.10, mean set size 1.70, 65%
-  single answers, and 0.3% of defects shown as a single "no-defect". Details in [`arch_a/README.md`](arch_a/README.md).
+- **Architecture B** (the calibrated layer on gc7, quality gate off), on the corrected test half: coverage 90.4% at
+  α = 0.10, mean set size 1.48, 0.3% of defects shown as nothing, and the visor speaks on 26.9% of clean crops.
+  Details in [`arch_a/README.md`](arch_a/README.md) and [`arch_a/results/archB/`](arch_a/results/archB/README.md).
+- **Retrained on the corrected D1 boxes (gc7_fix):** within noise of gc7 on val (macro-F1 0.698 vs 0.704), so gc7
+  stays ([`results/gc7_fix/compare.md`](results/gc7_fix/compare.md)).
 
 Every choice (epoch, kNN weight 0.25, prior correction 0.5) was made on val. Test was only read for the report
 (`results/gc7/`). One training run (seed 0).
@@ -117,7 +120,7 @@ All commands from `1_main_model_resnet18/`. Runs, caches and weights go to `data
 ```bash
 python enhanced_res/train_backbone.py --data d1_gc7 --out gc7   # ~25 min: 7-class backbone (best epoch 5 of 10)
 python enhanced_res/build_head_gc7.py                            # ~15 min: the head, data/work/enhanced_res/gc7/, results/gc7/
-python enhanced_res/arch_a/calibrate.py                          # ~10 min: architecture A for gc7, arch_a/calibration_gc7.json
+python enhanced_res/arch_a/calibrate.py --data d1_gc7_fix        # ~10 min: architecture B for gc7, arch_a/calibration_gc7.json
 ```
 
 `--data d1_gc7` uses v2's recipe unchanged with 7 classes. no-defect is the last class and gets about 14% of the
@@ -144,5 +147,5 @@ Each backbone takes 30-60 min on an M-series Mac; `build_head.py` takes about an
 | `build_head_gc7.py` | step 2 for gc7: the same head (h4) on the 7-class backbone, test report in `results/gc7/` |
 | `external_d5.py` | the D5 outside test set: D5 photos not copied from D1 (87% of D5 is) |
 | `evaluate.py` | re-tests a saved model (`--model gc7`, default, or `v2`) without training, and checks architecture A on the test half |
-| **`arch_a/`** | **architecture A**: `runtime.py` (the decision layer), `calibrate.py`, `calibration_gc7.json` (gc7) and `calibration.json` (v2), the study (`experiments/`, `results/`) |
+| **`arch_a/`** | **architectures A and B**: `runtime.py` (the decision layer), `calibrate.py`, `calibration_gc7.json` (B, gc7) and `calibration.json` (A, v2), the study (`experiments/`, `results/`) |
 | `results/` | v2: report, ablation table, summary, confusion matrix, D5 test set (`d5/`); **`results/gc7/`**: gc7's test report |
