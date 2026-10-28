@@ -15,15 +15,8 @@
 .title-type { position: relative; will-change: transform, opacity; }
 .saqr { margin: 0; font: 700 clamp(64px, 9.4vw, 168px)/.9 var(--font-fig); letter-spacing: -.05em; white-space: nowrap; }
 .sdp { margin: .35em 0 0 .06em; font: 700 clamp(26px, 3.3vw, 58px)/1 var(--font-fig); letter-spacing: .02em; color: var(--ink-2); white-space: nowrap; }
-/* the falcon: a solid emblem in a mid grey (the ink at 45% over the ground, made opaque), flown by the scroll from the
-   top right. Every shape has an outline in the ground colour, so where two shapes meet a thin carved gap appears;
-   .cut shapes are carved out, .solid has no outline (the beak grows out of the head) */
-.falcon { --falcon: #8F8F8F; position: absolute; top: 3%; right: 4vw; width: clamp(138px, 13.8vw, 240px); transform-origin: 50% 50%; will-change: transform, opacity; pointer-events: none; opacity: 0; }
-.falcon svg { display: block; width: 100%; height: auto; overflow: visible; }
-.falcon .f { fill: var(--falcon); stroke: var(--ground); stroke-width: 4; stroke-linejoin: round; paint-order: stroke; }
-.falcon .solid, .falcon .pupil { fill: var(--falcon); }
-.falcon .cut { fill: var(--ground); }
-.falcon-wing { transform-box: view-box; }
+/* the SAQR logo in the top right, shown as it is; its mask draws it in along its outlines */
+.saqr-logo { position: absolute; top: 5%; right: 5vw; width: clamp(130px, 12vw, 210px); height: auto; overflow: visible; pointer-events: none; }
 
 @media (max-width: 860px) {
   .title-run { height: 150vh; }
@@ -31,5 +24,5 @@
   .title-stage .sketch { max-height: 50vh; }
   .saqr { font-size: clamp(54px, 16vw, 120px); }
   .sdp { font-size: clamp(22px, 6vw, 40px); }
-  .falcon { top: 3%; width: clamp(88px, 24vw, 138px); }
+  .saqr-logo { top: 3%; width: clamp(90px, 24vw, 130px); }
 }
