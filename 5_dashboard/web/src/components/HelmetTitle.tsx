@@ -1,22 +1,24 @@
 import { useEffect, useRef } from "react";
+import logoMask from "../data/logoMask.json";
 import "../styles/title.css";
 
-/** The Model page's title: a hand-drawn sketch of the team's helmet beside S.A.Q.R. (SDP'26 under it), and a drawn
- *  falcon in the top right. The sketches draw themselves on arrival. Scrolling down un-draws the helmet (details first,
- *  the shell last) while the falcon flaps and dives across the page, gone by the end of the title; scrolling back up
- *  reverses both.
+/** The Model page's title: a hand-drawn sketch of the team's helmet beside S.A.Q.R. (SDP'26 under it), and the SAQR
+ *  logo in the top right. Both draw themselves on arrival: the logo is revealed along its own outlines (a mask traced
+ *  by scripts/logo_mask.py), then filled in, so the image itself is shown unchanged. Scrolling down un-draws them
+ *  (details first, the outlines last) and scrolling back up redraws them.
  *  With `step`, it is that presentation step (the first slide), shown fully drawn at the top of its run. */
 export function HelmetTitle({ step }: { step?: number }) {
   const run = useRef<HTMLDivElement>(null);
   const strokes = useRef<SVGGElement>(null);
   const type = useRef<HTMLDivElement>(null);
-  const falcon = useRef<HTMLDivElement>(null);
+  const logo = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     const els = Array.from(strokes.current!.children) as SVGElement[];
-    els.forEach((el) => { el.setAttribute("pathLength", "1"); el.style.strokeDasharray = "1 1"; });
-    const wings = Array.from(falcon.current?.querySelectorAll<SVGGElement>(".falcon-wing") ?? []);
-    const n = els.length, INTRO_MS = 1800, t0 = performance.now();
+    const marks = Array.from(logo.current?.querySelectorAll<SVGElement>(".logo-line") ?? []);
+    [...els, ...marks].forEach((el) => { el.setAttribute("pathLength", "1"); el.style.strokeDasharray = "1 1"; });
+    const fill = logo.current?.querySelector<SVGElement>(".logo-fill");
+    const INTRO_MS = 1800, t0 = performance.now();
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let intro = reduce ? 1 : 0, raf = 0;
 
@@ -28,30 +30,21 @@ export function HelmetTitle({ step }: { step?: number }) {
       const stick = box.firstElementChild as HTMLElement;
       const span = Math.max(1, box.offsetHeight - stick.offsetHeight);
       const erase = Math.min(1, Math.max(0, (stick.getBoundingClientRect().top - box.getBoundingClientRect().top) / (span * 0.85)));
-      els.forEach((el, i) => {
-        const drawn = Math.min(1, Math.max(0, (intro - (i / n) * 0.75) / 0.25));
-        const kept = 1 - Math.min(1, Math.max(0, (erase - ((n - 1 - i) / n) * 0.75) / 0.25));
+      // each list is drawn in order and un-drawn in reverse: the helmet's strokes, and the logo's beside them
+      const sketch = (list: SVGElement[]) => list.forEach((el, i) => {
+        const k = list.length, drawn = Math.min(1, Math.max(0, (intro - (i / k) * 0.75) / 0.25));
+        const kept = 1 - Math.min(1, Math.max(0, (erase - ((k - 1 - i) / k) * 0.75) / 0.25));
         const shown = Math.min(drawn, kept);
         el.style.strokeDashoffset = String(1 - shown);
         el.style.visibility = shown <= 0.001 ? "hidden" : "visible"; // a round cap would leave a dot
       });
+      sketch(els);
+      sketch(marks);
+      // the rest of the logo fills in once its outlines are drawn, and is the first to go
+      if (fill) fill.style.opacity = String(Math.min(Math.min(1, Math.max(0, (intro - 0.75) / 0.25)), 1 - Math.min(1, Math.max(0, erase / 0.3))));
       if (type.current) {
         type.current.style.opacity = String(1 - erase * 0.85);
         type.current.style.transform = `translateY(${-erase * 40}px)`;
-      }
-      const f = falcon.current;
-      if (f) {
-        // the falcon glides in from the right while the helmet draws, then the scroll flies it left above the
-        // helmet, beating its wing as it goes, faded out by the end of the title run
-        const arrive = 1 - Math.pow(1 - Math.min(1, Math.max(0, (intro - 0.3) / 0.6)), 3);
-        const W = stick.offsetWidth, H = stick.offsetHeight, e = erase;
-        // across the band above the helmet: a gentle rise, then a glide down as it leaves
-        const x = -e * W * 1.05, y = -Math.sin(e * Math.PI) * 24 + e * e * 40;
-        const tilt = Math.atan2(-Math.cos(e * Math.PI) * 24 * Math.PI + 80 * e, 1.05 * W) * (180 / Math.PI); // nose follows the path
-        f.style.transform = `translate(${x + (1 - arrive) * 60}px, ${y}px) rotate(${-tilt}deg) scale(${1 - e * 0.3})`;
-        f.style.opacity = String(arrive * (1 - Math.min(1, Math.max(0, (e - 0.72) / 0.28))));
-        const flap = reduce ? 0 : 13 * Math.sin(e * Math.PI * 9);      // the wing beats up and down about the shoulder
-        wings.forEach((w) => { w.style.transform = `rotate(${flap}deg)`; });
       }
       if (intro < 1) raf = requestAnimationFrame(paint);
     };
@@ -69,8 +62,8 @@ export function HelmetTitle({ step }: { step?: number }) {
       <path d="M-50,520 C180,430 300,610 520,520 C700,450 820,600 1250,470" />
       <path d="M-50,560 C170,480 320,660 540,565 C720,495 840,650 1250,520" />
       <path d="M-50,600 C160,530 340,700 560,610 C740,540 860,700 1250,570" />
-      <path d="M-50,170 C210,250 380,90 600,160 C820,230 930,80 1250,180" />
-      <path d="M-50,130 C220,210 390,50 610,120 C830,190 940,40 1250,140" />
+      <path d="M-50,170 C210,250 380,90 600,160 C740,205 820,120 880,-40" /> {/* the top two lines rise out of the page before the logo */}
+      <path d="M-50,130 C220,210 390,50 610,120 C740,162 800,80 850,-60" />
       <path d="M760,420 C820,300 990,300 1040,420 C1090,540 900,610 820,560 C780,535 745,480 760,420 Z" />
       <path d="M800,425 C845,345 965,345 1000,425 C1035,505 905,555 850,520 C820,500 790,470 800,425 Z" />
     </svg>
@@ -133,29 +126,24 @@ export function HelmetTitle({ step }: { step?: number }) {
           <h1 className="saqr">S.A.Q.R.</h1>
           <p className="sdp">SDP’26</p>
         </div>
-        <div className="falcon" ref={falcon} aria-hidden="true">
-          {/* an emblem-style falcon flying left: solid grey shapes with carved gaps (each shape has a ground-coloured
-              outline, so where shapes meet a thin gap appears). The head: a hooked beak growing out of the forehead
-              (drawn at 70% about its root), an angry eye under a heavy brow, a mouth crescent under the cheek; the
-              feet are tucked back under the tail, three hooked talons at the end */}
-          <svg viewBox="10 0 340 190">
-            <path className="f" d="M264,124 C288,118 312,112 338,107 L328,121 L344,127 L330,138 L340,152 C314,152 290,147 264,142 Z" />
-            <path className="cut" d="M278,128 C296,126 314,124 332,124 C314,128 296,130 280,131 Z M278,137 C296,138 314,140 332,143 C314,142 296,141 280,140 Z" />
-            <path className="f" d="M50,112 C62,92 92,84 122,96 C150,108 180,116 214,120 C236,123 254,124 270,124 L268,142 C246,148 220,154 196,156 C160,158 128,156 104,150 C84,145 68,138 58,128 C53,122 50,117 50,112 Z" />
-            <path className="cut" d="M118,137 C146,148 176,152 206,150 C176,147 148,142 124,132 Z" />
-            <path className="f" d="M180,148 C194,158 214,164 238,166 C226,172 206,174 192,172 C184,168 178,160 180,148 Z" />
-            <path className="solid" d="M236,164 C243,164 248,168 248,175 C245,171 241,170 237,170 Z M232,170 C238,172 241,177 240,183 C237,178 234,176 230,175 Z M226,172 C230,176 231,181 229,186 C227,181 225,179 222,177 Z" />
-            <g className="falcon-wing" style={{ transformOrigin: "160px 118px" }}>
-              <path className="f" d="M116,102 C128,70 156,44 194,28 C230,14 266,8 306,5 Q284,16 270,23 Q280,26 286,30 Q268,34 254,41 Q262,45 268,51 Q252,54 240,59 Q246,64 250,71 Q238,73 228,79 Q232,85 234,92 Q226,94 220,99 C216,110 212,118 208,124 C178,118 150,110 116,102 Z" />
-              <path className="cut" d="M198,40 C222,32 246,26 270,23 C246,30 222,38 204,46 Z M202,56 C220,50 238,45 254,41 C238,48 220,56 208,62 Z M205,72 C218,67 230,62 240,59 C230,66 218,72 210,78 Z M207,88 C214,85 222,82 228,79 C222,85 214,90 211,93 Z M134,92 C152,70 172,54 198,42 C176,58 158,76 144,96 Z" />
-            </g>
-            <path className="solid" transform="translate(70 115) scale(0.7) translate(-70 -115)" d="M70,100 C50,96 30,104 22,119 C16,130 18,142 26,150 C27,140 33,133 43,130 C52,128 61,129 70,132 C66,122 64,110 70,100 Z" />
-            <path className="cut" d="M76,97 C88,90 104,87 120,89 C106,92 92,96 80,102 Z" />
-            <path className="cut" d="M70,111 L108,99 C103,109 94,116 83,119 C77,119 72,116 70,111 Z" />
-            <circle className="pupil" cx="80.5" cy="111.5" r="3.2" />
-            <path className="cut" transform="translate(70 115) scale(0.7) translate(-70 -115)" d="M43,131 C58,128 72,131 86,136 C96,140 106,144 117,146 C103,146 90,143 79,139 C67,135 55,133 45,134 Z" />
-          </svg>
-        </div>
+        {/* the SAQR logo from the brand identity, mirrored to face left (web/public/brand/saqr_logo.png); the mask shows it
+            along its outlines first */}
+        <svg className="saqr-logo" ref={logo} viewBox={`0 0 ${logoMask.w} ${logoMask.h}`} aria-hidden="true">
+          <defs>
+            <mask id="saqr-logo-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={logoMask.w} height={logoMask.h}>
+              <rect className="logo-fill" width={logoMask.w} height={logoMask.h} fill="#fff" />
+              {logoMask.paths.map((d) => <path key={d.slice(0, 24)} className="logo-line" d={d} fill="none" stroke="#fff" strokeWidth={logoMask.pen} strokeLinecap="round" strokeLinejoin="round" />)}
+            </mask>
+            {/* the logo in the page's secondary ink (as SDP'26): its shape and shading (the image's alpha) filled with
+                var(--ink-2), the alpha scaled so the darkest parts come out as the full colour */}
+            <filter id="saqr-logo-grey" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+              <feComponentTransfer in="SourceAlpha" result="a"><feFuncA type="linear" slope={1 / logoMask.alphaMax} /></feComponentTransfer>
+              <feFlood style={{ floodColor: "var(--ink-2)" }} />
+              <feComposite in2="a" operator="in" />
+            </filter>
+          </defs>
+          <image href="/brand/saqr_logo.png" width={logoMask.w} height={logoMask.h} mask="url(#saqr-logo-mask)" filter="url(#saqr-logo-grey)" />
+        </svg>
       </div>
       {step != null && <i hidden data-step={step} data-step-at={0} />}
     </div>

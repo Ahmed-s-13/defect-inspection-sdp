@@ -1,11 +1,13 @@
 import { AnimatePresence, LayoutGroup, MotionConfig, motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { getModels, getReport, setActiveModel, type ModelsInfo } from "./api/client";
 import { TopBar, TABS, type Tab } from "./components/TopBar";
 import { BenchProvider, useBench } from "./state/bench";
 import { PresentProvider, scrollToStep, usePresent } from "./state/present";
 import { BatchView } from "./views/BatchView";
 import { DataView } from "./views/DataView";
+// the Helmet page carries three.js: loaded only when its tab is opened
+const HelmetView = lazy(() => import("./views/HelmetView").then((m) => ({ default: m.HelmetView })));
 import { InspectView } from "./views/InspectView";
 import { ModelView } from "./views/ModelView";
 
@@ -108,6 +110,7 @@ function Shell() {
               {tab === "batch" && <BatchView classes={classes} onOpen={openInInspect} />}
               {tab === "model" && <ModelView />}
               {tab === "data" && <DataView />}
+              {tab === "helmet" && <Suspense fallback={null}><HelmetView /></Suspense>}
             </motion.div>
           </AnimatePresence>
         </LayoutGroup>

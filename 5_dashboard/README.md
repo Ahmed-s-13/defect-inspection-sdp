@@ -10,8 +10,9 @@ a small Python server loads the model, and the page opens in your browser at htt
 | **Data** | how we went from D1 (leaky, 6 classes) to d1_gc7 (leak-free, 7 classes): grouping, the healer, the clean cropper, cropping | nothing (built into the page) |
 | **Inspect** | drop or paste one photo, drag the model's 224 px square, see architecture B's answer, the calibrated %, the 8 views and the unfamiliar-input check | gc7 weights |
 | **Batch** | drop a folder (or run the 35 samples): accuracy with a 95% interval, confusion matrix, CSV export | gc7 weights |
+| **Helmet** | SAQR Prototype 1 in 3D (`web/public/helmet/saqr_prototype_1.glb`), slowly turning: drag to turn it, click a component (or pick it from the list) to fly in and read what it is | nothing (built into the page) |
 
-Keys: `1` `2` `3` `4` switch pages · `P` presentation mode (`←` `→` step through a page) · `⌘V`/`Ctrl+V` paste an
+Keys: `1` to `5` switch pages · `P` presentation mode (`←` `→` step through a page) · `⌘V`/`Ctrl+V` paste an
 image · arrow keys move the square once it has focus (Shift resizes).
 
 ## Setup on your computer (once)
