@@ -1,0 +1,50 @@
+﻿GPU: NVIDIA GeForce RTX 2050, torch 2.14.0+cu130, CUDA 13.0, TensorRT 11.4.0.106; CPU: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel (16 threads)
+loaded 4868 test crops (175 groups, 615 no-defect; 2752 in architecture B's test half) in 4s
+
+== PyTorch FP32 (GPU) ==
+  acc 0.8036  macro-F1 0.7514 (0.709-0.787)  | b1 model 20.39 ms (median), end-to-end 43.16 ms | 74 crops/s | test set 76.6s
+
+== PyTorch FP16 (GPU) ==
+  acc 0.8032  macro-F1 0.7514 (0.709-0.787)  | b1 model 29.98 ms (median), end-to-end 33.59 ms | 122 crops/s | test set 48.3s
+
+== onnxruntime FP32 (CPU) ==
+  acc 0.8038  macro-F1 0.7517 (0.709-0.787)  | b1 model 73.26 ms (median), end-to-end 85.56 ms | 13 crops/s | test set 447.2s
+
+== TensorRT FP32 (GPU) ==
+  acc 0.8040  macro-F1 0.7522 (0.710-0.787)  | b1 model 10.29 ms (median), end-to-end 11.32 ms | 113 crops/s | test set 45.4s
+
+== TensorRT FP16 (GPU) ==
+  acc 0.8032  macro-F1 0.7513 (0.709-0.786)  | b1 model 5.90 ms (median), end-to-end 11.98 ms | 300 crops/s | test set 17.6s
+
+# enhanced_res gc7 + architecture B: PyTorch vs onnxruntime vs TensorRT
+
+4868 d1_gc7_fix test crops (175 source groups, 615 no-defect), same trained model. GPU NVIDIA GeForce RTX 2050, CPU Intel64 Family 6 Model 154 Stepping 3, GenuineIntel (16 threads); torch 2.14.0+cu130, CUDA 13.0, TensorRT 11.4.0.106. Every row runs the whole model (backbone + 8-view TTA + MLP heads + 5-NN); the onnxruntime and TensorRT rows need no PyTorch. Latency = median of 300 runs after 30 warm-up runs (onnxruntime: 100), 15 s pause between backends.
+
+| backend | accuracy | macro-F1 (95% group CI) | balanced acc | same class as PyTorch FP32 | same arch-B answer | McNemar vs FP32 (b, c, p) | latency b1, median (ms) | p95 | end-to-end b1 + decision, median (ms) | throughput b4 (crops/s) | whole test set (s) | speed-up | size (MB) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| PyTorch FP32 (GPU) | 0.8036 | 0.7514 (0.709-0.787) | 0.7633 | 100.00% | 100.00% | 0, 0, p=1.000 | 20.39 | 40.76 | 43.16 | 74.2 | 76.6 | 1.00x | 145.3 |
+| PyTorch FP16 (GPU) | 0.8032 | 0.7514 (0.709-0.787) | 0.7633 | 99.92% | 99.82% | 3, 1, p=0.625 | 29.98 | 53.77 | 33.59 | 121.9 | 48.3 | 0.68x | 122.9 |
+| onnxruntime FP32 (CPU) | 0.8038 | 0.7517 (0.709-0.787) | 0.7634 | 99.98% | 99.92% | 0, 1, p=1.000 | 73.26 | 79.06 | 85.56 | 13.1 | 447.2 | 0.28x | 145.4 |
+| TensorRT FP32 (GPU) | 0.8040 | 0.7522 (0.710-0.787) | 0.7638 | 99.96% | 99.86% | 0, 2, p=0.500 | 10.29 | 10.67 | 11.32 | 113.2 | 45.4 | 1.98x | 146.2 |
+| TensorRT FP16 (GPU) | 0.8032 | 0.7513 (0.709-0.786) | 0.7632 | 99.92% | 99.69% | 2, 0, p=0.500 | 5.90 | 8.19 | 11.98 | 299.6 | 17.6 | 3.46x | 124.3 |
+
+## Architecture B on its test half (2752 crops), every runtime
+
+| | CP coverage | mean set size | single class | inspector needed | single wrong class | silent miss | no-defect false alarm | re-aim | matches calibration_gc7.json |
+|---|---|---|---|---|---|---|---|---|---|
+| expected (calibration_gc7.json) | 90.4% | 1.48 | 70.9% | 30.0% | 6.7% | 0.3% | 26.9% | 2.9% | |
+| PyTorch FP32 (GPU) | 90.3% | 1.48 | 70.9% | 30.0% | 6.7% | 0.3% | 26.9% | 2.9% | yes |
+| PyTorch FP16 (GPU) | 90.3% | 1.48 | 71.0% | 29.9% | 6.7% | 0.4% | 26.9% | 2.9% | yes |
+| onnxruntime FP32 (CPU) | 90.4% | 1.48 | 70.9% | 30.0% | 6.7% | 0.3% | 26.9% | 2.9% | yes |
+| TensorRT FP32 (GPU) | 90.3% | 1.48 | 71.0% | 29.9% | 6.7% | 0.4% | 26.9% | 2.8% | NO: gates_false_reject_family -0.0057 |
+| TensorRT FP16 (GPU) | 90.4% | 1.48 | 71.0% | 29.9% | 6.7% | 0.3% | 27.2% | 2.8% | yes |
+
+The check uses the repo's evaluate.py tolerances (0.005; 0.015 for the set size) on seven metrics, among them the share of photo families stopped by the re-aim gate: that one averages over 87 families, so a single borderline crop in a small family moves it by up to ~0.006. Different runtimes round differently and flip a handful of crops that sit exactly on a threshold (see 'same arch-B answer').
+
+Per-class recall (top-1): PyTorch FP32 (GPU): corrosion 0.622, crack 0.761, dent 0.852, missing-head 0.951, paint-peel-off 0.717, scratch 0.530, no-defect 0.911
+
+PyTorch FP32 vs the dashboard's Model page / repo evaluate.py (0.8036 / 0.7514): MATCH (0.8036 / 0.7514).
+
+Whole benchmark run: 823 s. One run, one seed; the RTX 2050 is not the Jetson Orin NX and this laptop CPU is not a Raspberry Pi (relative speed-ups carry over, absolute ms do not).
+
+saved C:\Users\musta\Desktop\Year 4\Sem 7\Senior Design 1\SDP_Code\defect-inspection-sdp\trt_enhanced_res\results\results_enhanced_res_gc7_NVIDIA_GeForce_RTX_2050.md

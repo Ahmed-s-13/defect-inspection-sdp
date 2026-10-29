@@ -1,0 +1,364 @@
+[
+  {
+    "backend": "PyTorch FP32 (GPU)",
+    "accuracy": 0.8036154478225144,
+    "macro_f1": 0.7514417188539914,
+    "balanced_accuracy": 0.7633427468646914,
+    "recall": [
+      0.6216931216931217,
+      0.7612509534706331,
+      0.8520204894706886,
+      0.9505813953488372,
+      0.7169811320754716,
+      0.5303030303030303,
+      0.9105691056910569
+    ],
+    "test_set_seconds": 76.64055479998933,
+    "test_set_crops_per_s": 63.51728549857363,
+    "model_size_mb": 145.28656,
+    "macro_f1_ci": [
+      0.7088409375889042,
+      0.786549093252415
+    ],
+    "arch": {
+      "alpha": 0.1,
+      "accuracy": 0.7936046511627907,
+      "cp_coverage": 0.903343023255814,
+      "cp_family_coverage": 0.8950958584616618,
+      "cp_mean_set_size": 1.481468023255814,
+      "cp_single_class": 0.7093023255813954,
+      "actions": {
+        "show class": 0.6082848837209303,
+        "ambiguous": 0.18350290697674418,
+        "unclear": 0.0,
+        "re-take": 0.0,
+        "re-aim": 0.028706395348837208,
+        "nothing shown": 0.09193313953488372,
+        "possible defect": 0.08757267441860465
+      },
+      "human_attention": 0.29978197674418605,
+      "gates_false_reject": 0.028706395348837208,
+      "gates_false_reject_family": 0.0685683082756154,
+      "single_class_wrong": 0.06722383720930232,
+      "silent_miss": 0.0033098882912701694,
+      "silent_miss_by_class": {
+        "corrosion": 0.0,
+        "crack": 0.0015723270440251573,
+        "dent": 0.006200177147918512,
+        "missing-head": 0.0,
+        "paint-peel-off": 0.0,
+        "scratch": 0.0
+      },
+      "no_defect_nothing_shown": 0.7313432835820896,
+      "no_defect_false_alarm": 0.26865671641791045
+    },
+    "latency_mean_ms": 23.309252333613887,
+    "latency_p50_ms": 20.39484999841079,
+    "latency_p95_ms": 40.76049001159847,
+    "e2e_mean_ms": 46.59354166525494,
+    "e2e_p50_ms": 43.156050000106916,
+    "e2e_p95_ms": 89.94570000941168,
+    "throughput_crops_per_s": 74.15932754201147,
+    "total_run_seconds": 107.11494830000447,
+    "same_class": 1.0,
+    "same_answer": 1.0,
+    "mcnemar_b_c_p": [
+      0,
+      0,
+      1.0
+    ],
+    "speedup_vs_ref": 1.0,
+    "arch_off": {},
+    "arch_match": true
+  },
+  {
+    "backend": "PyTorch FP16 (GPU)",
+    "accuracy": 0.8032046014790468,
+    "macro_f1": 0.75136880293907,
+    "balanced_accuracy": 0.7632757913337801,
+    "recall": [
+      0.6216931216931217,
+      0.7597254004576659,
+      0.8514513375071144,
+      0.9505813953488372,
+      0.7169811320754716,
+      0.5303030303030303,
+      0.9121951219512195
+    ],
+    "test_set_seconds": 48.28081589998328,
+    "test_set_crops_per_s": 100.82679650825217,
+    "model_size_mb": 122.907154,
+    "macro_f1_ci": [
+      0.7089714609900208,
+      0.7868414892196914
+    ],
+    "arch": {
+      "alpha": 0.1,
+      "accuracy": 0.7936046511627907,
+      "cp_coverage": 0.903343023255814,
+      "cp_family_coverage": 0.8942337894961446,
+      "cp_mean_set_size": 1.4818313953488371,
+      "cp_single_class": 0.7096656976744186,
+      "actions": {
+        "show class": 0.6082848837209303,
+        "ambiguous": 0.18313953488372092,
+        "unclear": 0.0,
+        "re-take": 0.0,
+        "re-aim": 0.028706395348837208,
+        "nothing shown": 0.09229651162790697,
+        "possible defect": 0.08757267441860465
+      },
+      "human_attention": 0.29941860465116277,
+      "gates_false_reject": 0.028706395348837208,
+      "gates_false_reject_family": 0.0685683082756154,
+      "single_class_wrong": 0.06722383720930232,
+      "silent_miss": 0.003723624327678941,
+      "silent_miss_by_class": {
+        "corrosion": 0.0,
+        "crack": 0.0015723270440251573,
+        "dent": 0.006200177147918512,
+        "missing-head": 0.0,
+        "paint-peel-off": 0.0,
+        "scratch": 0.008264462809917356
+      },
+      "no_defect_nothing_shown": 0.7313432835820896,
+      "no_defect_false_alarm": 0.26865671641791045
+    },
+    "latency_mean_ms": 32.7001160000024,
+    "latency_p50_ms": 29.982499981997535,
+    "latency_p95_ms": 53.77151499124011,
+    "e2e_mean_ms": 36.1024789995281,
+    "e2e_p50_ms": 33.59184999135323,
+    "e2e_p95_ms": 59.02896999032237,
+    "throughput_crops_per_s": 121.90565356793601,
+    "total_run_seconds": 76.2777911000012,
+    "same_class": 0.9991783073130649,
+    "same_answer": 0.998151191454396,
+    "mcnemar_b_c_p": [
+      3,
+      1,
+      0.625
+    ],
+    "speedup_vs_ref": 0.6802251316820319,
+    "arch_off": {},
+    "arch_match": true
+  },
+  {
+    "backend": "onnxruntime FP32 (CPU)",
+    "accuracy": 0.8038208709942481,
+    "macro_f1": 0.7517024192248031,
+    "balanced_accuracy": 0.763424054288059,
+    "recall": [
+      0.6216931216931217,
+      0.7612509534706331,
+      0.852589641434263,
+      0.9505813953488372,
+      0.7169811320754716,
+      0.5303030303030303,
+      0.9105691056910569
+    ],
+    "test_set_seconds": 447.23113409997313,
+    "test_set_crops_per_s": 10.884752041685491,
+    "model_size_mb": 145.368626,
+    "macro_f1_ci": [
+      0.7092972178570973,
+      0.7867995658406222
+    ],
+    "arch": {
+      "alpha": 0.1,
+      "accuracy": 0.793968023255814,
+      "cp_coverage": 0.9037063953488372,
+      "cp_family_coverage": 0.8954790002241141,
+      "cp_mean_set_size": 1.4818313953488371,
+      "cp_single_class": 0.7093023255813954,
+      "actions": {
+        "show class": 0.6082848837209303,
+        "ambiguous": 0.18350290697674418,
+        "unclear": 0.0,
+        "re-take": 0.0,
+        "re-aim": 0.028706395348837208,
+        "nothing shown": 0.09193313953488372,
+        "possible defect": 0.08757267441860465
+      },
+      "human_attention": 0.29978197674418605,
+      "gates_false_reject": 0.028706395348837208,
+      "gates_false_reject_family": 0.0685683082756154,
+      "single_class_wrong": 0.06722383720930232,
+      "silent_miss": 0.0033098882912701694,
+      "silent_miss_by_class": {
+        "corrosion": 0.0,
+        "crack": 0.0015723270440251573,
+        "dent": 0.006200177147918512,
+        "missing-head": 0.0,
+        "paint-peel-off": 0.0,
+        "scratch": 0.0
+      },
+      "no_defect_nothing_shown": 0.7313432835820896,
+      "no_defect_false_alarm": 0.26865671641791045
+    },
+    "latency_mean_ms": 73.57329200283857,
+    "latency_p50_ms": 73.26289998309221,
+    "latency_p95_ms": 79.05938501644414,
+    "e2e_mean_ms": 91.4725640002871,
+    "e2e_p50_ms": 85.56430001044646,
+    "e2e_p95_ms": 116.14195000875043,
+    "throughput_crops_per_s": 13.073985553516195,
+    "total_run_seconds": 478.18803959997604,
+    "same_class": 0.9997945768282662,
+    "same_answer": 0.9991783073130649,
+    "mcnemar_b_c_p": [
+      0,
+      1,
+      1.0
+    ],
+    "speedup_vs_ref": 0.27837896129033335,
+    "arch_off": {},
+    "arch_match": true
+  },
+  {
+    "backend": "TensorRT FP32 (GPU)",
+    "accuracy": 0.8040262941659819,
+    "macro_f1": 0.7521611841283826,
+    "balanced_accuracy": 0.7638019832374167,
+    "recall": [
+      0.6243386243386243,
+      0.7612509534706331,
+      0.852589641434263,
+      0.9505813953488372,
+      0.7169811320754716,
+      0.5303030303030303,
+      0.9105691056910569
+    ],
+    "test_set_seconds": 45.38467309999396,
+    "test_set_crops_per_s": 107.26088054605042,
+    "model_size_mb": 146.169436,
+    "macro_f1_ci": [
+      0.7099006583176775,
+      0.7871069742754943
+    ],
+    "arch": {
+      "alpha": 0.1,
+      "accuracy": 0.7943313953488372,
+      "cp_coverage": 0.903343023255814,
+      "cp_family_coverage": 0.8940422186149187,
+      "cp_mean_set_size": 1.481468023255814,
+      "cp_single_class": 0.7100290697674418,
+      "actions": {
+        "show class": 0.6086482558139535,
+        "ambiguous": 0.18313953488372092,
+        "unclear": 0.0,
+        "re-take": 0.0,
+        "re-aim": 0.028343023255813952,
+        "nothing shown": 0.09229651162790697,
+        "possible defect": 0.08757267441860465
+      },
+      "human_attention": 0.2990552325581395,
+      "gates_false_reject": 0.028343023255813952,
+      "gates_false_reject_family": 0.06282118183883378,
+      "single_class_wrong": 0.06722383720930232,
+      "silent_miss": 0.003723624327678941,
+      "silent_miss_by_class": {
+        "corrosion": 0.0,
+        "crack": 0.0015723270440251573,
+        "dent": 0.006200177147918512,
+        "missing-head": 0.0,
+        "paint-peel-off": 0.0,
+        "scratch": 0.008264462809917356
+      },
+      "no_defect_nothing_shown": 0.7313432835820896,
+      "no_defect_false_alarm": 0.26865671641791045
+    },
+    "latency_mean_ms": 10.340332001408873,
+    "latency_p50_ms": 10.292600010870956,
+    "latency_p95_ms": 10.669685009634122,
+    "e2e_mean_ms": 11.389048666751478,
+    "e2e_p50_ms": 11.31869999517221,
+    "e2e_p95_ms": 11.930890018993523,
+    "throughput_crops_per_s": 113.17896947707926,
+    "total_run_seconds": 55.824208199977875,
+    "same_class": 0.9995891536565324,
+    "same_answer": 0.9985620377978636,
+    "mcnemar_b_c_p": [
+      0,
+      2,
+      0.5
+    ],
+    "speedup_vs_ref": 1.981506128370861,
+    "arch_off": {
+      "gates_false_reject_family": -0.0057
+    },
+    "arch_match": false
+  },
+  {
+    "backend": "TensorRT FP16 (GPU)",
+    "accuracy": 0.8032046014790468,
+    "macro_f1": 0.7512933114725999,
+    "balanced_accuracy": 0.7631524713689688,
+    "recall": [
+      0.6216931216931217,
+      0.7604881769641495,
+      0.8514513375071144,
+      0.9505813953488372,
+      0.7169811320754716,
+      0.5303030303030303,
+      0.9105691056910569
+    ],
+    "test_set_seconds": 17.585216299979948,
+    "test_set_crops_per_s": 276.8234360589327,
+    "model_size_mb": 124.312948,
+    "macro_f1_ci": [
+      0.7086854669862332,
+      0.7864481588569222
+    ],
+    "arch": {
+      "alpha": 0.1,
+      "accuracy": 0.7928779069767442,
+      "cp_coverage": 0.9037063953488372,
+      "cp_family_coverage": 0.8954790002241141,
+      "cp_mean_set_size": 1.4818313953488371,
+      "cp_single_class": 0.7100290697674418,
+      "actions": {
+        "show class": 0.6097383720930233,
+        "ambiguous": 0.18277616279069767,
+        "unclear": 0.0,
+        "re-take": 0.0,
+        "re-aim": 0.028343023255813952,
+        "nothing shown": 0.09156976744186046,
+        "possible defect": 0.08757267441860465
+      },
+      "human_attention": 0.2986918604651163,
+      "gates_false_reject": 0.028343023255813952,
+      "gates_false_reject_family": 0.06848501658812581,
+      "single_class_wrong": 0.06722383720930232,
+      "silent_miss": 0.0033098882912701694,
+      "silent_miss_by_class": {
+        "corrosion": 0.0,
+        "crack": 0.0015723270440251573,
+        "dent": 0.006200177147918512,
+        "missing-head": 0.0,
+        "paint-peel-off": 0.0,
+        "scratch": 0.0
+      },
+      "no_defect_nothing_shown": 0.7283582089552239,
+      "no_defect_false_alarm": 0.2716417910447761
+    },
+    "latency_mean_ms": 6.102313999435864,
+    "latency_p50_ms": 5.897199996979907,
+    "latency_p95_ms": 8.189405010489281,
+    "e2e_mean_ms": 12.267086333207166,
+    "e2e_p50_ms": 11.982249998254701,
+    "e2e_p95_ms": 15.823229997477037,
+    "throughput_crops_per_s": 299.5987997258577,
+    "total_run_seconds": 25.88728589998209,
+    "same_class": 0.9991783073130649,
+    "same_answer": 0.9969186524239935,
+    "mcnemar_b_c_p": [
+      2,
+      0,
+      0.5
+    ],
+    "speedup_vs_ref": 3.458395511235072,
+    "arch_off": {},
+    "arch_match": true
+  }
+]

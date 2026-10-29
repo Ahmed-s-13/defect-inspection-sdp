@@ -9,8 +9,8 @@ Two trained versions, same architecture and file names (git-ignored, GitHub Rele
   gc7  the main model since 28 Oct 2026: 7 classes (the six defects + no-defect), trained on d1_gc7.
        data/work/enhanced_res/gc7/ (enhanced_res_gc7_model.zip, Release v3.0-gc7)
   v2   the 6-class model on d1_grouped: data/work/enhanced_res/ (enhanced_res_model.zip, Release v2.0-enhanced-res).
-       EnhancedRes() with no argument still loads it, so code built on the 6 classes (trt_enhanced_res, the healer's
-       screw-head scorer, arch_a/experiments) is unchanged.
+       EnhancedRes() with no argument still loads it, so code built on the 6 classes (the healer's screw-head scorer,
+       arch_a/experiments) is unchanged.
 
   from enhanced_res.model import EnhancedRes, MODELS
   m = EnhancedRes(MODELS["gc7"])          # the main model; EnhancedRes() = v2. Picks CUDA / MPS / CPU

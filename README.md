@@ -18,8 +18,8 @@ from two modules:
 - It calls 3.9% of defects "no-defect". With a cut on p(no-defect) chosen on val, that drops to 0.9%.
 
 Run it with `python predict.py` in `1_main_model_resnet18/`. The weights are `enhanced_res_gc7_model.zip` on this
-repo's **Releases** page (`v3.0-gc7`). The 6-class model (**v2**, Release `v2.0-enhanced-res`) is kept: `--model v2`,
-`EnhancedRes()` in code, and `trt_enhanced_res`.
+repo's **Releases** page (`v3.0-gc7`). The 6-class model (**v2**, Release `v2.0-enhanced-res`) is kept: `--model v2` and
+`EnhancedRes()` in code (the healer's screw-head scorer uses it). `trt_enhanced_res` runs gc7 + architecture B.
 
 **Main architecture: enhanced_res gc7 + [architecture B](1_main_model_resnet18/enhanced_res/arch_a/README.md)** (28 October):
 architecture A's calibrated layer on the 7-class model, quality gate off. The visor shows **nothing** when the set is
@@ -38,8 +38,8 @@ The model's output goes through a calibrated decision layer instead of the fixed
 For v2 on normal grouped-test crops, a single wrong class is shown without warning 6.7% of the time, against 20.9%
 before, and 38.5% of crops are flagged for the inspector.
 
-B's numbers are in `calibration_gc7.json`, A's in `calibration.json` (kNN + AoN at α 0.08; read by
-`trt_enhanced_res`). Both are in git; `calibrate.py` refits either without retraining anything.
+B's numbers are in `calibration_gc7.json`, A's in `calibration.json` (kNN + AoN at α 0.08).
+Both are in git; `calibrate.py` refits either without retraining anything.
 
 ## Current D1 grouping work — 22 October 2026
 
@@ -110,6 +110,7 @@ which defect it is. Everything here uses public datasets.
 | [`3_clean_cropper/`](3_clean_cropper/) | **clean cropper, in use** | Cuts squares from the unboxed parts of D1 photos, scores them for background and unboxed damage (CLIP), learns "clean" from a hand-labelled audit and picks a varied set for a final review: 3,000 of d1_gc7's no-defect crops. |
 | [`4_early_classifiers_archive/`](4_early_classifiers_archive/) | archived | Our first models: plain CNN and SupCon ResNet-18, on smaller Roboflow datasets. |
 | [`5_dashboard/`](5_dashboard/) | **dashboard, in use** | A local web app for the main model: its test results and how it works (Model), how d1_gc7 was made (Data), and a test bench for one photo (Inspect) or a folder (Batch). `cd 5_dashboard && ./run.sh` opens it at http://127.0.0.1:8765. Setup for your computer: [`5_dashboard/README.md`](5_dashboard/README.md). |
+| [`trt_enhanced_res/`](trt_enhanced_res/) | **deployment, in use** | The main model (**gc7 + architecture B**) as one ONNX file: run with **TensorRT** on an NVIDIA GPU (laptop, Jetson) or with **onnxruntime** on any CPU, including the **Raspberry Pi 5**. Gives the same answers as PyTorch; the ONNX files are on the team Drive, a ready-to-copy Pi bundle too. How to use it: [`trt_enhanced_res/README.md`](trt_enhanced_res/README.md). |
 
 Each folder has its own README with the run order. Run scripts from inside their folder.
 
@@ -142,7 +143,7 @@ so you unzip it **inside the cloned repo folder** and every file lands where the
 | file | size | where to download | what it gives you |
 |---|---|---|---|
 | `enhanced_res_gc7_model.zip` | 133 MB | this repo's **Releases** page (`v3.0-gc7`) | **the main model, gc7**: `data/work/enhanced_res/gc7/` (backbone + MLP head) |
-| `enhanced_res_model.zip` | 136 MB | this repo's **Releases** page (`v2.0-enhanced-res`) | the 6-class enhanced_res v2: `data/work/enhanced_res/` (backbone + MLP head); still used by `trt_enhanced_res` and the healer's screw-head scorer |
+| `enhanced_res_model.zip` | 136 MB | this repo's **Releases** page (`v2.0-enhanced-res`) | the 6-class enhanced_res v2: `data/work/enhanced_res/` (backbone + MLP head); still used by the healer's screw-head scorer |
 | `d1_gc7_no_defect_crops.zip` | 42 MB | team shared Google Drive | d1_gc7's 4,858 no-defect crops: `data/work/crops/no_defect/` (needed to test or retrain gc7, not to run it) |
 | `trained_models.zip` | 69 MB | this repo's **Releases** page (`v1.0-models`) | the legacy ResNet-18 (`model_best.pt`), the MSRD teacher–student and the checkpoints of the earlier healing experiment (both removed from the repo; their code is in git history) |
 | `lama_weights.zip` | 206 MB | team shared Google Drive | the healer's LaMa model: `2_lama_healing/weights/big-lama.pt` |

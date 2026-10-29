@@ -1,17 +1,22 @@
-# Python 3.13. Versions used for the results in results/ (RTX 2050, Windows 11, NVIDIA driver 617.42).
+# Python 3.13. Versions used for the results in results/ (RTX 2050 laptop, Windows 11, NVIDIA driver 580 or newer).
+# Three ways to run the model, install only what you need (see README.md):
 
-# ---- predict_trt.py and trt_runner.py's engine build: TensorRT 11 for CUDA 13 (driver 580 or newer)
+# ---- A. NVIDIA GPU with TensorRT: predict_trt.py, trt_runner.py (builds the engines)
 tensorrt-cu13==11.4.0.106
 cuda-python==13.4.4
 numpy==2.5.3
-pandas==3.0.6
 pillow==12.3.0
 
-# ---- only to re-export the ONNX (export_onnx.py) or run benchmark.py. torch with CUDA, install it first:
+# ---- B. any CPU with onnxruntime: predict_onnx.py (the Raspberry Pi has its own list in the bundle: requirements_pi.txt)
+onnxruntime==1.31.0
+
+# ---- C. only to re-export the ONNX files (export_onnx.py), run benchmark.py and make_reference.py.
+# Install torch with CUDA first:
 #   pip install torch==2.14.0 torchvision==0.29.0 --index-url https://download.pytorch.org/whl/cu130
 # torch==2.14.0
 # torchvision==0.29.0
 # onnx==1.23.2
 # onnxscript==0.7.2
-# onnxruntime==1.31.0
+# pandas==3.0.6
 # scikit-learn==1.9.1
+# PyYAML==6.0.3

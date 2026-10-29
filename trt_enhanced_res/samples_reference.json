@@ -1,0 +1,189 @@
+{
+ "corrosion_01.jpg": {
+  "action": "show class",
+  "classes": [
+   "corrosion"
+  ]
+ },
+ "corrosion_02.jpg": {
+  "action": "ambiguous",
+  "classes": [
+   "corrosion",
+   "paint-peel-off",
+   "crack",
+   "dent"
+  ]
+ },
+ "corrosion_03.jpg": {
+  "action": "re-aim",
+  "classes": []
+ },
+ "corrosion_04.jpg": {
+  "action": "show class",
+  "classes": [
+   "corrosion"
+  ]
+ },
+ "corrosion_05.jpg": {
+  "action": "ambiguous",
+  "classes": [
+   "corrosion",
+   "crack",
+   "scratch",
+   "paint-peel-off"
+  ]
+ },
+ "crack_01.jpg": {
+  "action": "ambiguous",
+  "classes": [
+   "crack",
+   "dent"
+  ]
+ },
+ "crack_02.jpg": {
+  "action": "re-aim",
+  "classes": []
+ },
+ "crack_03.jpg": {
+  "action": "show class",
+  "classes": [
+   "crack"
+  ]
+ },
+ "crack_04.jpg": {
+  "action": "re-aim",
+  "classes": []
+ },
+ "crack_05.jpg": {
+  "action": "show class",
+  "classes": [
+   "crack"
+  ]
+ },
+ "dent_01.jpg": {
+  "action": "show class",
+  "classes": [
+   "dent"
+  ]
+ },
+ "dent_02.jpg": {
+  "action": "show class",
+  "classes": [
+   "dent"
+  ]
+ },
+ "dent_03.jpg": {
+  "action": "show class",
+  "classes": [
+   "dent"
+  ]
+ },
+ "dent_04.jpg": {
+  "action": "show class",
+  "classes": [
+   "dent"
+  ]
+ },
+ "dent_05.jpg": {
+  "action": "possible defect",
+  "classes": [
+   "scratch",
+   "dent",
+   "no-defect"
+  ]
+ },
+ "missing-head_01.jpg": {
+  "action": "show class",
+  "classes": [
+   "missing-head"
+  ]
+ },
+ "missing-head_02.jpg": {
+  "action": "show class",
+  "classes": [
+   "missing-head"
+  ]
+ },
+ "missing-head_03.jpg": {
+  "action": "show class",
+  "classes": [
+   "missing-head"
+  ]
+ },
+ "missing-head_04.jpg": {
+  "action": "show class",
+  "classes": [
+   "missing-head"
+  ]
+ },
+ "missing-head_05.jpg": {
+  "action": "re-aim",
+  "classes": []
+ },
+ "paint-peel-off_01.jpg": {
+  "action": "show class",
+  "classes": [
+   "paint-peel-off"
+  ]
+ },
+ "paint-peel-off_02.jpg": {
+  "action": "show class",
+  "classes": [
+   "paint-peel-off"
+  ]
+ },
+ "paint-peel-off_03.jpg": {
+  "action": "ambiguous",
+  "classes": [
+   "paint-peel-off",
+   "dent"
+  ]
+ },
+ "paint-peel-off_04.jpg": {
+  "action": "show class",
+  "classes": [
+   "paint-peel-off"
+  ]
+ },
+ "paint-peel-off_05.jpg": {
+  "action": "show class",
+  "classes": [
+   "paint-peel-off"
+  ]
+ },
+ "scratch_01.jpg": {
+  "action": "show class",
+  "classes": [
+   "paint-peel-off"
+  ]
+ },
+ "scratch_02.jpg": {
+  "action": "possible defect",
+  "classes": [
+   "scratch",
+   "no-defect"
+  ]
+ },
+ "scratch_03.jpg": {
+  "action": "possible defect",
+  "classes": [
+   "scratch",
+   "no-defect"
+  ]
+ },
+ "scratch_04.jpg": {
+  "action": "possible defect",
+  "classes": [
+   "scratch",
+   "no-defect",
+   "paint-peel-off"
+  ]
+ },
+ "scratch_05.jpg": {
+  "action": "ambiguous",
+  "classes": [
+   "scratch",
+   "dent"
+  ]
+ }
+}

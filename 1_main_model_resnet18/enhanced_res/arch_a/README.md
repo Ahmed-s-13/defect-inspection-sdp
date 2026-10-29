@@ -5,13 +5,13 @@
 > the model's answer and a calibrated, conformal way of choosing how many classes to show. Its numbers are fitted
 > per model version and live in git:
 > - [`calibration.json`](calibration.json): **architecture A**, the 6-class v2 on d1_grouped (quality gate on).
->   `trt_enhanced_res` reads this one.
 > - [`calibration_gc7.json`](calibration_gc7.json): **architecture B**, the main model gc7 (7 classes incl.
 >   no-defect) on d1_gc7_fix, quality gate off. See **"Architecture B"** below.
 >
 > The study and the results below the B section were done on v2 (architecture A).
 
-`predict.py` and `trt_enhanced_res/predict_trt.py` use it by default (`--raw` gives the old top-2 output).
+`predict.py`, `trt_enhanced_res/predict_trt.py` (TensorRT) and `trt_enhanced_res/predict_onnx.py` (onnxruntime, any CPU,
+Raspberry Pi) use it by default (`--raw` gives the old top-2 output).
 
 ## What it does, per crop
 
@@ -155,8 +155,12 @@ dec = arch.decide(model.proba_from_features(f).cpu().numpy(), crops=pil_crops,  
 print(dec[0].text() or "(nothing shown)", dec[0].action)
 ```
 
-**TensorRT** (`trt_enhanced_res/predict_trt.py`) still runs **v2** with `calibration.json`; moving it to gc7 needs a
-new ONNX export of the gc7 weights (7 outputs) and `ArchA(CALIBRATIONS["gc7"])`. It runs the quality gate, temperature and the conformal set; `runtime.py` needs only numpy and PIL. The engine outputs `probs` only, so the OOD gate (both parts need the 768-d features) is skipped there. Enabling it needs a `features` output added to the ONNX export (owned by the `trt_enhanced_res/` team); the AoN part is then one dot product on those features. `--grouped-test` also checks the CP coverage and set size against PyTorch.
+**TensorRT and onnxruntime** (`trt_enhanced_res/`, see its README) run **gc7 + architecture B**, the whole model in one
+ONNX file with three outputs: `probs`, `feats` (the 768-d features the AoN gate reads) and `knn_dist` (the kNN distance,
+from the same top-5 similarities the kNN vote uses). `predict_trt.py` (NVIDIA GPU) and `predict_onnx.py` (any CPU,
+e.g. the Raspberry Pi 5) pass them to `ArchA(CALIBRATIONS["gc7"])`, so the unfamiliar-input gate, temperature and the
+conformal set run exactly as in `predict.py` (`runtime.py` needs only numpy and PIL). `trt_enhanced_res/benchmark.py`
+checks the CP coverage, set size and visor actions of every runtime against `calibration_gc7.json`.
 
 **Re-calibrate** whenever the model weights, the labels or the split change. It retrains nothing:
 
@@ -172,7 +176,7 @@ python enhanced_res/arch_a/calibrate.py --model v2                     # A -> ca
 | `runtime.py` | the decision layer: gates, temperature, CP set, `ArchA.decide()` (numpy + PIL only) |
 | `calibrate.py` | fits T, the CP thresholds, the gates' calibration scores and AoN; writes `calibration_gc7.json` (B) or `calibration.json` (A, `--model v2`) with the expected test-half numbers. Options: `--data`, `--quality/--no-quality`, `--alpha-ood`, `--miss-guard`, `--plain-negatives` |
 | `calibration_gc7.json` | architecture B: everything `runtime.py` needs for gc7, fitted on d1_gc7_fix, quality gate off (`ArchA(CALIBRATIONS["gc7"])`) |
-| `calibration.json` | everything `runtime.py` needs for v2, fitted on d1_grouped (`ArchA()`, `trt_enhanced_res`) |
+| `calibration.json` | everything `runtime.py` needs for v2, fitted on d1_grouped (`ArchA()`) |
 | `cal_split.csv` | which d1_grouped test crops are the calibration half (88 families) vs the test half (87); seed 0, balanced by class. gc7's no-defect crops follow their family |
 | `experiments/` | the study behind every choice (run from `1_main_model_resnet18/`, results cached in `data/work/enhanced_res/calibration/`) |
 | `results/` | the reports of those runs |

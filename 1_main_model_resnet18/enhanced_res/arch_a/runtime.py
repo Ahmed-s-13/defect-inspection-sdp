@@ -20,7 +20,7 @@ Models with a "no-defect" class (architecture B, gc7): the quality gate can be s
   defects only               -> as above
 An optional miss guard (calibration "miss_guard") only allows "nothing shown" when a one-sided conformal test on
 the defect calibration crops rejects "this is a defect"; otherwise the crop is shown as "POSSIBLE".
-numpy + PIL only (no PyTorch, no OpenCV), so trt_enhanced_res/predict_trt.py can use it too.
+numpy + PIL only (no PyTorch, no OpenCV), so trt_enhanced_res/predict_trt.py and predict_onnx.py (Raspberry Pi) use it too.
 
   from enhanced_res.arch_a.runtime import ArchA
   a = ArchA()                                   # loads calibration.json (v2); alpha 0.10 by default
@@ -33,7 +33,7 @@ from pathlib import Path
 
 import numpy as np
 
-CALIBRATION = Path(__file__).resolve().parent / "calibration.json"             # v2 (6 classes; trt_enhanced_res uses it)
+CALIBRATION = Path(__file__).resolve().parent / "calibration.json"             # v2 (6 classes)
 CALIBRATIONS = {"v2": CALIBRATION, "gc7": CALIBRATION.with_name("calibration_gc7.json"),
                 "gc7_fix": CALIBRATION.with_name("calibration_gc7_fix.json")}   # one per model version
 STATS = ("sharpness", "brightness", "clipped_hi", "clipped_lo")

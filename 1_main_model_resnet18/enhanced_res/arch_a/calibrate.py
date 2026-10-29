@@ -2,7 +2,7 @@
 
 From 1_main_model_resnet18/:
   python enhanced_res/arch_a/calibrate.py            # the main model gc7 -> calibration_gc7.json (~10 min, cached after)
-  python enhanced_res/arch_a/calibrate.py --model v2 # the 6-class v2 -> calibration.json (what trt_enhanced_res reads)
+  python enhanced_res/arch_a/calibrate.py --model v2 # the 6-class v2 -> calibration.json
 
 gc7 uses d1_gc7: its no-defect crops join the val set (temperature, quality reference) and the test halves, each crop
 in its photo family's half of cal_split.csv. The OOD gate's bank is gc7's own train features, no-defect included.

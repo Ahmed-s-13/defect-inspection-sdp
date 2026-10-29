@@ -83,7 +83,7 @@ The weights are not in git (like all `*.pt` files). Unzip each file in the repo 
 | file | where | gives |
 |---|---|---|
 | `enhanced_res_gc7_model.zip` | GitHub **Releases**, `v3.0-gc7` | **gc7**: `data/work/enhanced_res/gc7/enhanced_res_backbone.pt` (45 MB) + `enhanced_res_head.pt` (100 MB) |
-| `enhanced_res_model.zip` | GitHub **Releases**, `v2.0-enhanced-res` | v2: `data/work/enhanced_res/enhanced_res_backbone.pt` + `enhanced_res_head.pt` (also used by the healer's screw-head scorer and `trt_enhanced_res`) |
+| `enhanced_res_model.zip` | GitHub **Releases**, `v2.0-enhanced-res` | v2: `data/work/enhanced_res/enhanced_res_backbone.pt` + `enhanced_res_head.pt` (also used by the healer's screw-head scorer) |
 | `d1_gc7_no_defect_crops.zip` | team Google Drive | the no-defect crops of d1_gc7: `data/work/crops/no_defect/` (needed to test or retrain gc7, not to run it) |
 | `main_model_data_work.zip` | team Google Drive | the D1 crops and the rest of `data/work/` |
 
