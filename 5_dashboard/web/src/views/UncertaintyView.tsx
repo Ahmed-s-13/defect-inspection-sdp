@@ -16,8 +16,7 @@ import "../styles/model.css";
 import "../styles/uncertainty.css";
 
 /** scripts/uncertainty_data.py: coverage by class with an example each way, and the aircraft-or-not chart. */
-interface Example { image: string; set: string[]; p: number[] }
-interface ClassRow { cls: string; n: number; coverage: number; coverage_passed: number; in_set_right: number; alone_right: number; alone_n: number; groups: number; hit?: Example; miss?: Example }
+interface ClassRow { cls: string; n: number; coverage: number; coverage_passed: number; in_set_right: number; alone_right: number; alone_n: number; groups: number }
 const U = u as unknown as {
   overall: { n: number; groups: number; coverage: number; coverage_passed: number; single: number; set_size: number; single_right: number; multi_right: number };
   by_class: ClassRow[]; aon: AonData & { n_pos: number; n_neg: number }; gates: { set: string; label: string; stopped: number }[];
@@ -37,8 +36,8 @@ export function UncertaintyView() {
 
   const sections: [string, ReactNode][] = [
     ["Intro", <Intro rep={rep} />], ["Coverage", <Coverage />], ["Percentages", <Percentages rep={rep} />],
-    ["Confidence", <Confidence rep={rep} />], ["Pipeline", null], ["Alphas", <AlphaLab rep={rep} />],
-    ["AoN", <AonSection rep={rep} />], ["Refusals", <Refusals rep={rep} />],
+    ["Confidence", <Confidence rep={rep} />], ["AoN", <AonSection rep={rep} />], ["Refusals", <Refusals rep={rep} />],
+    ["Pipeline", null], ["Alphas", <AlphaLab rep={rep} />],
   ];
   const sizes = sections.map(([name]) => (name === "Pipeline" ? PIPE_AT.length : 1));
   const firsts = sizes.map((_, i) => sizes.slice(0, i).reduce((a, b) => a + b, 0));
@@ -76,40 +75,27 @@ function Intro({ rep }: { rep: Report }) {
 function Coverage() {
   const rv = useReveal<HTMLDivElement>(0.8);
   const rows = [...U.by_class].sort((a, b) => a.coverage - b.coverage);
-  const [pick, setPick] = useState(rows[0].cls);
-  const c = rows.find((r) => r.cls === pick)!;
   const lo = rows[0], hi = rows[rows.length - 1];
   return (
     <div className="panel" ref={rv.ref} data-shown={rv.shown}>
       <RuleDraw />
-      <h2 className="panel-title rv" style={iv(0)}>How often the answer includes the right class</h2>
-      <p className="panel-sub rv" style={iv(1)}>About 9 in 10 answers include the right class ({pct(U.overall.coverage)}), but not equally for every class. Each bar starts from the crops that really are that class and counts how often their answer included it: from {pct(lo.coverage, 0)} of real {className(lo.cls).toLowerCase()} crops to {pct(hi.coverage, 0)} of real {className(hi.cls).toLowerCase()} crops. These are measured on the test crops, not promised: only the overall 90% is, and easy classes carry the hard ones. A single-class answer was right {pct(U.overall.single_right)} of the time; answers with two or more classes included the right one {pct(U.overall.multi_right)}. Pick a class to see a real crop of it whose answer included it, and one whose answer left it out.</p>
       <div className="unc-cov">
-        <p className="unc-bars-head rv" style={iv(2)}>Real crops of this class whose answer included it</p>
-        <ol className="unc-bars rv" style={iv(2)} aria-label="Real crops of each class whose answer included it">
-          {rows.map((r, i) => (
-            <li key={r.cls}>
-              <button type="button" className="unc-bar" aria-pressed={r.cls === pick} onClick={() => setPick(r.cls)}>
+        <div>
+          <h2 className="panel-title rv" style={iv(0)}>How often the answer includes the right class</h2>
+          <p className="panel-sub rv" style={iv(1)}>About 9 in 10 answers include the right class ({pct(U.overall.coverage)}), but not equally for every class. Each bar starts from the crops that really are that class and counts how often their answer included it: from {pct(lo.coverage, 0)} of real {className(lo.cls).toLowerCase()} crops to {pct(hi.coverage, 0)} of real {className(hi.cls).toLowerCase()} crops. These are measured on the test crops, not promised: only the overall 90% is, and easy classes carry the hard ones. A single-class answer was right {pct(U.overall.single_right)} of the time; answers with two or more classes included the right one {pct(U.overall.multi_right)}.</p>
+        </div>
+        <div className="rv" style={iv(2)}>
+          <p className="unc-bars-head">Real crops of this class whose answer included it</p>
+          <ol className="unc-bars" aria-label="Real crops of each class whose answer included it">
+            {rows.map((r, i) => (
+              <li key={r.cls} className="unc-bar">
                 <span>{className(r.cls)}</span>
                 <span className="unc-track"><motion.i initial={false} animate={{ scaleX: rv.shown ? r.coverage : 0 }} transition={{ duration: rv.t(0.8), delay: rv.t(0.06) * i, ease }} className={r.coverage < 0.9 ? "is-low" : undefined} /><b /></span>
                 <span className="fig">{pct(r.coverage, 0)}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-        <div className="unc-ex rv" style={iv(3)}>
-          <p className="unc-ex-head"><b>{className(c.cls)}</b>: {int(c.n)} test crops from {c.groups} photo groups. Shown alone, it was right {pct(c.alone_right)} of the time ({int(c.alone_n)} answers).</p>
-          <div className="unc-ex-pair">
-            {([["hit", "Right class included"], ["miss", "Right class left out"]] as const).map(([k, word]) => {
-              const e = c[k];
-              return e ? (
-                <motion.figure key={`${c.cls}-${k}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease }}>
-                  <img src={e.image} alt={`A real ${className(c.cls).toLowerCase()} crop whose answer ${k === "hit" ? "included" : "left out"} ${className(c.cls).toLowerCase()}`} />
-                  <figcaption><span className={`unc-tag is-${k}`}>{word}</span><br />B's answer: {e.set.map(className).join(" or ")}</figcaption>
-                </motion.figure>
-              ) : <figure key={k} className="unc-none"><figcaption>No clear example among the test crops: the few real {className(c.cls).toLowerCase()} crops whose answer {k === "miss" ? "left it out" : "included it"} don't show it well enough.</figcaption></figure>;
-            })}
-          </div>
+              </li>
+            ))}
+          </ol>
+          <p className="unc-bars-key"><i aria-hidden="true" /> 90% line: the overall target</p>
         </div>
       </div>
     </div>

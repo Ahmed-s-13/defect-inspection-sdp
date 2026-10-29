@@ -203,7 +203,7 @@ export function Confidence({ rep }: { rep: Report }) {
   const raw = a.reliability.raw.find((b) => b.lo === 0.9);
   const nd = !!rep.no_defect, mix = mixOf(r, nd);
   return (
-    <div className="pair is-centred">
+    <div className="pair">
       <div className="panel" ref={honest.ref} data-shown={honest.shown}>
         <RuleDraw />
         <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>Are its percentages honest?</h2>

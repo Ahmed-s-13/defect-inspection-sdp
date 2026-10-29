@@ -1,7 +1,7 @@
-"""Data for the Uncertainty page (coverage by class with examples, the aircraft-or-not chart) and for the dataset
+"""Data for the Uncertainty page (coverage by class, the aircraft-or-not chart) and for the dataset
 sections at the end of the Data page (every dataset's size, where it was used, and samples with architecture B's
 answer). Writes web/src/data/uncertainty.json, web/src/data/datasets.json and the sample crops in
-web/public/uncertainty/ and web/public/datasets/.
+web/public/datasets/.
 
     python scripts/uncertainty_data.py
 
@@ -31,23 +31,12 @@ from server.states import describe  # noqa: E402
 from enhanced_res.arch_a.runtime import pvalue, temper  # noqa: E402
 
 sys.path.insert(0, str(REPO_MAIN / "enhanced_res/arch_a/experiments"))
-OUT_U, OUT_D = DASH / "web/public/uncertainty", DASH / "web/public/datasets"
+OUT_D = DASH / "web/public/datasets"
 J_U, J_D = DASH / "web/src/data/uncertainty.json", DASH / "web/src/data/datasets.json"
 OFF = REPO_MAIN / "data/work/enhanced_res/offtarget"
 OFF_FEATS = REPO_MAIN / "data/work/enhanced_res/arch_a_offtarget_feats_gc7.npz"
 OI_META = REPO_MAIN / "data/src/offtarget/oi/validation-images-with-rotation.csv"
 rng = np.random.default_rng(0)
-# class -> crop file names, chosen by eye: each one visibly shows its class (D1 has some mislabelled crops, and a
-# random pick can land on one). None: no clear example exists among the test crops.
-EXAMPLES = {
-    "corrosion": {"hit": 'content__Aircraft_dataset__images__train__aircraft_008376__0.jpg', "miss": 'content__Aircraft_dataset__images__train__aircraft_009029__0.jpg'},
-    "crack": {"hit": 'content__Aircraft_dataset__images__train__aircraft_000560__0.jpg', "miss": 'content__Aircraft_dataset__images__train__aircraft_000671__0.jpg'},
-    "dent": {"hit": 'content__Aircraft_dataset__images__train__aircraft_008252__0.jpg', "miss": 'content__Aircraft_dataset__images__val__aircraft_003900__0.jpg'},
-    "missing-head": {"hit": 'content__Aircraft_dataset__images__train__aircraft_011073__0.jpg', "miss": None},
-    "paint-peel-off": {"hit": 'content__Aircraft_dataset__images__train__aircraft_004067__1.jpg', "miss": 'content__Aircraft_dataset__images__val__aircraft_014466__2.jpg'},
-    "scratch": {"hit": 'content__Aircraft_dataset__images__train__aircraft_009522__0.jpg', "miss": 'content__Aircraft_dataset__images__train__aircraft_005349__15.jpg'},
-    "no-defect": {"hit": 'train__aircraft_013388__c2.jpg', "miss": 'train__aircraft_011073__c1.jpg'},
-}
 r4 = lambda v: float(round(float(v), 4))  # noqa: E731
 
 
@@ -71,7 +60,7 @@ def main():
     entry, a = registry.entry(), registry.active()
     arch, classes = a.arch, a.classes
     nd = classes.index("no-defect")
-    for d in (OUT_U, OUT_D):
+    for d in (OUT_D, DASH / "web/public/uncertainty"):   # uncertainty/: example crops, no longer used
         if d.exists():
             shutil.rmtree(d)
 
@@ -98,15 +87,6 @@ def main():
         row = {"cls": c, "n": int(t.sum()), "coverage": r4(hit[t].mean()), "coverage_passed": r4(hit[tp].mean()),
                "in_set_right": r4((y[tst & passed & S[:, k]] == k).mean()), "alone_right": r4((y[shown] == k).mean()),
                "alone_n": int(shown.sum()), "groups": int(len(set(g[t])))}
-        # one test crop of this class whose answer holds it, and one whose answer misses it (different photo groups)
-        for key, m in (("hit", tp & hit), ("miss", tp & ~hit)):
-            name = EXAMPLES.get(c, {}).get(key)
-            idx = np.flatnonzero(m & (sub.crop_path.map(lambda q: Path(q).name) == name).to_numpy()) if name else []
-            assert not name or len(idx) == 1, (c, key, name, "the chosen example no longer has this outcome")
-            if len(idx):
-                i = int(idx[0])
-                row[key] = {"image": save(Image.open(sub.crop_path[i]), OUT_U, f"{c}-{key}-{Path(sub.crop_path[i]).stem.split('__')[-2]}"),
-                            "set": [classes[j] for j in np.argsort(-Pt[i]) if S[i, j]], "p": [r4(v) for v in Pt[i]]}
         by_class.append(row)
     overall = {"n": int(tst.sum()), "groups": int(len(set(g[tst]))), "coverage": r4(hit[tst].mean()),
                "coverage_passed": r4(hit[tst & passed].mean()), "single": r4(alone[tst & passed].mean()),

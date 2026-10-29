@@ -16,6 +16,13 @@ const GROUPS: [Group, string][] = [["skin", "Aircraft skin: the model's training
   ["held", "Off-target, test categories, left out for testing (helmets, hands, gloves, hangars, runways)"]];
 const W = 760, H = 420, PAD = 28;
 const OUT_WORDS: Record<string, string> = { show: "Defect detected", ambiguous: "Ambiguous", possible: "Possible: check", nothing: "Nothing shown", reaim: "Re-aim" };
+/** Each dot flies in from a distance as the chart reveals (and back out when it hides): from a point pushed away from
+ *  the chart's centre, small, then to its place. */
+const fly = (p: { x: number; y: number }, shown: boolean, i: number): React.CSSProperties => {
+  const dx = (p.x - W / 2) * 1.6, dy = (p.y - H / 2) * 1.6, d = ((i * 37) % 100) / 100;
+  return { transform: shown ? "none" : `translate(${dx}px, ${dy}px) scale(.2)`, transformBox: "fill-box", transformOrigin: "center",
+    transition: `transform ${shown ? 0.9 : 0.4}s cubic-bezier(.22,1,.36,1) ${shown ? d * 0.6 : 0}s` };
+};
 const cat = (c: string) => c.replace(/^[a-z_]+\//, (m) => m).replace(/_/g, " ");
 
 export function AonExplorer({ d, shown }: { d: AonData; shown: boolean }) {
@@ -57,7 +64,7 @@ export function AonExplorer({ d, shown }: { d: AonData; shown: boolean }) {
         onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
         {(["skin", "fit", "held"] as Group[]).map((g) => (
           <g key={g} className={`aon-pts aon-${g}`} style={{ opacity: shown && on[g] ? 1 : 0, transition: `opacity .6s ${shown ? delay(g) : 0}s` } as React.CSSProperties}>
-            {pts.filter((p) => p.g === g).map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="2.4" />)}
+            {pts.filter((p) => p.g === g).map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="2.4" style={fly(p, shown, i)} />)}
           </g>
         ))}
         <line className="aon-boundary" x1={sx(0)} x2={sx(0)} y1={PAD - 10} y2={H - 30} />
