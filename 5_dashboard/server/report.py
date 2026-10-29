@@ -12,8 +12,7 @@ from sklearn.metrics import balanced_accuracy_score, confusion_matrix, f1_score,
 
 from server.paths import CACHE
 
-TARGET_MACRO_F1 = 0.85  # NFR2, SDP Report Part II
-REPORT_VERSION = "v6"   # bump when the report's shape or meaning changes, so cached reports are rebuilt
+REPORT_VERSION = "v7"   # bump when the report's shape or meaning changes, so cached reports are rebuilt
 _mem = {}
 _lock = threading.Lock()
 _splits = {}
@@ -260,7 +259,7 @@ def build_report(entry, adapter):
     return {
         "key": _key(entry), "model": entry.id, "label": entry.label, "description": entry.description,
         "trained_on": entry.trained_on, "computed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "classes": classes, "target_macro_f1": TARGET_MACRO_F1,
+        "classes": classes,
         "test": {"n": int(test.sum()), "groups": int(split.src_group[test].nunique()),
                  "accuracy": float(correct[test].mean()),
                  "macro_f1": float(f1_score(y[test], pred[test], average="macro")),

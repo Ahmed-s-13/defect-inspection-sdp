@@ -4,9 +4,9 @@ import { scrollToStep, usePresent } from "../state/present";
 import { Mark } from "./Mark";
 import { ModelChip } from "./ModelChip";
 
-export type Tab = "model" | "data" | "inspect" | "batch" | "helmet";
+export type Tab = "model" | "uncertainty" | "data" | "inspect" | "batch" | "helmet";
 export const TABS: { id: Tab; label: string }[] = [
-  { id: "model", label: "Model" }, { id: "data", label: "Data" }, { id: "inspect", label: "Inspect" }, { id: "batch", label: "Batch" },
+  { id: "model", label: "Model" }, { id: "uncertainty", label: "Uncertainty" }, { id: "data", label: "Data" }, { id: "inspect", label: "Inspect" }, { id: "batch", label: "Batch" },
   { id: "helmet", label: "Helmet" },
 ];
 

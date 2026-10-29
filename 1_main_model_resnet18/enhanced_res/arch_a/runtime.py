@@ -12,7 +12,8 @@ Per crop (both gates are checked; if both fire, the visor says "re-aim"):
   4. temperature         p ** (1 / T), renormalised (T fitted on val)                 -> the shown percentage
   5. CP set (LAC)        every class with tempered p >= 1 - q[alpha]                  -> 1 class: that class
                                                                                          2+: "AMBIGUOUS"
-                                                                                         0: "UNCLEAR"
+                         an empty set keeps its top class (only at larger alphas, e.g. 0.20; coverage can only
+                         rise), so "UNCLEAR" is no longer produced; the action stays defined for older callers
 Models with a "no-defect" class (architecture B, gc7): the quality gate can be switched off in the calibration file
 (it is legacy there), and the set is read for the visor as
   {no-defect}                -> nothing shown (SAQR: no message when there is no damage)
@@ -198,9 +199,12 @@ class ArchA:
         return np.minimum(1, self.n_parts * P.min(0)), np.array(names)[P.argmin(0)]
 
     def sets(self, probs):
-        """Tempered probabilities and the boolean CP sets [N, n_classes]."""
+        """Tempered probabilities and the boolean CP sets [N, n_classes]. A set that would be empty keeps its top
+        class (the usual non-empty LAC set; it can only raise coverage)."""
         p = temper(probs, self.T)
-        return p, p >= 1 - self.q
+        S = p >= 1 - self.q
+        S[np.arange(len(p)), p.argmax(1)] |= ~S.any(1)
+        return p, S
 
     def _reason(self, stat, value):  # quality gate only
         if stat == "sharpness":

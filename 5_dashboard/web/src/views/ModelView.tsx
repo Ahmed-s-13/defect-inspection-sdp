@@ -6,7 +6,6 @@ import { AnimatedNumber } from "../components/AnimatedNumber";
 import { ConfusionMatrix } from "../components/ConfusionMatrix";
 import { RecallDumbbell } from "../components/charts/RecallDumbbell";
 import { ReliabilityChart } from "../components/charts/ReliabilityChart";
-import { TargetBar } from "../components/charts/TargetBar";
 import { HelmetTitle } from "../components/HelmetTitle";
 import { RuleDraw } from "../components/RuleDraw";
 import { ANATOMY_STEPS, ModelAnatomy } from "../components/ModelAnatomy";
@@ -34,9 +33,7 @@ export function ModelView() {
     ["Anatomy", null],
     ["Classes", <Classes rep={rep} />],
     ...(rep.no_defect ? [["NoDefect", <NoDefectSection rep={rep} nd={rep.no_defect} />] as [string, ReactNode]] : []),
-    ["Confidence", <Confidence rep={rep} />],
     ["Square", null],
-    ["Refusals", <Refusals rep={rep} />],
     ["Evidence", <Evidence rep={rep} />],
   ];
   const sizes = sections.map(([name]) => (name === "Square" ? SQUARE_AT.length : name === "Anatomy" ? ANATOMY_STEPS : 1));
@@ -62,7 +59,6 @@ export function ModelView() {
 function Headline({ rep }: { rep: Report }) {
   const t = rep.test;
   const weak = [...t.per_class].sort((a, b) => a.recall - b.recall).slice(0, 2).map((c) => className(c.cls).toLowerCase());
-  const below = t.macro_f1 < rep.target_macro_f1;
   const nd = rep.no_defect, base = rep.baseline;
   const rv = useReveal<HTMLDivElement>(0.85);
   return (
@@ -74,10 +70,10 @@ function Headline({ rep }: { rep: Report }) {
           animate={{ clipPath: rv.shown ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)", y: rv.shown ? 0 : 18 }}
           transition={{ duration: rv.t(0.9), ease }}><AnimatedNumber value={(nd ? nd.defects_best.accuracy : t.accuracy) * 100} format={(v) => `${v.toFixed(1)}%`} /></motion.p>
         <p className="headline-sentence rv" style={{ "--i": 3 } as React.CSSProperties}>{nd ? <>right defect class on {int(nd.n_defects)} unseen defect crops from {t.groups} separate photo groups.</> : <>top class correct on {int(t.n)} unseen test crops from {t.groups} separate photo groups.</>}</p>
-        <p className="headline-finding rv" style={{ "--i": 4 } as React.CSSProperties}>{below ? `Below our 0.85 target. ${cap(weak[0])} and ${weak[1]} are the weak spots.` : "Meets our target."}</p>
+        <p className="headline-finding rv" style={{ "--i": 4 } as React.CSSProperties}>{`${cap(weak[0])} and ${weak[1]} are the weak spots.`}</p>
       </div>
       <dl className="headline-facts">
-        <div className="rv" style={{ "--i": 2 } as React.CSSProperties}><dt>Macro-F1, every class counting equally{nd ? ` (all ${rep.classes.length})` : ""}</dt><dd><span className="fig big">{t.macro_f1.toFixed(3)}</span>{t.ci && <span className="sub"> 95% interval {t.ci[0].toFixed(3)}–{t.ci[1].toFixed(3)}{nd ? ` · balanced accuracy ${pct(t.balanced_accuracy)}` : ""}</span>}<TargetBar value={t.macro_f1} ci={t.ci} target={rep.target_macro_f1} reveal={rv} /></dd></div>
+        <div className="rv" style={{ "--i": 2 } as React.CSSProperties}><dt>Macro-F1, every class counting equally{nd ? ` (all ${rep.classes.length})` : ""}</dt><dd><span className="fig big">{t.macro_f1.toFixed(3)}</span>{t.ci && <span className="sub"> 95% interval {t.ci[0].toFixed(3)}–{t.ci[1].toFixed(3)}{nd ? ` · balanced accuracy ${pct(t.balanced_accuracy)}` : ""}</span>}</dd></div>
         <div className="rv" style={{ "--i": 3 } as React.CSSProperties}><dt>What the inspector sees, through architecture B</dt><dd>The answer holds the true class <span className="fig big">{pct(served(rep).cp_coverage)}</span><span className="sub"> of the time (target {pct(1 - rep.arch_a.alpha, 0)}); a single wrong class with no warning on {pct(served(rep).single_class_wrong)}, against {pct(1 - served(rep).accuracy)} if it always showed its top class</span></dd></div>
         {!nd && <div className="rv" style={{ "--i": 3 } as React.CSSProperties}><dt>Balanced accuracy</dt><dd><span className="fig big">{pct(t.balanced_accuracy)}</span></dd></div>}
         {nd && <div className="rv" style={{ "--i": 3 } as React.CSSProperties}><dt>Intact surface it recognises</dt><dd><span className="fig big">{pct(nd.recall)}</span><span className="sub"> of {int(nd.n)} no-defect test crops; {pct(nd.defects_called_clear)} of defects called no defect. The 6-class model called every clean crop a defect.</span></dd></div>}
@@ -198,7 +194,7 @@ function mixOf(r: AlphaResult, nd: boolean): [MixState, string, number][] {
   ] as [MixState, string, number][]).filter(([, , v]) => v > 0);
 }
 
-function Confidence({ rep }: { rep: Report }) {
+export function Confidence({ rep }: { rep: Report }) {
   const a = rep.arch_a;
   const alphas = Object.keys(a.by_alpha).sort();
   const [key, setKey] = useState(a.alpha.toFixed(2));
@@ -210,10 +206,10 @@ function Confidence({ rep }: { rep: Report }) {
     <div className="pair is-centred">
       <div className="panel" ref={honest.ref} data-shown={honest.shown}>
         <RuleDraw />
-        <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>Is its confidence honest?</h2>
+        <h2 className="panel-title rv" style={{ "--i": 0 } as React.CSSProperties}>Are its percentages honest?</h2>
         <p className="panel-sub rv" style={{ "--i": 1 } as React.CSSProperties}>
-          {raw && <>Raw, when the model said over 90% it was right {pct(raw.accuracy, 0)} of the time. </>}
-          Architecture B softens every percentage with one temperature (T = {a.temperature.toFixed(2)}, fitted on validation photos), so stated confidence matches how often it is right: calibration error <span className="fig">{a.ece.raw.toFixed(3)}</span> → <span className="fig">{a.ece.tempered.toFixed(3)}</span>. The top class never changes.
+          {raw && <>Raw, when the model said over 90% ({pct(raw.confidence, 0)} on average) it was right {pct(raw.accuracy, 0)} of the time. </>}
+          Architecture B softens every percentage with one temperature (T = {a.temperature.toFixed(2)}, fitted on validation photos). For this model it changes little: calibration error <span className="fig">{a.ece.raw.toFixed(3)}</span> → <span className="fig">{a.ece.tempered.toFixed(3)}</span>, and stated percentages still run high above 90% and between 50 and 70%. The top class never changes, and the guarantee comes from the conformal set below, not from the percentage.
         </p>
         <ReliabilityChart bins={a.reliability.tempered} before={a.reliability.raw} reveal={honest} label="Reliability on the test half: accuracy against stated confidence, before and after calibration" />
         <p className="chart-key rv" style={{ "--i": 2 } as React.CSSProperties}><span className="key-swatch key-bar" /> Calibrated <span className="key-raw" /> Raw, before calibration <span className="key-line key-dash" /> Perfectly honest · {int(a.test_half.n)} test crops, bands with 20+</p>
@@ -242,7 +238,7 @@ function Confidence({ rep }: { rep: Report }) {
         </p>
         <dl className="mix-facts rv" style={{ "--i": 4 } as React.CSSProperties}>
           <div><dt>Answer holds the true class</dt><dd><AnimatedNumber value={sets.shown ? r.cp_coverage * 100 : 0} format={(x) => `${x.toFixed(1)}%`} /></dd></div>
-          <div><dt>Wrong with no warning</dt><dd><AnimatedNumber value={sets.shown ? r.single_class_wrong * 100 : 0} format={(x) => `${x.toFixed(1)}%`} /> <small>top class alone: {pct(1 - r.accuracy)}</small></dd></div>
+          <div><dt>Wrong with no warning</dt><dd><AnimatedNumber value={sets.shown ? r.single_class_wrong * 100 : 0} format={(x) => `${x.toFixed(1)}%`} /> <small>always naming the top class: {pct(1 - r.accuracy)}, at any α</small></dd></div>
           <div><dt>Needs a person</dt><dd><AnimatedNumber value={sets.shown ? r.human_attention * 100 : 0} format={(x) => `${x.toFixed(1)}%`} /></dd></div>
         </dl>
         <p className="coverage-ref rv" style={{ "--i": 5 } as React.CSSProperties}>Measured on the {int(a.test_half.n)} test crops ({a.test_half.families} photo groups) not used to set the cut-off. Aiming higher means bigger sets and more work for the inspector.</p>
@@ -251,7 +247,7 @@ function Confidence({ rep }: { rep: Report }) {
   );
 }
 
-function Refusals({ rep }: { rep: Report }) {
+export function Refusals({ rep }: { rep: Report }) {
   const a = rep.arch_a, r = served(rep), g = a.gate_tests, q = a.alpha_quality != null;
   const rv = useReveal<HTMLDivElement>(0.8);
   const normal = r.actions["re-take"] + r.actions["re-aim"];

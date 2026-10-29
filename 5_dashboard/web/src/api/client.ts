@@ -23,7 +23,7 @@ export interface Sample { file: string; cls: string }
 export interface Bin { lo: number; hi: number; n: number; confidence: number; accuracy: number }
 export interface Report {
   model: string; label: string; description: string; trained_on: string; computed_at: string;
-  classes: string[]; target_macro_f1: number;
+  classes: string[];
   test: {
     n: number; groups: number; accuracy: number; macro_f1: number; balanced_accuracy: number;
     ci: [number, number] | null; confusion: number[][];

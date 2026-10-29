@@ -19,7 +19,7 @@ function trustLine(r: Prediction) {
   if (r.state === "retake") return <>The image-quality check stopped this crop before any class was shown. Only <span className="fig">{pct(r.p_quality ?? 0, 0)}</span> of normal photos look this unusual.</>;
   if (r.state === "cannot_assess") return <>The unfamiliar-input check stopped this crop before any class was shown. Only <span className="fig">{pct(r.p_ood ?? 0, 0)}</span> of normal photos are this far from the training photos.</>;
   if (r.state === "unrated") return <>Confidence <span className="fig">{pct(r.confidence)}</span>. This model has no calibrated decision layer, so the raw number is shown.</>;
-  return <>Percentages are calibrated. On normal photos the answer holds the true class about <span className="fig">{cover}%</span> of the time{r.state === "detected" || r.state === "clear" ? ", and here only one class is likely enough to keep" : ""}.</>;
+  return <>The percentage is the model's probability, softened by one temperature. On test crops it is roughly honest but runs high, most above 90% and between 50 and 70%, and on photos unlike the training data it means less. The guarantee is the answer itself: on photos like the training data it holds the true class about <span className="fig">{cover}%</span> of the time{r.state === "detected" || r.state === "clear" ? ", and here only one class is likely enough to keep" : ""}.</>;
 }
 
 /** A gate's result in words: passed or stopped, with its p-value. */

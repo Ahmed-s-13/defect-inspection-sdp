@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CleanCropSection, Gc7Section } from "../components/CleanCropSection";
+import { DatasetSection } from "../components/DatasetSection";
 import { HealerSection } from "../components/HealerSection";
 import crop from "../data/crop.json";
 import meta from "../data/grouping.json";
@@ -19,7 +20,7 @@ const CARDS: Card[] = GROUPS.flatMap((gid) => meta.groups[gid].items.map((it) =>
 // presentation steps, in the order we did the work. What was wrong with D1; part 1, a leak-free split: the scene's three
 // stages and the four steps of how we did it; part 2, the no-defect class: the healer (before/after, how it works),
 // the clean cropper (its five stages, how it picks) and d1_gc7; part 3, from photo to datapoint: the crop's four stages
-const SCENE_STEPS = [1, 2, 3], HOW_FIRST = 4, HEAL_FIRST = 8, CLEAN_FIRST = 10, GC7_STEP = 16, CROP_STEPS = [17, 18, 19, 20], STEP_COUNT = 21;
+const SCENE_STEPS = [1, 2, 3], HOW_FIRST = 4, HEAL_FIRST = 8, CLEAN_FIRST = 10, GC7_STEP = 16, CROP_STEPS = [17, 18, 19, 20], DS_FIRST = 21, STEP_COUNT = 23;
 
 export function DataView() {
   const present = usePresent();
@@ -42,6 +43,9 @@ export function DataView() {
       <Gc7Section step={GC7_STEP} dim={dimAt(GC7_STEP)} />
       <h2 className="data-part"><small>Part 3</small>From photo to datapoint</h2>
       <CropScene dim={dimAt(...CROP_STEPS)} />
+      <h2 className="data-part"><small>Part 4</small>Every dataset we used</h2>
+      <p className="how-sub">The photos behind the model, its calibration and its tests, with their sizes, where each was used, and real samples.</p>
+      <DatasetSection first={DS_FIRST} dimAt={dimAt} />
       {present.on && <p className="step-hint">Section {present.step + 1} of {STEP_COUNT} · ← → to move</p>}
     </div>
   );

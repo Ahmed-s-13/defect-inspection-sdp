@@ -6,13 +6,14 @@ a small Python server loads the model, and the page opens in your browser at htt
 
 | page | what it shows | needs |
 |---|---|---|
-| **Model** | the test results of the main model: accuracy, how it works (7 swipeable cards), per-class recall, the no-defect class, calibration, conformal sets, the sliding-window demo, refusals, its worst silent mistakes | gc7 weights + the D1 and no-defect crops |
-| **Data** | how we went from D1 (leaky, 6 classes) to d1_gc7 (leak-free, 7 classes): grouping, the healer, the clean cropper, cropping | nothing (built into the page) |
+| **Model** | the test results of the main model: accuracy, how it works (7 swipeable cards), per-class recall, the no-defect class, the sliding-window demo, its worst silent mistakes | gc7 weights + the D1 and no-defect crops |
+| **Uncertainty** | calibration and conformal prediction, inferences first: how often the answer holds the true class (per class, with examples), what the percentages mean, how many classes to show, five crops followed through architecture B, alphas you can change, how the aircraft-or-not check works (interactive chart), what it refuses | gc7 weights + the D1 and no-defect crops (for the live report) |
+| **Data** | how we went from D1 (leaky, 6 classes) to d1_gc7 (leak-free, 7 classes): grouping, the healer, the clean cropper, cropping; then every dataset we used (aircraft and not), with samples and architecture B's answer | nothing (built into the page) |
 | **Inspect** | drop or paste one photo, drag the model's 224 px square, see architecture B's answer, the calibrated %, the 8 views and the unfamiliar-input check | gc7 weights |
 | **Batch** | drop a folder (or run the 35 samples): accuracy with a 95% interval, confusion matrix, CSV export | gc7 weights |
 | **Helmet** | SAQR Prototype 1 in 3D (`web/public/helmet/saqr_prototype_1.glb`), slowly turning: drag to turn it, click a component (or pick it from the list) to fly in and read what it is | nothing (built into the page) |
 
-Keys: `1` to `5` switch pages · `P` presentation mode (`←` `→` step through a page) · `⌘V`/`Ctrl+V` paste an
+Keys: `1` to `6` switch pages · `P` presentation mode (`←` `→` step through a page) · `⌘V`/`Ctrl+V` paste an
 image · arrow keys move the square once it has focus (Shift resizes).
 
 ## Setup on your computer (once)
@@ -92,7 +93,7 @@ photo group), so its accuracy figure is honest. All of them come from the test s
 ```bash
 cd 5_dashboard
 python -m pytest tests -q        # 41 tests: registry, crops = predict.py, report = the team's numbers, API
-cd web && npm test               # 39 tests: labels, metrics, geometry, format, the Data scene, uploads, reveals
+cd web && npm test               # 43 tests: labels, metrics, geometry, format, the Data scene, uploads, reveals, the pipeline data
 ```
 
 ## Problems
@@ -142,6 +143,8 @@ cd web && npm test               # 39 tests: labels, metrics, geometry, format, 
 | script | makes | needs, besides the gc7 weights |
 |---|---|---|
 | `python scripts/model_anatomy.py` | Model → How it works | the D1 crops |
+| `python scripts/pipeline_scene.py` | Uncertainty → Follow a crop through architecture B, Try other alphas | the D1 and no-defect crops; the off-target features (local) for the aircraft-or-not chart |
+| `python scripts/uncertainty_data.py` (after `pipeline_scene.py`) | Uncertainty → coverage by class, the aircraft-or-not chart; Data → every dataset we used | the D1, no-defect, D5 and FGVC crops; the off-target benchmark and its cached features (local); Open Images' validation metadata for the photo credits |
 | `python scripts/sweep_crops.py` | Model → the sliding square | `D1_raw.zip` |
 | `python scripts/healer_samples.py` | Data → the healer slider | `D1_raw.zip`, the healer's `no_defect/work/healed/` |
 | `python scripts/clean_cropper_samples.py` | Data → the clean cropper and d1_gc7 | `D1_raw.zip`, `3_clean_cropper/work/` |

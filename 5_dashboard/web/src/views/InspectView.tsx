@@ -9,6 +9,8 @@ import { useBench } from "../state/bench";
 import { usePresent } from "../state/present";
 import "../styles/inspect.css";
 
+let defaultShown = false; // the first visit to Inspect opens one sample, so the page never starts empty
+
 /** True while `active`, and for at least `ms` after it started, so a fast answer still shows the fan. */
 function useHeld(active: boolean, ms: number) {
   const [held, setHeld] = useState(false);
@@ -31,6 +33,14 @@ export function InspectView({ classes, models, onBackToBatch }: { classes: strin
   useEffect(() => {
     getInspectSamples().then((s) => (s.length ? s : getSamples())).then(setSamples).catch(() => setSamples([]));
   }, [models?.active]);
+
+  // first visit: open the crack sample (or the first one), once per session; clearing it leaves the page empty
+  useEffect(() => {
+    if (defaultShown || !samples.length || state.inspectId) return;
+    defaultShown = true;
+    const s = samples.find((x) => x.cls === "crack") ?? samples[0];
+    void sampleFile(s.file).then((f) => bench.inspectFile(f, s.cls));
+  }, [samples]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const square = (pending && pending.id === item?.id ? pending.sq : null) ?? item?.detail?.square ?? null;
   const preview = useCropPreview(item?.url, square ?? undefined);

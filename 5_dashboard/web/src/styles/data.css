@@ -270,3 +270,36 @@
   .cc-tag { font-size: 11px; margin: 4px 0 0 4px; padding: 2px 5px; }
   .cc-point figcaption { flex-direction: column; gap: 2px; }
 }
+
+/* Every dataset we used: two tables; a row opens to samples with architecture B's answer */
+.data .ds-sec { position: relative; margin-top: 40px; padding-top: 20px; }
+.ds-table { width: 100%; border-collapse: collapse; font-size: var(--t-small); }
+.ds-table thead th { text-align: left; color: var(--ink-3); font-weight: 400; padding: 0 12px 8px 0; }
+.ds-row th, .ds-row td { padding: 12px 12px 12px 0; border-top: 1px solid var(--rule); vertical-align: top; text-align: left; } /* taste-skill-ignore: a real data table */
+.ds-row td { color: var(--ink-2); }
+.ds-row .fig { white-space: nowrap; color: var(--ink); }
+.ds-toggle { display: inline-flex; gap: 10px; align-items: baseline; padding: 0; border: 0; background: none; font: 700 var(--t-small) var(--font-ui); color: var(--ink); cursor: pointer; text-align: left; }
+.ds-toggle:hover { color: var(--control-ink); }
+.ds-caret { display: inline-block; width: 1em; color: var(--control-ink); font-family: var(--font-fig); }
+.ds-row.is-open th, .ds-row.is-open td { border-top-color: var(--ink); }
+.ds-out .fig { font-weight: 700; }
+.ds-detail td { padding: 4px 0 22px; }
+.ds-note { margin: 0 0 12px; color: var(--ink-2); max-width: 80ch; }
+.ds-samples { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.ds-samples li { display: grid; gap: 4px; align-content: start; font-size: var(--t-micro); }
+.ds-samples img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 3px; background: var(--well); }
+.ds-label { color: var(--ink-3); text-transform: none; }
+.ds-answer { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; }
+.ds-answer.tone-detected { color: var(--detected); }
+.ds-answer.tone-clear { color: var(--clear); }
+.ds-answer.tone-ambiguous, .ds-answer.tone-unclear { color: var(--verify-ink); }
+.ds-answer.tone-cannot_assess { color: var(--unfamiliar); }
+.ds-credit { color: var(--ink-3); font-size: 11px; text-decoration: underline; text-underline-offset: 2px; }
+.ds-key { margin: 10px 0 0; color: var(--ink-3); font-size: var(--t-micro); }
+@media (max-width: 720px) {
+  .ds-table thead { display: none; }
+  .ds-row { display: grid; }
+  .ds-row th, .ds-row td { border-top: 0; padding: 4px 0; }
+  .ds-row th { border-top: 1px solid var(--rule); padding-top: 12px; }
+  .ds-samples { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

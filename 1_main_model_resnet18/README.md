@@ -54,8 +54,7 @@ python predict.py photo.jpg --legacy                 # the legacy ResNet-18 + ML
 ```
 
 Output (gc7, architecture B) is one of `crack_01.jpg:  CRACK 88.0%`, `(nothing shown: no damage)`,
-`POSSIBLE DENT: check`, `AMBIGUOUS: crack 52.1%   dent 33.0%`, `CAN'T ASSESS: re-aim (not aircraft skin)` or
-`UNCLEAR: re-inspect`; `--model v2` (architecture A) can also say `BAD IMAGE: re-take (blurry)`
+`POSSIBLE DENT: check`, `AMBIGUOUS: crack 52.1%   dent 33.0%`, or `CAN'T ASSESS: re-aim (not aircraft skin)`; `--model v2` (architecture A) can also say `BAD IMAGE: re-take (blurry)`
 (see [`enhanced_res/arch_a/README.md`](enhanced_res/arch_a/README.md)).
 `samples/` holds 5 grouped-test crops per class plus `labels.csv` (one per source group, never trained on).
 The legacy model scores higher on them (0.97 vs 0.80) only because D1's original split put copies of these

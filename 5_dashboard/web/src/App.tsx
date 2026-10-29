@@ -10,6 +10,7 @@ import { DataView } from "./views/DataView";
 const HelmetView = lazy(() => import("./views/HelmetView").then((m) => ({ default: m.HelmetView })));
 import { InspectView } from "./views/InspectView";
 import { ModelView } from "./views/ModelView";
+import { UncertaintyView } from "./views/UncertaintyView";
 
 export function App() {
   return (
@@ -109,6 +110,7 @@ function Shell() {
               {tab === "inspect" && <InspectView classes={classes} models={models} onBackToBatch={() => setTab("batch")} />}
               {tab === "batch" && <BatchView classes={classes} onOpen={openInInspect} />}
               {tab === "model" && <ModelView />}
+              {tab === "uncertainty" && <UncertaintyView />}
               {tab === "data" && <DataView />}
               {tab === "helmet" && <Suspense fallback={null}><HelmetView /></Suspense>}
             </motion.div>

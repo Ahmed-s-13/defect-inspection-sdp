@@ -9,13 +9,6 @@
 .headline-facts dd { margin: 4px 0 0; }
 .big { font-size: var(--t-figure); }
 .sub { color: var(--ink-3); font-size: var(--t-small); }
-.target { margin-top: 12px; }
-.target-track { position: relative; height: 10px; background: var(--rule); border-radius: 2px; }
-.target-ci { position: absolute; top: 0; bottom: 0; background: var(--bar); }
-.target-value { position: absolute; top: -4px; width: 4px; height: 18px; margin-left: -2px; background: var(--ink); }
-.target-tick { position: absolute; top: -6px; width: 2px; height: 22px; margin-left: -1px; background: var(--ink-2); }
-.target-scale { position: relative; display: flex; justify-content: space-between; margin-top: 6px; color: var(--ink-3); font-size: var(--t-micro); }
-.target-label { position: absolute; transform: translateX(-50%); color: var(--ink); font-weight: 700; white-space: nowrap; }
 
 .pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); align-items: stretch; }
 .pair.is-centred { align-items: center; } /* panels of unequal height: the shorter one sits in the middle, not over empty space */
