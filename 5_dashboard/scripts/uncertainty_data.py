@@ -89,9 +89,17 @@ def main():
                "alone_n": int(shown.sum()), "groups": int(len(set(g[t])))}
         by_class.append(row)
     overall = {"n": int(tst.sum()), "groups": int(len(set(g[tst]))), "coverage": r4(hit[tst].mean()),
+               "confidence_passed": r4(Pt[tst & passed].max(axis=1).mean()),
                "coverage_passed": r4(hit[tst & passed].mean()), "single": r4(alone[tst & passed].mean()),
                "set_size": r4(S[tst].sum(1).mean()),
                "single_right": r4(hit[tst & passed & alone].mean()), "multi_right": r4(hit[tst & passed & ~alone].mean())}
+
+    by_set_size = []
+    for size in range(len(classes) + 1):
+        selected = tst & passed & (S.sum(axis=1) == size)
+        n, correct = int(selected.sum()), int(hit[selected].sum())
+        by_set_size.append({"size": size, "n": n, "correct": correct,
+                            "coverage": correct / n if n else None})
 
     # ------------------------------------------------------------ the aircraft-or-not chart
     lr = arch.lr
@@ -128,6 +136,7 @@ def main():
     gates = json.loads((REPO_MAIN / "enhanced_res/arch_a/results/archB/gates.json").read_text())
 
     J_U.write_text(json.dumps({"made": date.today().isoformat(), "overall": overall, "by_class": by_class,
+                              "by_set_size": by_set_size,
                                "aon": aon, "gates": gates["sets"]}, separators=(",", ":")))
 
     # ------------------------------------------------------------ the datasets

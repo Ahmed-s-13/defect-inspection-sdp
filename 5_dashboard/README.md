@@ -143,6 +143,8 @@ cd web && npm test               # 43 tests: labels, metrics, geometry, format, 
 | script | makes | needs, besides the gc7 weights |
 |---|---|---|
 | `python scripts/model_anatomy.py` | Model → How it works | the D1 crops |
+| `python scripts/cp_comparison_data.py` | Uncertainty → family-weighted vs equal-crop CP comparison | saved `arch_a/results/archB/equal_crop_cp/results.json`; rerun `archB_equal_crop_cp.py` when the model or calibration changes |
+| `python scripts/ood_comparison_data.py` | Uncertainty → OOD comparison and low-FRR selection rationale | saved `arch_a/results/archB/dinov2_ood/results.json`; rerun `archB_dinov2_ood.py` when the model or calibration changes |
 | `python scripts/pipeline_scene.py` | Uncertainty → Follow a crop through architecture B, Try other alphas | the D1 and no-defect crops; the off-target features (local) for the aircraft-or-not chart |
 | `python scripts/uncertainty_data.py` (after `pipeline_scene.py`) | Uncertainty → coverage by class, the aircraft-or-not chart; Data → every dataset we used | the D1, no-defect, D5 and FGVC crops; the off-target benchmark and its cached features (local); Open Images' validation metadata for the photo credits |
 | `python scripts/sweep_crops.py` | Model → the sliding square | `D1_raw.zip` |

@@ -1,0 +1,706 @@
+{
+  "protocol": "Architecture B, quality off, fixed OOD alpha 0.08; family-weighted p-values; Bonferroni for two-score gates. No test tuning. FAR means gate passage, not visor defect display. AoN trained on fit categories only; role=test excluded. Deployed reference saw more off-target categories and is not a held-out comparison. D6 rejection need not be a false rejection of usable skin.",
+  "features": "Frozen pretrained vit_small_patch14_dinov2.lvd142m, 224 pixels, 384 features, no classification head. k=5. AoN logistic regression C=0.5, balanced; all D1 training features used.",
+  "counts": {
+    "train": 23046,
+    "cal": 2116,
+    "test": 2752,
+    "bench": 6238,
+    "d5": 1008
+  },
+  "cal_families": 88,
+  "test_families": 87,
+  "resnet_aon_positive_features": 23047,
+  "fit_categories": [
+    "Car",
+    "Human face",
+    "Ladder",
+    "Person",
+    "Tool",
+    "Truck",
+    "auto_factory",
+    "engine_room",
+    "garage/indoor",
+    "industrial_area",
+    "loading_dock"
+  ],
+  "held_out_categories": [
+    "Glove",
+    "Helmet",
+    "Human hand",
+    "airport_terminal",
+    "hangar/indoor",
+    "hangar/outdoor",
+    "helmet photo (user)",
+    "repair_shop",
+    "runway",
+    "storage_room"
+  ],
+  "variants": {
+    "ResNet AoN (fit-only)": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 93,
+        "rate": 0.03379360465116279
+      },
+      "d1_family_frr": 0.07954027280629339,
+      "d1_frr_family_bootstrap_ci95": [
+        0.017257237205897998,
+        0.05993179933255659
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 4,
+        "rate": 0.003968253968253968
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 46,
+        "rate": 0.02117863720073665
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 4,
+          "rate": 0.01
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 2,
+          "rate": 0.005
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 5,
+          "rate": 0.025
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 5,
+          "rate": 0.025
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 10,
+          "rate": 0.05
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 0,
+          "rate": 0.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 6,
+          "rate": 0.03
+        },
+        "runway": {
+          "n": 200,
+          "count": 14,
+          "rate": 0.07
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 11,
+        "rate": 0.010128913443830571
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 35,
+        "rate": 0.03222836095764273
+      },
+      "held_out_far_category_macro": 0.021500000000000002,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 746,
+        "rate": 0.746
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 499,
+        "rate": 0.998
+      }
+    },
+    "DINOv2 AoN": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 111,
+        "rate": 0.0403343023255814
+      },
+      "d1_family_frr": 0.0722950279968104,
+      "d1_frr_family_bootstrap_ci95": [
+        0.019528357983593606,
+        0.07377688498026354
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 53,
+        "rate": 0.05257936507936508
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 8,
+        "rate": 0.003683241252302026
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 1,
+          "rate": 0.005
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 2,
+          "rate": 0.01
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 0,
+          "rate": 0.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        },
+        "runway": {
+          "n": 200,
+          "count": 5,
+          "rate": 0.025
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 0,
+        "rate": 0.0
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 8,
+        "rate": 0.007366482504604052
+      },
+      "held_out_far_category_macro": 0.004,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 969,
+        "rate": 0.969
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 500,
+        "rate": 1.0
+      }
+    },
+    "DINOv2 kNN": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 219,
+        "rate": 0.07957848837209303
+      },
+      "d1_family_frr": 0.08633177448934691,
+      "d1_frr_family_bootstrap_ci95": [
+        0.03969978413043424,
+        0.1452618974688241
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 13,
+        "rate": 0.012896825396825396
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 45,
+        "rate": 0.020718232044198894
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 1,
+          "rate": 0.005
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 21,
+          "rate": 0.105
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 7,
+          "rate": 0.035
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 0,
+          "rate": 0.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 1,
+          "rate": 0.005
+        },
+        "runway": {
+          "n": 200,
+          "count": 15,
+          "rate": 0.075
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 14,
+        "rate": 0.01289134438305709
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 31,
+        "rate": 0.0285451197053407
+      },
+      "held_out_far_category_macro": 0.022500000000000003,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 910,
+        "rate": 0.91
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 496,
+        "rate": 0.992
+      }
+    },
+    "ResNet kNN": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 114,
+        "rate": 0.04142441860465116
+      },
+      "d1_family_frr": 0.06531187042823426,
+      "d1_frr_family_bootstrap_ci95": [
+        0.027260223573577238,
+        0.060342183902415115
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 9,
+        "rate": 0.008928571428571428
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 1085,
+        "rate": 0.4995395948434622
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 53,
+          "rate": 0.31176470588235294
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 243,
+          "rate": 0.6075
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 155,
+          "rate": 0.3875
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 71,
+          "rate": 0.355
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 119,
+          "rate": 0.595
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 132,
+          "rate": 0.66
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 1,
+          "rate": 0.5
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 83,
+          "rate": 0.415
+        },
+        "runway": {
+          "n": 200,
+          "count": 149,
+          "rate": 0.745
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 79,
+          "rate": 0.395
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 562,
+        "rate": 0.5174953959484346
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 523,
+        "rate": 0.48158379373848986
+      },
+      "held_out_far_category_macro": 0.4971764705882352,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 334,
+        "rate": 0.334
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 133,
+        "rate": 0.266
+      }
+    },
+    "ResNet AoN + kNN (fit-only)": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 82,
+        "rate": 0.029796511627906978
+      },
+      "d1_family_frr": 0.07313727003842993,
+      "d1_frr_family_bootstrap_ci95": [
+        0.017322633472624794,
+        0.04835774729935136
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 3,
+        "rate": 0.002976190476190476
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 74,
+        "rate": 0.03406998158379374
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 7,
+          "rate": 0.0175
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 9,
+          "rate": 0.0225
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 7,
+          "rate": 0.035
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 8,
+          "rate": 0.04
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 14,
+          "rate": 0.07
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 0,
+          "rate": 0.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 6,
+          "rate": 0.03
+        },
+        "runway": {
+          "n": 200,
+          "count": 23,
+          "rate": 0.115
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 21,
+        "rate": 0.019337016574585635
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 53,
+        "rate": 0.04880294659300184
+      },
+      "held_out_far_category_macro": 0.033,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 651,
+        "rate": 0.651
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 491,
+        "rate": 0.982
+      }
+    },
+    "DINOv2 AoN + kNN": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 144,
+        "rate": 0.05232558139534884
+      },
+      "d1_family_frr": 0.07285103348796772,
+      "d1_frr_family_bootstrap_ci95": [
+        0.02033740967422718,
+        0.10549632266553877
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 24,
+        "rate": 0.023809523809523808
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 9,
+        "rate": 0.004143646408839779
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 1,
+          "rate": 0.005
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 3,
+          "rate": 0.015
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 0,
+          "rate": 0.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        },
+        "runway": {
+          "n": 200,
+          "count": 5,
+          "rate": 0.025
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 0,
+        "rate": 0.0
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 9,
+        "rate": 0.008287292817679558
+      },
+      "held_out_far_category_macro": 0.0045,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 968,
+        "rate": 0.968
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 500,
+        "rate": 1.0
+      }
+    },
+    "Deployed B (reference only)": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 79,
+        "rate": 0.028706395348837208
+      },
+      "d1_family_frr": 0.0685683082756154,
+      "d1_frr_family_bootstrap_ci95": [
+        0.01616829152402275,
+        0.04716101131895036
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 3,
+        "rate": 0.002976190476190476
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 1,
+        "rate": 0.00046040515653775324
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 1,
+          "rate": 0.005
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 0,
+          "rate": 0.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        },
+        "runway": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 0,
+        "rate": 0.0
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 1,
+        "rate": 0.0009208103130755065
+      },
+      "held_out_far_category_macro": 0.0005,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 801,
+        "rate": 0.801
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 496,
+        "rate": 0.992
+      }
+    }
+  }
+}

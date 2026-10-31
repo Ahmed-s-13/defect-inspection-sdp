@@ -1,0 +1,329 @@
+{
+  "method": "Same gc7 weights, prior correction, OOD gate, alpha 0.10, family weights, and top-class fallback. Refit q separately on OOD-passed calibration half only; T is deployed val-fitted T or 1. Test half is report-only.",
+  "calibration_crops": 2116,
+  "accepted_calibration_crops": 2014,
+  "calibration_families": 88,
+  "test_families": 87,
+  "variants": {
+    "temperature_scaled": {
+      "alpha": 0.1,
+      "accuracy": 0.793968023255814,
+      "cp_coverage": 0.9037063953488372,
+      "cp_family_coverage": 0.8954790002241141,
+      "cp_mean_set_size": 1.4818313953488371,
+      "cp_single_class": 0.7093023255813954,
+      "actions": {
+        "show class": 0.6082848837209303,
+        "ambiguous": 0.18350290697674418,
+        "unclear": 0.0,
+        "re-take": 0.0,
+        "re-aim": 0.028706395348837208,
+        "nothing shown": 0.09193313953488372,
+        "possible defect": 0.08757267441860465
+      },
+      "human_attention": 0.29978197674418605,
+      "gates_false_reject": 0.028706395348837208,
+      "gates_false_reject_family": 0.0685683082756154,
+      "single_class_wrong": 0.06722383720930232,
+      "silent_miss": 0.0033098882912701694,
+      "silent_miss_by_class": {
+        "corrosion": 0.0,
+        "crack": 0.0015723270440251573,
+        "dent": 0.006200177147918512,
+        "missing-head": 0.0,
+        "paint-peel-off": 0.0,
+        "scratch": 0.0
+      },
+      "no_defect_nothing_shown": 0.7313432835820896,
+      "no_defect_false_alarm": 0.26865671641791045,
+      "temperature": 1.0562116354922055,
+      "q_hat": 0.9330497148627894,
+      "probability_cutoff": 0.06695028513721057,
+      "all": {
+        "n": 2752,
+        "coverage": 0.9037063953488372,
+        "macro_coverage": 0.8776952856991463,
+        "family_coverage": 0.8954790002241141,
+        "mean_set_size": 1.4818313953488371,
+        "singleton_rate": 0.7093023255813954,
+        "mean_confidence": 0.8086221713532061,
+        "per_class": {
+          "corrosion": 0.7782101167315175,
+          "crack": 0.8694968553459119,
+          "dent": 0.9468556244464128,
+          "missing-head": 0.9696969696969697,
+          "paint-peel-off": 0.852112676056338,
+          "scratch": 0.7603305785123967,
+          "no-defect": 0.9671641791044776
+        },
+        "by_set_size": [
+          {
+            "size": 0,
+            "n": 0,
+            "correct": 0
+          },
+          {
+            "size": 1,
+            "n": 1952,
+            "correct": 1759
+          },
+          {
+            "size": 2,
+            "n": 459,
+            "correct": 411
+          },
+          {
+            "size": 3,
+            "n": 196,
+            "correct": 180
+          },
+          {
+            "size": 4,
+            "n": 108,
+            "correct": 101
+          },
+          {
+            "size": 5,
+            "n": 34,
+            "correct": 33
+          },
+          {
+            "size": 6,
+            "n": 3,
+            "correct": 3
+          },
+          {
+            "size": 7,
+            "n": 0,
+            "correct": 0
+          }
+        ]
+      },
+      "accepted": {
+        "n": 2673,
+        "coverage": 0.9038533482977927,
+        "macro_coverage": 0.8754634029172257,
+        "family_coverage": 0.8959977445853221,
+        "mean_set_size": 1.4444444444444444,
+        "singleton_rate": 0.7209128320239432,
+        "mean_confidence": 0.8134982523427008,
+        "per_class": {
+          "corrosion": 0.7615062761506276,
+          "crack": 0.8727272727272727,
+          "dent": 0.9471326164874552,
+          "missing-head": 0.9696969696969697,
+          "paint-peel-off": 0.85,
+          "scratch": 0.7583333333333333,
+          "no-defect": 0.9688473520249221
+        },
+        "by_set_size": [
+          {
+            "size": 0,
+            "n": 0,
+            "correct": 0
+          },
+          {
+            "size": 1,
+            "n": 1927,
+            "correct": 1734
+          },
+          {
+            "size": 2,
+            "n": 448,
+            "correct": 404
+          },
+          {
+            "size": 3,
+            "n": 182,
+            "correct": 168
+          },
+          {
+            "size": 4,
+            "n": 89,
+            "correct": 84
+          },
+          {
+            "size": 5,
+            "n": 26,
+            "correct": 25
+          },
+          {
+            "size": 6,
+            "n": 1,
+            "correct": 1
+          },
+          {
+            "size": 7,
+            "n": 0,
+            "correct": 0
+          }
+        ]
+      }
+    },
+    "raw_hybrid": {
+      "alpha": 0.1,
+      "accuracy": 0.793968023255814,
+      "cp_coverage": 0.9037063953488372,
+      "cp_family_coverage": 0.8946169312585966,
+      "cp_mean_set_size": 1.4876453488372092,
+      "cp_single_class": 0.7100290697674418,
+      "actions": {
+        "show class": 0.6086482558139535,
+        "ambiguous": 0.1824127906976744,
+        "unclear": 0.0,
+        "re-take": 0.0,
+        "re-aim": 0.028706395348837208,
+        "nothing shown": 0.09229651162790697,
+        "possible defect": 0.08793604651162791
+      },
+      "human_attention": 0.2990552325581395,
+      "gates_false_reject": 0.028706395348837208,
+      "gates_false_reject_family": 0.0685683082756154,
+      "single_class_wrong": 0.06722383720930232,
+      "silent_miss": 0.003723624327678941,
+      "silent_miss_by_class": {
+        "corrosion": 0.0,
+        "crack": 0.0015723270440251573,
+        "dent": 0.006200177147918512,
+        "missing-head": 0.0,
+        "paint-peel-off": 0.0,
+        "scratch": 0.008264462809917356
+      },
+      "no_defect_nothing_shown": 0.7313432835820896,
+      "no_defect_false_alarm": 0.26865671641791045,
+      "temperature": 1.0,
+      "q_hat": 0.9398412375629582,
+      "probability_cutoff": 0.06015876243704177,
+      "all": {
+        "n": 2752,
+        "coverage": 0.9037063953488372,
+        "macro_coverage": 0.8770705125239664,
+        "family_coverage": 0.8946169312585966,
+        "mean_set_size": 1.4876453488372092,
+        "singleton_rate": 0.7100290697674418,
+        "mean_confidence": 0.8275394465087307,
+        "per_class": {
+          "corrosion": 0.7821011673151751,
+          "crack": 0.8694968553459119,
+          "dent": 0.9468556244464128,
+          "missing-head": 0.9696969696969697,
+          "paint-peel-off": 0.852112676056338,
+          "scratch": 0.7520661157024794,
+          "no-defect": 0.9671641791044776
+        },
+        "by_set_size": [
+          {
+            "size": 0,
+            "n": 0,
+            "correct": 0
+          },
+          {
+            "size": 1,
+            "n": 1954,
+            "correct": 1760
+          },
+          {
+            "size": 2,
+            "n": 449,
+            "correct": 401
+          },
+          {
+            "size": 3,
+            "n": 197,
+            "correct": 183
+          },
+          {
+            "size": 4,
+            "n": 112,
+            "correct": 104
+          },
+          {
+            "size": 5,
+            "n": 37,
+            "correct": 36
+          },
+          {
+            "size": 6,
+            "n": 3,
+            "correct": 3
+          },
+          {
+            "size": 7,
+            "n": 0,
+            "correct": 0
+          }
+        ]
+      },
+      "accepted": {
+        "n": 2673,
+        "coverage": 0.9038533482977927,
+        "macro_coverage": 0.8748706553579512,
+        "family_coverage": 0.8951807511212698,
+        "mean_set_size": 1.4489337822671156,
+        "singleton_rate": 0.7216610549943884,
+        "mean_confidence": 0.8324307579553183,
+        "per_class": {
+          "corrosion": 0.7656903765690377,
+          "crack": 0.8727272727272727,
+          "dent": 0.9471326164874552,
+          "missing-head": 0.9696969696969697,
+          "paint-peel-off": 0.85,
+          "scratch": 0.75,
+          "no-defect": 0.9688473520249221
+        },
+        "by_set_size": [
+          {
+            "size": 0,
+            "n": 0,
+            "correct": 0
+          },
+          {
+            "size": 1,
+            "n": 1929,
+            "correct": 1735
+          },
+          {
+            "size": 2,
+            "n": 439,
+            "correct": 395
+          },
+          {
+            "size": 3,
+            "n": 184,
+            "correct": 172
+          },
+          {
+            "size": 4,
+            "n": 92,
+            "correct": 86
+          },
+          {
+            "size": 5,
+            "n": 28,
+            "correct": 27
+          },
+          {
+            "size": 6,
+            "n": 1,
+            "correct": 1
+          },
+          {
+            "size": 7,
+            "n": 0,
+            "correct": 0
+          }
+        ]
+      }
+    }
+  },
+  "comparison": {
+    "accepted_sets_changed": 16,
+    "accepted_newly_covered": 1,
+    "accepted_newly_missed": 1,
+    "visor_actions_changed": 4,
+    "raw_minus_scaled_accepted_coverage_ci95": [
+      -0.0011583908795372777,
+      0.0010711035350906486
+    ]
+  }
+}

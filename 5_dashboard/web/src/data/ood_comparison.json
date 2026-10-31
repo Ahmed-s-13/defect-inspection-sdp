@@ -1,0 +1,51 @@
+{
+  "source": "1_main_model_resnet18/enhanced_res/arch_a/results/archB/dinov2_ood/results.json",
+  "alpha_ood": 0.08,
+  "test_crops": 2752,
+  "d5_crops": 1008,
+  "offtarget_crops": 2172,
+  "variants": [
+    {
+      "name": "ResNet + AoN",
+      "selected": false,
+      "far": 0.02117863720073665,
+      "d1_frr": 0.03379360465116279,
+      "d5_frr": 0.003968253968253968
+    },
+    {
+      "name": "ResNet + kNN",
+      "selected": false,
+      "far": 0.4995395948434622,
+      "d1_frr": 0.04142441860465116,
+      "d5_frr": 0.008928571428571428
+    },
+    {
+      "name": "ResNet + AoN + kNN",
+      "selected": true,
+      "far": 0.03406998158379374,
+      "d1_frr": 0.029796511627906978,
+      "d5_frr": 0.002976190476190476
+    },
+    {
+      "name": "DINOv2 + AoN",
+      "selected": false,
+      "far": 0.003683241252302026,
+      "d1_frr": 0.0403343023255814,
+      "d5_frr": 0.05257936507936508
+    },
+    {
+      "name": "DINOv2 + kNN",
+      "selected": false,
+      "far": 0.020718232044198894,
+      "d1_frr": 0.07957848837209303,
+      "d5_frr": 0.012896825396825396
+    },
+    {
+      "name": "DINOv2 + AoN + kNN",
+      "selected": false,
+      "far": 0.004143646408839779,
+      "d1_frr": 0.05232558139534884,
+      "d5_frr": 0.023809523809523808
+    }
+  ]
+}
