@@ -1,6 +1,6 @@
 """Architecture B OOD ablation; no deployed assets changed.
 Run from repository root with the d1_sscd_grouped Python environment.
-Fixed deployed alpha=0.08, quality off. Evaluation never tunes thresholds.
+Uses deployed OOD alpha, quality off. Evaluation never tunes thresholds.
 """
 import json
 import sys
@@ -10,6 +10,7 @@ import pandas as pd
 import torch
 from PIL import Image
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import average_precision_score, roc_auc_score
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -27,7 +28,7 @@ def rate(mask):
 def main():
     torch.set_num_threads(4)
     B = R.ArchA(R.CALIBRATIONS['gc7'])
-    assert not B.use_quality and B.alpha_ood == 0.08
+    assert not B.use_quality
     va, cal, test = BC.halves(B.cal['data']['split'])
     split = BC.load_split(B.cal['data']['split'])
     train = split[split.split == 'train']
@@ -120,8 +121,24 @@ def main():
             mask = (man.source == 'fgvc-aircraft').to_numpy() & (man.category == category).to_numpy()
             m[label + '_rejection'] = rate(stop['bench'][mask])
         results[name] = m
-    assert results['Deployed B (reference only)']['d1_frr']['count'] == 79
-    report = {'protocol': 'Architecture B, quality off, fixed OOD alpha 0.08; family-weighted p-values; Bonferroni for two-score gates. No test tuning. FAR means gate passage, not visor defect display. AoN trained on fit categories only; role=test excluded. Deployed reference saw more off-target categories and is not a held-out comparison. D6 rejection need not be a false rejection of usable skin.',
+        # OE paper's implementation uses average precision, with OOD as positive.
+        # Report both the final gate ranking and raw standalone detector ranking.
+        def ranking(id_score, ood_score):
+            labels = np.r_[np.zeros(len(id_score)), np.ones(len(ood_score))]
+            values = np.r_[id_score, ood_score]
+            weights = np.r_[np.ones(len(id_score)), np.full(len(ood_score), len(id_score)/(5*len(ood_score)))]
+            return {'auprc_average_precision': float(average_precision_score(labels, values)),
+                    'auprc_ood_to_id_1_to_5_reweighted': float(average_precision_score(labels, values, sample_weight=weights)),
+                    'auroc': float(roc_auc_score(labels, values)),
+                    'ood_prevalence': float(labels.mean())}
+        m['gate_ranking'] = ranking(1-values['test'], 1-values['bench'][held])
+        if name in scores:
+            m['raw_score_ranking'] = ranking(scores[name]['test'], scores[name]['bench'][held])
+        m['gate_ranking_by_category'] = {
+            cat: ranking(1-values['test'], 1-values['bench'][held & (man.category == cat).to_numpy()])
+            for cat in sorted(man.category[held].unique())}
+    assert np.isclose(results['Deployed B (reference only)']['d1_frr']['rate'], B.cal['expected_test_half']['gates_false_reject'])
+    report = {'ood_alpha': B.alpha_ood, 'protocol': f'Architecture B, quality off, fixed OOD alpha {B.alpha_ood}; family-weighted p-values; Bonferroni for two-score gates. No test tuning. FAR means gate passage, not visor defect display. AoN trained on fit categories only; role=test excluded. Deployed reference saw more off-target categories and is not a held-out comparison. D6 rejection need not be a false rejection of usable skin.',
               'features': 'Frozen pretrained vit_small_patch14_dinov2.lvd142m, 224 pixels, 384 features, no classification head. k=5. AoN logistic regression C=0.5, balanced; all D1 training features used.',
               'counts': {s: len(ps) for s,ps in items.items()}, 'cal_families': int(cal.src_group.nunique()),
               'test_families': int(test.src_group.nunique()), 'resnet_aon_positive_features': len(bank),
@@ -136,6 +153,14 @@ def main():
     pct = lambda v: f'{100*v:.2f}%'
     for name,m in results.items():
         lines.append('| '+name+' | '+' | '.join([pct(m['d1_frr']['rate']),pct(m['d1_family_frr']),pct(m['d5_frr']['rate']),pct(m['held_out_far']['rate']),pct(m['held_out_far_centre']['rate'])+' / '+pct(m['held_out_far_box']['rate']),pct(m['d6_skin_rejection']['rate']),pct(m['d6_whole_rejection']['rate'])])+' |')
+    lines += ['', '## Threshold-independent ranking', '',
+              'OOD is positive. AUPRC is sklearn average_precision_score, as in the Outlier Exposure paper code (https://github.com/hendrycks/outlier-exposure/blob/master/utils/display_results.py). Gate ranking uses 1 minus its conformal p-value; raw ranking uses the standalone detector score before conformal calibration. Pooled D1 versus held-out off-target crops; prevalence differs from the paper, so these are not benchmark-comparable results.', '',
+              '| Gate | Gate AUPRC | Raw score AUPRC | Gate AUROC | Gate AUPRC at 1:5 | Raw AUPRC at 1:5 |', '|---|---:|---:|---:|---:|---:|']
+    for name,m in results.items():
+        raw = pct(m['raw_score_ranking']['auprc_average_precision']) if 'raw_score_ranking' in m else '—'
+        raw_adjusted = pct(m['raw_score_ranking']['auprc_ood_to_id_1_to_5_reweighted']) if 'raw_score_ranking' in m else '—'
+        lines.append(f"| {name} | {pct(m['gate_ranking']['auprc_average_precision'])} | {raw} | {pct(m['gate_ranking']['auroc'])} | {pct(m['gate_ranking']['auprc_ood_to_id_1_to_5_reweighted'])} | {raw_adjusted} |")
+    lines += ['', 'The 1:5 columns reweight OOD crops so total OOD weight is one fifth of ID weight, matching the paper\'s OOD prevalence without discarding observations. This does not match its datasets, per-dataset averaging, training method or repeated-run protocol. These columns are prevalence-adjusted estimates, not a reproduction of the paper.']
     lines += ['', 'FAR here is pooled over crops; JSON also records per-category rates and their equal-category average. Older Architecture A tables averaged categories, so their FARs are not directly comparable. D1 intervals in JSON resample evaluation families, conditional on the fitted calibration. This experiment changes only the OOD gate: it does not recalibrate LAC or measure downstream CP/visor outcomes. No deployed model or calibration was changed.', '', 'Run: `1_main_model_resnet18/experiments/d1_sscd_grouped/.venv/bin/python 1_main_model_resnet18/enhanced_res/arch_a/experiments/archB_dinov2_ood.py`']
     (OUT/'README.md').write_text('\n'.join(lines)+'\n')
     print('\n'.join(lines), flush=True)

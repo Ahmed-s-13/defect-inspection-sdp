@@ -1,0 +1,14 @@
+{
+  "family": 533,
+  "class": "corrosion",
+  "rejected_crops": 9,
+  "check": "AoN",
+  "image": "/uncertainty/family-533-false-reject.jpg",
+  "source_crop": "1_main_model_resnet18/data/work_fix/crops/D1/content__Aircraft_dataset__images__test__aircraft_003932__0.jpg",
+  "original_image": "content/Aircraft_dataset/images/test/aircraft_003932.jpg",
+  "p_aon": 0.011235955056179775,
+  "p_knn": 0.3474760977616294,
+  "ood_alpha": 0.05,
+  "per_detector_cutoff": 0.025,
+  "audit": "1_main_model_resnet18/enhanced_res/arch_a/results/archB/knn_sweep/rejected_crops.csv"
+}

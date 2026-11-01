@@ -49,7 +49,7 @@ def main():
     nd = B.nd
     md = ["# Architecture B: gc7 + the calibrated layer, quality gate off", "",
           f"Model enhanced_res gc7 (7 classes, with no-defect), crops {B.cal['data']['split']} (D1 with the 27 Oct box "
-          f"corrections), T {B.T:.3f}, OOD α {B.alpha_ood} (kNN + AoN), CP α {B.alpha} (LAC, fitted on gate-passed "
+          f"corrections), family-weighted validation T {B.T:.6f}, OOD α {B.alpha_ood} (kNN + AoN), CP α {B.alpha} (LAC, fitted on gate-passed "
           f"cal-half crops), miss guard {'α ' + str(B.guard[0]) if B.guard else 'none'}. Architecture A (v2, 6 "
           "classes, quality gate on) is shown next to it where the set allows. A re-aim on undamaged skin counts as "
           "the visor speaking.", ""]

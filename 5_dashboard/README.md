@@ -29,7 +29,7 @@ source .venv/bin/activate            # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**2. Node.js 20 or newer** (https://nodejs.org), to build the web page (the first time and after updates). `node -v` checks it.
+**2. Node.js 20.19+ or 22.12+** (https://nodejs.org), to build the web page (the first time and after updates). `node -v` checks it.
 
 **3. The model and the data.** Download these and unzip each one **in the repo root** (each zip already holds the
 right folders, see the top-level README, "Getting the data and trained models"):
@@ -83,16 +83,15 @@ photo group), so its accuracy figure is honest. All of them come from the test s
 ## Check that it works
 
 - Batch → **Run the 35 samples**: 35 held-out test crops (5 per class, `no-defect_*` included). The top class is right
-  for 31 of 35 (88.6%), including all 5 no-defect samples (3 are answered **No defect**, so the visor shows nothing;
-  the other two are **Possible …: check** and go to a person, as architecture B intends when it is less sure).
+  for 31 of 35 (88.6%), including all 5 no-defect samples (their visor decisions are recalculated using the current OOD and CP calibration).
 - Model page: the headline reads **81.1%** (the right defect class on 4,253 unseen defect crops, corrected labels),
-  macro-F1 **0.752** over all 7 classes, the answer holds the true class **90.4%** of the time, and 0.3% of defects
-  are shown as no defect.
+  macro-F1 **0.752** over all 7 classes, the answer holds the true class **91.0%** of the time, and 0.3% of defects
+  are shown as no defect. OOD α is **0.05** (0.025 per detector), with **1.49%** false rejection; CP α stays **0.10**.
 - Tests (optional):
 
 ```bash
 cd 5_dashboard
-python -m pytest tests -q        # 41 tests: registry, crops = predict.py, report = the team's numbers, API
+python -m pytest tests -q        # 42 tests: registry, crops = predict.py, report = the team's numbers, API
 cd web && npm test               # 43 tests: labels, metrics, geometry, format, the Data scene, uploads, reveals, the pipeline data
 ```
 
@@ -145,6 +144,8 @@ cd web && npm test               # 43 tests: labels, metrics, geometry, format, 
 | `python scripts/model_anatomy.py` | Model → How it works | the D1 crops |
 | `python scripts/cp_comparison_data.py` | Uncertainty → family-weighted vs equal-crop CP comparison | saved `arch_a/results/archB/equal_crop_cp/results.json`; rerun `archB_equal_crop_cp.py` when the model or calibration changes |
 | `python scripts/ood_comparison_data.py` | Uncertainty → OOD comparison and low-FRR selection rationale | saved `arch_a/results/archB/dinov2_ood/results.json`; rerun `archB_dinov2_ood.py` when the model or calibration changes |
+| `python scripts/false_rejection_data.py` | Uncertainty → family 533 false-rejection image and p-values | tracked `archB/knn_sweep/rejected_crops.csv` and the referenced local D1 crop; rerun `archB_knn_sweep.py` if the gate changes. The exported image and JSON are versioned for teammates. |
+| `python scripts/uncertainty_experiments_data.py` | Uncertainty → gate combination, calibration alternatives, miss guard and larger calibration-set experiments | tracked snapshots `archB/historical_local_x/gates.md`, `archB/historical_local_x/calibrators.md`, `archB/historical_local_x/cal20.md` and `archB/choices.md` reports |
 | `python scripts/pipeline_scene.py` | Uncertainty → Follow a crop through architecture B, Try other alphas | the D1 and no-defect crops; the off-target features (local) for the aircraft-or-not chart |
 | `python scripts/uncertainty_data.py` (after `pipeline_scene.py`) | Uncertainty → coverage by class, the aircraft-or-not chart; Data → every dataset we used | the D1, no-defect, D5 and FGVC crops; the off-target benchmark and its cached features (local); Open Images' validation metadata for the photo credits |
 | `python scripts/sweep_crops.py` | Model → the sliding square | `D1_raw.zip` |
@@ -154,3 +155,11 @@ cd web && npm test               # 43 tests: labels, metrics, geometry, format, 
 | `python scripts/inspect_samples.py` | `samples/inspect/` (Inspect's chips, picked for clarity) | the D1 and no-defect crops |
 
 Run them from `5_dashboard/`, then `REBUILD=1 ./run.sh`.
+
+**Refreshing the OOD cutoff:** from the repo root, run `python 1_main_model_resnet18/enhanced_res/arch_a/experiments/archB_update_ood.py --alpha 0.05` with the model environment and cached calibration outputs available. CP alpha stays 0.10; the script refits its cutoffs on accepted calibration crops. Current reports and committed page JSON are already regenerated. The historical experiment exporter reads the small versioned reports under `archB/historical_local_x/`; it does not require ignored local experiment folders. Restart the server after replacing calibration JSON so its loaded adapter reads the new settings.
+
+**Family-weighted temperature:** current Architecture B uses T = 1.089562, fitted on 4,818 validation crops / 178 families by averaging NLL within each family and then across families. `calibrate.py` uses this objective by default. To update only temperature and CP from aligned cached outputs, run `python 1_main_model_resnet18/enhanced_res/arch_a/experiments/archB_update_temperature.py` from the repo root. This preserves the trained model and OOD gate. Then regenerate `archB_report.py`, the raw/equal-crop/mean-score CP comparison reports, and the page data above; restart the server after changing calibration. Historical reports retain their original calibration settings.
+
+**Running the new experiments on another computer:** the checked-in page JSON, comparison reports and family-533 image are sufficient to display the new sections. The dashboard does not run the research experiments at startup. Use the activated repo Python environment (`python ...` on any platform), rather than copying the author’s environment path from an experiment log.
+
+The temperature comparison and calibration-update scripts require the aligned cache `1_main_model_resnet18/data/work/enhanced_res/arch_a_outputs_gc7.npz`, in validation / calibration / test order. This cache is generated by `calibrate.py --model gc7`; that command also refits and writes calibration, so run it in a separate checkout when reproducing an experiment. Caches contain local crop paths and should be generated on the receiving computer. The kNN sweep additionally needs the non-aircraft manifest and `archB/gc7_bench.npz` / `archB/gc7_d5.npz` feature caches generated by the OOD comparison, along with the corresponding external datasets. These research-only inputs are not included in the normal dashboard downloads.

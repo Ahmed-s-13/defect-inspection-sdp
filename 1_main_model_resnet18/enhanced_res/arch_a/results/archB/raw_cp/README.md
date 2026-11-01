@@ -2,32 +2,32 @@
 
 Same gc7 weights, prior correction, OOD gate, alpha 0.10, family weights, and top-class fallback. Refit q separately on OOD-passed calibration half only; T is deployed val-fitted T or 1. Test half is report-only.
 
-Calibration: 2116 crops (2014 accepted), 88 families. Evaluation: 2752 crops (2673 accepted), 87 families.
+Calibration: 2116 crops (2065 accepted), 88 families. Evaluation: 2752 crops (2711 accepted), 87 families.
 
 | Metric | Temperature-scaled | Raw hybrid |
 |---|---:|---:|
-| Probability cutoff | 6.6950% | 6.0159% |
-| Silent defect miss | 0.3310% | 0.3724% |
-| Clean crop false alarm | 26.8657% | 26.8657% |
-| Human referral | 29.9782% | 29.9055% |
-| Accepted: coverage | 0.903853 | 0.903853 |
-| Accepted: macro_coverage | 0.875463 | 0.874871 |
-| Accepted: family_coverage | 0.895998 | 0.895181 |
-| Accepted: mean_set_size | 1.444444 | 1.448934 |
-| Accepted: singleton_rate | 0.720913 | 0.721661 |
-| Accepted: mean_confidence | 0.813498 | 0.832431 |
+| Probability cutoff | 6.2640% | 5.4407% |
+| Silent defect miss | 0.3310% | 0.3310% |
+| Clean crop false alarm | 28.0597% | 27.4627% |
+| Human referral | 31.7587% | 31.0320% |
+| Accepted: coverage | 0.909627 | 0.908890 |
+| Accepted: macro_coverage | 0.882543 | 0.882290 |
+| Accepted: family_coverage | 0.907174 | 0.906204 |
+| Accepted: mean_set_size | 1.518259 | 1.513833 |
+| Accepted: singleton_rate | 0.692733 | 0.700111 |
+| Accepted: mean_confidence | 0.799090 | 0.829513 |
 
 Paired comparison:
 
 ```json
 {
-  "accepted_sets_changed": 16,
+  "accepted_sets_changed": 42,
   "accepted_newly_covered": 1,
-  "accepted_newly_missed": 1,
-  "visor_actions_changed": 4,
+  "accepted_newly_missed": 3,
+  "visor_actions_changed": 23,
   "raw_minus_scaled_accepted_coverage_ci95": [
-    -0.0011583908795372777,
-    0.0010711035350906486
+    -0.002960406353591903,
+    0.0008302545288846653
   ]
 }
 ```

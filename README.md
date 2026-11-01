@@ -21,10 +21,11 @@ Run it with `python predict.py` in `1_main_model_resnet18/`. The weights are `en
 repo's **Releases** page (`v3.0-gc7`). The 6-class model (**v2**, Release `v2.0-enhanced-res`) is kept: `--model v2` and
 `EnhancedRes()` in code (the healer's screw-head scorer uses it). `trt_enhanced_res` runs gc7 + architecture B.
 
-**Main architecture: enhanced_res gc7 + [architecture B](1_main_model_resnet18/enhanced_res/arch_a/README.md)** (28 October):
+**Main architecture: enhanced_res gc7 + [architecture B](1_main_model_resnet18/enhanced_res/arch_a/README.md)**:
 architecture A's calibrated layer on the 7-class model, quality gate off. The visor shows **nothing** when the set is
 only no-defect and "POSSIBLE DENT: check" when it mixes a defect with no-defect. On the corrected test half a defect is
-shown as nothing 0.3% of the time and the visor speaks on 26.9% of clean crops
+shown as nothing 0.3% of the time and the visor speaks on 28.1% of clean crops. OOD α is 0.05
+(0.025 per detector); temperature T = 1.089562 is fitted with equal weight per validation family; CP α remains 0.10, with 91.0% observed coverage and 1.49% OOD false rejection
 ([results](1_main_model_resnet18/enhanced_res/arch_a/results/archB/README.md)).
 
 **Architecture A** (27 October) is the same layer on the 6-class v2, with the quality gate on; the gates run in parallel.
@@ -38,7 +39,7 @@ The model's output goes through a calibrated decision layer instead of the fixed
 For v2 on normal grouped-test crops, a single wrong class is shown without warning 6.7% of the time, against 20.9%
 before, and 38.5% of crops are flagged for the inspector.
 
-B's numbers are in `calibration_gc7.json`, A's in `calibration.json` (kNN + AoN at α 0.08).
+B's numbers are in `calibration_gc7.json` (OOD α 0.05, CP α 0.10); A's are in `calibration.json` (legacy OOD α 0.08).
 Both are in git; `calibrate.py` refits either without retraining anything.
 
 ## Current D1 grouping work — 22 October 2026

@@ -31,7 +31,7 @@ export function KnnHist({ knn, at, alpha }: { knn: { edges: number[]; counts: nu
   );
 }
 
-/** Aircraft-skin crops (the model's training crops) against the off-target photos the aircraft-or-not check was
+/** Aircraft-skin crops (the model's training crops) against the non-aircraft photos the aircraft-or-not check was
  *  fitted on. Across: its score (log-odds of "not aircraft skin"); down: the features' main other direction. */
 export function AonScatter({ aon, at, alpha }: { aon: { skin: [number, number][]; off: [number, number][]; cut: Record<string, number> }; at: [number, number]; alpha: number }) {
   const H = 220, pad = 10, all = [...aon.skin, ...aon.off, at];
@@ -42,7 +42,7 @@ export function AonScatter({ aon, at, alpha }: { aon: { skin: [number, number][]
   return (
     <figure className="pl-chart">
       <figcaption><b>Does it look like aircraft skin?</b> A logistic check on the model's features, fitted on its training crops and on photos of people, tools, vehicles and scenes. Right of the line, this part alone stops a crop.</figcaption>
-      <svg className="chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Scatter of aircraft-skin and off-target crops with the stop line and this crop">
+      <svg className="chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Scatter of aircraft-skin and non-aircraft crops with the stop line and this crop">
         {aon.skin.map((p, i) => <circle key={`s${i}`} className="pl-dot-skin" cx={x(p[0])} cy={y(p[1])} r="2.2" />)}
         {aon.off.map((p, i) => <circle key={`o${i}`} className="pl-dot-off" cx={x(p[0])} cy={y(p[1])} r="2.2" />)}
         <line className="ref" x1={x(cut)} x2={x(cut)} y1={pad} y2={H - 22} />
@@ -50,7 +50,7 @@ export function AonScatter({ aon, at, alpha }: { aon: { skin: [number, number][]
         <text className="tick" x={pad} y={H - 4}>aircraft skin</text>
         <text className="tick" x={W - pad} y={H - 4} textAnchor="end">not aircraft skin</text>
       </svg>
-      <p className="chart-key"><i className="pl-key pl-dot-skin" /> Training crops <i className="pl-key pl-dot-off" /> Off-target photos <i className="pl-key pl-key-ring" /> This crop</p>
+      <p className="chart-key"><i className="pl-key pl-dot-skin" /> Training crops <i className="pl-key pl-dot-off" /> Non-aircraft photos <i className="pl-key pl-key-ring" /> This crop</p>
     </figure>
   );
 }

@@ -1,5 +1,7 @@
 # Tried and left out: plain-surface negatives for B's AoN (28 Oct)
 
+> Historical experiment: measured before the OOD change, using OOD α 0.08 where applicable (the threshold sweep lists its own values). Current B uses OOD α 0.05 and CP α 0.10. These recorded numbers are not current-deployment results; see the regenerated [Architecture B report](README.md).
+
 > B's AoN was refitted with 3,880 extra negative crops (10 Places365 plain scenes, 47 DTD textures; about half held out by category), because held-out runway crops were shown as a defect 10.5% of the time. It did not fix runway (11.5%) and made the original held-out categories worse (helmet 1.8% -> 4.5%, hand 2.2% -> 6.8%, hangar outdoor 6.5% -> 8.0%) and the visor spoke more on clean crops (26.9% -> 29.0%); only wallpapers (17.2% -> 12.0% shown) and static (3.1% -> 2.5%) improved. So B keeps the original negatives; `calibrate.py --plain-negatives` turns them back on. Below: the full B report and choices as they came out with them.
 
 ## Architecture B: gc7 + the calibrated layer, quality gate off

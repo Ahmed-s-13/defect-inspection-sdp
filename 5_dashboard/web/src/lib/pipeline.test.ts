@@ -15,10 +15,11 @@ describe("pipeline scene data", () => {
     expect(pipe.crops.map((c) => c.outcome).sort()).toEqual(["ambiguous", "nothing", "possible", "reaim", "show"]);
     for (const c of pipe.crops) expect((c.outcomes as Record<string, string>)[served]).toBe(c.outcome);
   });
-  it("is architecture B as served: coverage 90.4%, 1.48 classes, 2.9% re-aimed", () => {
-    expect(grid[served].coverage).toBeCloseTo(0.9037, 3);
-    expect(grid[served].set_size).toBeCloseTo(1.4818, 3);
-    expect(grid[served].reaim).toBeCloseTo(0.0287, 3);
+  it("is architecture B as served: OOD 0.05, CP 0.10: coverage 91.0%, 1.54 classes, 1.5% re-aimed", () => {
+    expect(pipe.served).toEqual({ ood: 0.05, cp: 0.10 });
+    expect(grid[served].coverage).toBeCloseTo(0.9102, 3);
+    expect(grid[served].set_size).toBeCloseTo(1.5363, 3);
+    expect(grid[served].reaim).toBeCloseTo(0.0149, 3);
   });
   it("adds up, and a larger conformal alpha never raises coverage", () => {
     for (const g of Object.values(grid)) expect(Object.values(g.mix).reduce((a, b) => a + b, 0)).toBeCloseTo(1, 3);

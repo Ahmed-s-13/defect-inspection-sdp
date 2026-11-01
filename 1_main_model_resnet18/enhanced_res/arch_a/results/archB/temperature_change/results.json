@@ -1,0 +1,86 @@
+{
+  "before_temperature": {
+    "kind": "probability temperature: p ** (1/T), renormalised; fitted on val by NLL",
+    "T": 1.0562116354922055
+  },
+  "after_temperature": {
+    "kind": "probability temperature: p ** (1/T), renormalised; fitted on val by family-weighted NLL",
+    "weighting": "each validation family has total weight 1; each crop has weight 1/family_size",
+    "validation_families": 178,
+    "T": 1.0895623515239266
+  },
+  "before": {
+    "alpha": 0.1,
+    "accuracy": 0.793968023255814,
+    "cp_coverage": 0.9102470930232558,
+    "cp_family_coverage": 0.9059332534973146,
+    "cp_mean_set_size": 1.5399709302325582,
+    "cp_single_class": 0.6893168604651163,
+    "actions": {
+      "show class": 0.5930232558139535,
+      "ambiguous": 0.1973110465116279,
+      "unclear": 0.0,
+      "re-take": 0.0,
+      "re-aim": 0.014898255813953489,
+      "nothing shown": 0.09084302325581395,
+      "possible defect": 0.10392441860465117
+    },
+    "human_attention": 0.3161337209302325,
+    "gates_false_reject": 0.014898255813953489,
+    "gates_false_reject_family": 0.046094474680539635,
+    "single_class_wrong": 0.062136627906976744,
+    "silent_miss": 0.0033098882912701694,
+    "silent_miss_by_class": {
+      "corrosion": 0.0,
+      "crack": 0.0015723270440251573,
+      "dent": 0.006200177147918512,
+      "missing-head": 0.0,
+      "paint-peel-off": 0.0,
+      "scratch": 0.0
+    },
+    "no_defect_nothing_shown": 0.7223880597014926,
+    "no_defect_false_alarm": 0.27761194029850744
+  },
+  "after": {
+    "alpha": 0.1,
+    "accuracy": 0.793968023255814,
+    "cp_coverage": 0.9102470930232558,
+    "cp_family_coverage": 0.9063586901296476,
+    "cp_mean_set_size": 1.5363372093023255,
+    "cp_single_class": 0.6878633720930233,
+    "actions": {
+      "show class": 0.5919331395348837,
+      "ambiguous": 0.19912790697674418,
+      "unclear": 0.0,
+      "re-take": 0.0,
+      "re-aim": 0.014898255813953489,
+      "nothing shown": 0.09047965116279069,
+      "possible defect": 0.10356104651162791
+    },
+    "human_attention": 0.31758720930232553,
+    "gates_false_reject": 0.014898255813953489,
+    "gates_false_reject_family": 0.046094474680539635,
+    "single_class_wrong": 0.06140988372093023,
+    "silent_miss": 0.0033098882912701694,
+    "silent_miss_by_class": {
+      "corrosion": 0.0,
+      "crack": 0.0015723270440251573,
+      "dent": 0.006200177147918512,
+      "missing-head": 0.0,
+      "paint-peel-off": 0.0,
+      "scratch": 0.0
+    },
+    "no_defect_nothing_shown": 0.7194029850746269,
+    "no_defect_false_alarm": 0.28059701492537314
+  },
+  "before_q": {
+    "0.05": 0.9808216617873582,
+    "0.10": 0.9407661827967719,
+    "0.20": 0.7449497759802246
+  },
+  "after_q": {
+    "0.05": 0.9788835316400555,
+    "0.10": 0.9373600723333446,
+    "0.20": 0.7481213007245282
+  }
+}

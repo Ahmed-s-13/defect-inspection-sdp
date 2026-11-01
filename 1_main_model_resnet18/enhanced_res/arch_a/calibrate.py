@@ -43,12 +43,13 @@ from klshift.common import CropDataset
 SPLIT = HERE / "cal_split.csv"
 CACHE = {"v2": EWORK / "arch_a_outputs.npz", "gc7": EWORK / "arch_a_outputs_gc7.npz",
          "gc7_fix": EWORK / "arch_a_outputs_gc7_fix.npz"}   # git-ignored
-DATA = {"v2": "d1_grouped", "gc7": "d1_gc7", "gc7_fix": "d1_gc7_fix"}
+DATA = {"v2": "d1_grouped", "gc7": "d1_gc7_fix", "gc7_fix": "d1_gc7_fix"}
 RELEASE = {"v2": "v2.0-enhanced-res", "gc7": "v3.0-gc7", "gc7_fix": "local (gc7 retrained on the corrected D1 boxes)"}
 ALPHA, ALPHAS = 0.10, (0.05, 0.10, 0.20)
-ALPHA_Q, ALPHA_OOD, K = 0.05, 0.08, 5      # quality 0.05 (28 Oct; experiments/archA_quality_alpha.py). OOD: kNN + AoN, Bonferroni (0.04 each). Checked without the test
-                                           # half: 500 halvings of the cal half stop 12.9% of families (budget 15%;
-                                           # experiments/archA_alpha_check.py). Worst case by the union bound: 0.05 + 0.08 = 13%.
+ALPHA_Q, K = 0.05, 5
+ALPHA_OOD = {"v2": 0.08, "gc7": 0.05, "gc7_fix": 0.05}
+# B: one combined OOD gate at 0.05 (0.025 per detector), quality off.
+# Legacy A retains its 0.08 OOD cutoff and 0.05 quality cutoff.
 QUALITY_SIDES = {**R.SIDES, "sharpness": "both"}     # also flag far-too-sharp crops (noise), 2026-10-27
 OFFTARGET = EWORK / "offtarget/manifest.csv"
 OFF_CACHE = {m: EWORK / ("arch_a_offtarget_feats.npz" if m == "v2" else f"arch_a_offtarget_feats_{m}.npz") for m in DATA}
@@ -107,6 +108,17 @@ def nll(p, y):
     return float(-np.log(np.clip(p[np.arange(len(y)), y], 1e-12, None)).mean())
 
 
+def fit_temperature(p, y, groups):
+    """Minimize validation NLL with equal total weight for each photo family."""
+    _, inv, counts = np.unique(groups, return_inverse=True, return_counts=True)
+    weights = 1.0 / counts[inv]
+    weights /= weights.sum()
+    return minimize_scalar(
+        lambda lt: float(np.sum(weights * -np.log(np.clip(
+            R.temper(p, np.exp(lt))[np.arange(len(y)), y], 1e-12, None)))),
+        bounds=(np.log(0.05), np.log(20)), method="bounded")
+
+
 def g9(a):
     return [float(f"{v:.9g}") for v in np.asarray(a, float)]
 
@@ -129,7 +141,8 @@ def main():
     ap.add_argument("--quality", action=argparse.BooleanOptionalAction, default=None,
                     help="quality gate on/off (default: on for v2 = architecture A, off for the 7-class models = B, "
                          "where it is legacy)")
-    ap.add_argument("--alpha-ood", type=float, default=ALPHA_OOD)
+    ap.add_argument("--alpha-ood", type=float, default=None,
+                    help="combined OOD cutoff (default: 0.05 for architecture B, 0.08 for legacy v2)")
     ap.add_argument("--miss-guard", type=float, default=None, metavar="ALPHA",
                     help="7-class models: only show nothing when the defect test rejects at this alpha")
     ap.add_argument("--data", choices=sorted(set(DATA.values())), default=None,
@@ -142,6 +155,8 @@ def main():
     global PLAIN_NEGATIVES
     PLAIN_NEGATIVES = args.plain_negatives
     model = args.model
+    if args.alpha_ood is None:
+        args.alpha_ood = ALPHA_OOD[model]
     data = args.data or DATA[model]
     use_q = (model == "v2") if args.quality is None else args.quality
     crops = load_split(data)
@@ -163,10 +178,10 @@ def main():
     g = {"val": va.src_group.to_numpy(), "cal": cal.src_group.to_numpy(), "test": tst.src_group.to_numpy()}
 
     # temperature on val
-    r = minimize_scalar(lambda lt: nll(R.temper(P[sl["val"]], np.exp(lt)), y["val"]),
-                        bounds=(np.log(0.05), np.log(20)), method="bounded")
+    r = fit_temperature(P[sl["val"]], y["val"], g["val"])
+    assert r.success, r.message
     T = float(np.exp(r.x))
-    print(f"T = {T:.3f}  (val NLL {nll(P[sl['val']], y['val']):.3f} -> {r.fun:.3f})")
+    print(f"T = {T:.3f}  (family-weighted val NLL {r.fun:.6f})")
 
     # unfamiliar-input gate, second part: AoN
     path = R.CALIBRATIONS[model]
@@ -224,7 +239,9 @@ def main():
                  "val_crops": nv, "cal_crops": nc, "cal_families": int(cal.src_group.nunique()),
                  "test_half_crops": len(tst), "test_half_families": int(tst.src_group.nunique())},
         "classes": classes,
-        "temperature": {"kind": "probability temperature: p ** (1/T), renormalised; fitted on val by NLL", "T": T},
+        "temperature": {"kind": "probability temperature: p ** (1/T), renormalised; fitted on val by family-weighted NLL",
+                        "weighting": "each validation family has total weight 1; each crop has weight 1/family_size",
+                        "validation_families": int(va.src_group.nunique()), "T": T},
         "cp": {"score": "LAC: 1 - tempered probability of the true class",
                "weighting": "every calibration family carries weight 1", "alpha": ALPHA, "q": q,
                "rule": "set = every class with tempered probability >= 1 - q[alpha]",

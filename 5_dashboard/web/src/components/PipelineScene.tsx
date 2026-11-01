@@ -18,7 +18,7 @@ export interface PipeCrop {
   knn_dist: number; aon_score: number; p_knn: number; p_aon: number; p_ood: number; set: string[]; outcomes: Record<string, string>;
   about?: string; credit?: { author: string; url: string; license: string; license_url: string; source: string };
 }
-/** The re-aim example is not a D1 crop but an off-target photo (truth "off-target"), shown with its credit. */
+/** The re-aim example is not a D1 crop but a non-aircraft photo (truth "off-target"), shown with its credit. */
 export const isOff = (c: PipeCrop) => c.truth === "off-target";
 export const PIPE = pipe as unknown as {
   made: string; classes: string[]; T: number; served: { ood: number; cp: number }; ood_alphas: number[]; cp_alphas: number[];
@@ -257,11 +257,11 @@ function Note({ pos, c, rep, cut }: { pos: ReturnType<typeof where>; c: PipeCrop
   const words = c.set.filter((x) => x !== "no-defect").map((x) => className(x).toLowerCase());
   switch (pos.stage) {
     case "crop": return isOff(c)
-      ? <><strong>Crop {n} of 5: {ABOUT[c.outcome]}</strong><p>A photo from the team's off-target set, cut to the same 224 px square. The model was never trained on anything like it, but it still gives every class a probability.</p></>
+      ? <><strong>Crop {n} of 5: {ABOUT[c.outcome]}</strong><p>A photo from the team's non-aircraft set, cut to the same 224 px square. The model was never trained on anything like it, but it still gives every class a probability.</p></>
       : <><strong>Crop {n} of 5: {ABOUT[c.outcome]}</strong><p>A 224 px square from the test photos. Its true class is {className(c.truth).toLowerCase()}.</p></>;
     case "model": return <><strong>The model's first guess: {className(top.cls)} {pct(top.p, 0)}</strong><p>Eight rotated and flipped views, a ResNet-18, five MLP heads and a vote of the 5 nearest training crops give a probability for each of the 7 classes. On the test crops: macro-F1 <span className="fig">{rep.test.macro_f1.toFixed(3)}</span>.</p></>;
-    case "ood": return <><strong>{stopped ? "Stopped: this looks unfamiliar" : "Passed: this looks like aircraft skin"}</strong><p>Two conformal p-values: how close the crop is to its 5 nearest training crops, and how much it looks like aircraft skin rather than people, tools or scenes. Twice the smaller must be above {PIPE.served.ood}. It stops {pct(s.actions["re-aim"])} of normal test crops{held ? <> and {pct(held.stopped, 0)} of off-target photos it never saw</> : null}.</p></>;
-    case "temp": return <><strong>Softened percentages</strong><p>Every probability is softened with one temperature, fitted on validation photos. For this model it changes little (calibration error <span className="fig">{a.ece.raw.toFixed(3)}</span> → <span className="fig">{a.ece.tempered.toFixed(3)}</span>); stated percentages still run a little high. The ranking never changes, and the guarantee comes from the next step, not the percentage.</p></>;
+    case "ood": return <><strong>{stopped ? "Stopped: this looks unfamiliar" : "Passed: this looks like aircraft skin"}</strong><p>Two conformal p-values: how close the crop is to its 5 nearest training crops, and how much it looks like aircraft skin rather than people, tools or scenes. Twice the smaller must be above {PIPE.served.ood}. It stops {pct(s.actions["re-aim"])} of normal test crops{held ? <> and {pct(held.stopped, 0)} of non-aircraft photos it never saw</> : null}.</p></>;
+    case "temp": return <><strong>Softened percentages</strong><p>Every probability is softened with one temperature, fitted with equal total weight per validation photo family. For this model it changes little (calibration error <span className="fig">{a.ece.raw.toFixed(3)}</span> → <span className="fig">{a.ece.tempered.toFixed(3)}</span>); stated percentages still run a little high. The ranking never changes, and the guarantee comes from the next step, not the percentage.</p></>;
     case "set": return <><strong>{c.set.length === 1 ? `One class passes: ${className(c.set[0])}` : `${c.set.length} classes pass the cut-off`}</strong><p>Conformal prediction keeps every class at {pct(cut, 1)} or more. The cut-off is set on {a.cal.families} calibration photo groups so the answer holds the true class {pct(1 - a.alpha, 0)} of the time; on the test crops it does {pct(s.cp_coverage)}, with {PIPE.grid[cellKey(PIPE.served.ood, PIPE.served.cp)].set_size.toFixed(2)} classes on average.</p></>;
     default: return <>
       <strong className={`pl-verdict tone-${bucketState(c.outcome)}`}><StateGlyph state={bucketState(c.outcome)} size={20} /> {c.outcome === "show" ? `${className(c.set[0])} ${pct(c.tempered[PIPE.classes.indexOf(c.set[0])], 0)}`

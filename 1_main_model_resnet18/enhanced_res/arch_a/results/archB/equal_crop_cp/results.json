@@ -1,31 +1,31 @@
 {
   "method": "Same gc7 weights, prior correction, deployed temperature, OOD gate, alpha 0.10, and top-class fallback. Baseline uses family-weighted individual scores. Alternative gives every accepted calibration crop weight 1 and uses the ceil((N+1)*0.90)-th sorted true-label score. Thresholds are fitted on the same OOD-passed calibration half only. Test half is report-only. The equal-crop procedure is standard LAC arithmetic, but crop exchangeability is not established for this grouped dataset.",
   "calibration_crops": 2116,
-  "accepted_calibration_crops": 2014,
-  "equal_crop_rank": 1814,
+  "accepted_calibration_crops": 2065,
+  "equal_crop_rank": 1860,
   "calibration_families": 88,
   "test_families": 87,
   "variants": {
     "family_weighted": {
       "alpha": 0.1,
       "accuracy": 0.793968023255814,
-      "cp_coverage": 0.9037063953488372,
-      "cp_family_coverage": 0.8954790002241141,
-      "cp_mean_set_size": 1.4818313953488371,
-      "cp_single_class": 0.7093023255813954,
+      "cp_coverage": 0.9102470930232558,
+      "cp_family_coverage": 0.9063586901296476,
+      "cp_mean_set_size": 1.5363372093023255,
+      "cp_single_class": 0.6878633720930233,
       "actions": {
-        "show class": 0.6082848837209303,
-        "ambiguous": 0.18350290697674418,
+        "show class": 0.5919331395348837,
+        "ambiguous": 0.19912790697674418,
         "unclear": 0.0,
         "re-take": 0.0,
-        "re-aim": 0.028706395348837208,
-        "nothing shown": 0.09193313953488372,
-        "possible defect": 0.08757267441860465
+        "re-aim": 0.014898255813953489,
+        "nothing shown": 0.09047965116279069,
+        "possible defect": 0.10356104651162791
       },
-      "human_attention": 0.29978197674418605,
-      "gates_false_reject": 0.028706395348837208,
-      "gates_false_reject_family": 0.0685683082756154,
-      "single_class_wrong": 0.06722383720930232,
+      "human_attention": 0.31758720930232553,
+      "gates_false_reject": 0.014898255813953489,
+      "gates_false_reject_family": 0.046094474680539635,
+      "single_class_wrong": 0.06140988372093023,
       "silent_miss": 0.0033098882912701694,
       "silent_miss_by_class": {
         "corrosion": 0.0,
@@ -35,27 +35,27 @@
         "paint-peel-off": 0.0,
         "scratch": 0.0
       },
-      "no_defect_nothing_shown": 0.7313432835820896,
-      "no_defect_false_alarm": 0.26865671641791045,
-      "temperature": 1.0562116354922055,
-      "q_hat": 0.9330497148627894,
-      "probability_cutoff": 0.06695028513721057,
+      "no_defect_nothing_shown": 0.7194029850746269,
+      "no_defect_false_alarm": 0.28059701492537314,
+      "temperature": 1.0895623515239266,
+      "q_hat": 0.9373600723333446,
+      "probability_cutoff": 0.06263992766665538,
       "all": {
         "n": 2752,
-        "coverage": 0.9037063953488372,
-        "macro_coverage": 0.8776952856991463,
-        "family_coverage": 0.8954790002241141,
-        "mean_set_size": 1.4818313953488371,
-        "singleton_rate": 0.7093023255813954,
-        "mean_confidence": 0.8086221713532061,
+        "coverage": 0.9102470930232558,
+        "macro_coverage": 0.8842243624866853,
+        "family_coverage": 0.9063586901296476,
+        "mean_set_size": 1.5363372093023255,
+        "singleton_rate": 0.6878633720930233,
+        "mean_confidence": 0.7971632224945281,
         "per_class": {
-          "corrosion": 0.7782101167315175,
-          "crack": 0.8694968553459119,
-          "dent": 0.9468556244464128,
+          "corrosion": 0.8015564202334631,
+          "crack": 0.8726415094339622,
+          "dent": 0.9530558015943312,
           "missing-head": 0.9696969696969697,
-          "paint-peel-off": 0.852112676056338,
+          "paint-peel-off": 0.8591549295774648,
           "scratch": 0.7603305785123967,
-          "no-defect": 0.9671641791044776
+          "no-defect": 0.9731343283582089
         },
         "by_set_size": [
           {
@@ -65,33 +65,33 @@
           },
           {
             "size": 1,
-            "n": 1952,
-            "correct": 1759
+            "n": 1893,
+            "correct": 1716
           },
           {
             "size": 2,
-            "n": 459,
-            "correct": 411
+            "n": 473,
+            "correct": 424
           },
           {
             "size": 3,
-            "n": 196,
-            "correct": 180
+            "n": 216,
+            "correct": 201
           },
           {
             "size": 4,
-            "n": 108,
-            "correct": 101
+            "n": 114,
+            "correct": 109
           },
           {
             "size": 5,
-            "n": 34,
-            "correct": 33
+            "n": 51,
+            "correct": 50
           },
           {
             "size": 6,
-            "n": 3,
-            "correct": 3
+            "n": 5,
+            "correct": 5
           },
           {
             "size": 7,
@@ -101,21 +101,21 @@
         ]
       },
       "accepted": {
-        "n": 2673,
-        "coverage": 0.9038533482977927,
-        "macro_coverage": 0.8754634029172257,
-        "family_coverage": 0.8959977445853221,
-        "mean_set_size": 1.4444444444444444,
-        "singleton_rate": 0.7209128320239432,
-        "mean_confidence": 0.8134982523427008,
+        "n": 2711,
+        "coverage": 0.9096274437476946,
+        "macro_coverage": 0.8825432716850249,
+        "family_coverage": 0.9071737550849803,
+        "mean_set_size": 1.5182589450387312,
+        "singleton_rate": 0.6927333087421615,
+        "mean_confidence": 0.799090038384316,
         "per_class": {
-          "corrosion": 0.7615062761506276,
-          "crack": 0.8727272727272727,
-          "dent": 0.9471326164874552,
+          "corrosion": 0.7918367346938775,
+          "crack": 0.8723747980613893,
+          "dent": 0.9529307282415631,
           "missing-head": 0.9696969696969697,
-          "paint-peel-off": 0.85,
-          "scratch": 0.7583333333333333,
-          "no-defect": 0.9688473520249221
+          "paint-peel-off": 0.8581560283687943,
+          "scratch": 0.7603305785123967,
+          "no-defect": 0.9724770642201835
         },
         "by_set_size": [
           {
@@ -125,33 +125,33 @@
           },
           {
             "size": 1,
-            "n": 1927,
-            "correct": 1734
+            "n": 1878,
+            "correct": 1701
           },
           {
             "size": 2,
-            "n": 448,
-            "correct": 404
+            "n": 468,
+            "correct": 420
           },
           {
             "size": 3,
-            "n": 182,
-            "correct": 168
+            "n": 211,
+            "correct": 196
           },
           {
             "size": 4,
-            "n": 89,
-            "correct": 84
+            "n": 105,
+            "correct": 101
           },
           {
             "size": 5,
-            "n": 26,
-            "correct": 25
+            "n": 45,
+            "correct": 44
           },
           {
             "size": 6,
-            "n": 1,
-            "correct": 1
+            "n": 4,
+            "correct": 4
           },
           {
             "size": 7,
@@ -164,23 +164,23 @@
     "equal_crop": {
       "alpha": 0.1,
       "accuracy": 0.793968023255814,
-      "cp_coverage": 0.8728197674418605,
-      "cp_family_coverage": 0.8562446350115881,
-      "cp_mean_set_size": 1.268531976744186,
-      "cp_single_class": 0.7921511627906976,
+      "cp_coverage": 0.8815406976744186,
+      "cp_family_coverage": 0.8644037221886196,
+      "cp_mean_set_size": 1.3186773255813953,
+      "cp_single_class": 0.7663517441860465,
       "actions": {
-        "show class": 0.6791424418604651,
-        "ambiguous": 0.13372093023255813,
+        "show class": 0.6631540697674418,
+        "ambiguous": 0.1511627906976744,
         "unclear": 0.0,
         "re-take": 0.0,
-        "re-aim": 0.028706395348837208,
-        "nothing shown": 0.10065406976744186,
-        "possible defect": 0.05777616279069767
+        "re-aim": 0.014898255813953489,
+        "nothing shown": 0.0962936046511628,
+        "possible defect": 0.07449127906976744
       },
-      "human_attention": 0.22020348837209303,
-      "gates_false_reject": 0.028706395348837208,
-      "gates_false_reject_family": 0.0685683082756154,
-      "single_class_wrong": 0.09084302325581395,
+      "human_attention": 0.2405523255813954,
+      "gates_false_reject": 0.014898255813953489,
+      "gates_false_reject_family": 0.046094474680539635,
+      "single_class_wrong": 0.08393895348837209,
       "silent_miss": 0.004964832436905255,
       "silent_miss_by_class": {
         "corrosion": 0.0,
@@ -190,27 +190,27 @@
         "paint-peel-off": 0.0,
         "scratch": 0.01652892561983471
       },
-      "no_defect_nothing_shown": 0.7910447761194029,
-      "no_defect_false_alarm": 0.208955223880597,
-      "temperature": 1.0562116354922055,
-      "q_hat": 0.8782932573579971,
-      "probability_cutoff": 0.12170674264200287,
+      "no_defect_nothing_shown": 0.755223880597015,
+      "no_defect_false_alarm": 0.24477611940298508,
+      "temperature": 1.0895623515239266,
+      "q_hat": 0.8923035101376596,
+      "probability_cutoff": 0.10769648986234037,
       "all": {
         "n": 2752,
-        "coverage": 0.8728197674418605,
-        "macro_coverage": 0.8445246815221783,
-        "family_coverage": 0.8562446350115881,
-        "mean_set_size": 1.268531976744186,
-        "singleton_rate": 0.7921511627906976,
-        "mean_confidence": 0.8086221713532061,
+        "coverage": 0.8815406976744186,
+        "macro_coverage": 0.8510097396182149,
+        "family_coverage": 0.8644037221886196,
+        "mean_set_size": 1.3186773255813953,
+        "singleton_rate": 0.7663517441860465,
+        "mean_confidence": 0.7971632224945281,
         "per_class": {
-          "corrosion": 0.7431906614785992,
-          "crack": 0.8176100628930818,
-          "dent": 0.9247121346324181,
+          "corrosion": 0.754863813229572,
+          "crack": 0.8333333333333334,
+          "dent": 0.9326837909654562,
           "missing-head": 0.9696969696969697,
-          "paint-peel-off": 0.795774647887324,
+          "paint-peel-off": 0.8028169014084507,
           "scratch": 0.7024793388429752,
-          "no-defect": 0.9582089552238806
+          "no-defect": 0.9611940298507463
         },
         "by_set_size": [
           {
@@ -220,33 +220,33 @@
           },
           {
             "size": 1,
-            "n": 2180,
-            "correct": 1914
+            "n": 2109,
+            "correct": 1865
           },
           {
             "size": 2,
-            "n": 433,
-            "correct": 368
+            "n": 467,
+            "correct": 404
           },
           {
             "size": 3,
-            "n": 112,
-            "correct": 95
+            "n": 125,
+            "correct": 110
           },
           {
             "size": 4,
-            "n": 26,
-            "correct": 24
+            "n": 45,
+            "correct": 41
           },
           {
             "size": 5,
-            "n": 1,
-            "correct": 1
+            "n": 5,
+            "correct": 5
           },
           {
             "size": 6,
-            "n": 0,
-            "correct": 0
+            "n": 1,
+            "correct": 1
           },
           {
             "size": 7,
@@ -256,21 +256,21 @@
         ]
       },
       "accepted": {
-        "n": 2673,
-        "coverage": 0.8761690983913206,
-        "macro_coverage": 0.8437490037880673,
-        "family_coverage": 0.8669589234723455,
-        "mean_set_size": 1.2506546950991395,
-        "singleton_rate": 0.8028432472876917,
-        "mean_confidence": 0.8134982523427008,
+        "n": 2711,
+        "coverage": 0.882700110660273,
+        "macro_coverage": 0.8503319577513894,
+        "family_coverage": 0.8749884712008054,
+        "mean_set_size": 1.3098487642936185,
+        "singleton_rate": 0.7709332349686463,
+        "mean_confidence": 0.799090038384316,
         "per_class": {
-          "corrosion": 0.7238493723849372,
-          "crack": 0.8347107438016529,
-          "dent": 0.9256272401433692,
+          "corrosion": 0.7428571428571429,
+          "crack": 0.840064620355412,
+          "dent": 0.9325044404973357,
           "missing-head": 0.9696969696969697,
-          "paint-peel-off": 0.7928571428571428,
-          "scratch": 0.7,
-          "no-defect": 0.9595015576323987
+          "paint-peel-off": 0.8014184397163121,
+          "scratch": 0.7024793388429752,
+          "no-defect": 0.963302752293578
         },
         "by_set_size": [
           {
@@ -280,33 +280,33 @@
           },
           {
             "size": 1,
-            "n": 2146,
-            "correct": 1884
+            "n": 2090,
+            "correct": 1847
           },
           {
             "size": 2,
-            "n": 407,
-            "correct": 352
+            "n": 458,
+            "correct": 399
           },
           {
             "size": 3,
-            "n": 98,
-            "correct": 86
+            "n": 114,
+            "correct": 102
           },
           {
             "size": 4,
-            "n": 21,
-            "correct": 19
+            "n": 43,
+            "correct": 39
           },
           {
             "size": 5,
-            "n": 1,
-            "correct": 1
+            "n": 5,
+            "correct": 5
           },
           {
             "size": 6,
-            "n": 0,
-            "correct": 0
+            "n": 1,
+            "correct": 1
           },
           {
             "size": 7,
@@ -318,13 +318,13 @@
     }
   },
   "comparison": {
-    "accepted_sets_changed": 407,
+    "accepted_sets_changed": 443,
     "accepted_newly_covered": 0,
-    "accepted_newly_missed": 74,
-    "visor_actions_changed": 239,
+    "accepted_newly_missed": 73,
+    "visor_actions_changed": 243,
     "equal_crop_minus_family_accepted_coverage_ci95": [
-      -0.041842696921821555,
-      -0.01722120976059644
+      -0.04247592645472428,
+      -0.015607273388790584
     ]
   }
 }

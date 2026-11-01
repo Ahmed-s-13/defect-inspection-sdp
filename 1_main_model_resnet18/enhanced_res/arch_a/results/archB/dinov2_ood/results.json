@@ -1,5 +1,6 @@
 {
-  "protocol": "Architecture B, quality off, fixed OOD alpha 0.08; family-weighted p-values; Bonferroni for two-score gates. No test tuning. FAR means gate passage, not visor defect display. AoN trained on fit categories only; role=test excluded. Deployed reference saw more off-target categories and is not a held-out comparison. D6 rejection need not be a false rejection of usable skin.",
+  "ood_alpha": 0.05,
+  "protocol": "Architecture B, quality off, fixed OOD alpha 0.05; family-weighted p-values; Bonferroni for two-score gates. No test tuning. FAR means gate passage, not visor defect display. AoN trained on fit categories only; role=test excluded. Deployed reference saw more off-target categories and is not a held-out comparison. D6 rejection need not be a false rejection of usable skin.",
   "features": "Frozen pretrained vit_small_patch14_dinov2.lvd142m, 224 pixels, 384 features, no classification head. k=5. AoN logistic regression C=0.5, balanced; all D1 training features used.",
   "counts": {
     "train": 23046,
@@ -40,23 +41,23 @@
     "ResNet AoN (fit-only)": {
       "d1_frr": {
         "n": 2752,
-        "count": 93,
-        "rate": 0.03379360465116279
+        "count": 42,
+        "rate": 0.015261627906976744
       },
-      "d1_family_frr": 0.07954027280629339,
+      "d1_family_frr": 0.048357637267330125,
       "d1_frr_family_bootstrap_ci95": [
-        0.017257237205897998,
-        0.05993179933255659
+        0.006635172296561378,
+        0.028901807384305127
       ],
       "d5_frr": {
         "n": 1008,
-        "count": 4,
-        "rate": 0.003968253968253968
+        "count": 1,
+        "rate": 0.000992063492063492
       },
       "held_out_far": {
         "n": 2172,
-        "count": 46,
-        "rate": 0.02117863720073665
+        "count": 79,
+        "rate": 0.0363720073664825
       },
       "by_category": {
         "Glove": {
@@ -66,28 +67,28 @@
         },
         "Helmet": {
           "n": 400,
-          "count": 4,
-          "rate": 0.01
+          "count": 6,
+          "rate": 0.015
         },
         "Human hand": {
           "n": 400,
-          "count": 2,
-          "rate": 0.005
+          "count": 11,
+          "rate": 0.0275
         },
         "airport_terminal": {
           "n": 200,
-          "count": 5,
-          "rate": 0.025
+          "count": 8,
+          "rate": 0.04
         },
         "hangar/indoor": {
           "n": 200,
-          "count": 5,
-          "rate": 0.025
+          "count": 9,
+          "rate": 0.045
         },
         "hangar/outdoor": {
           "n": 200,
-          "count": 10,
-          "rate": 0.05
+          "count": 13,
+          "rate": 0.065
         },
         "helmet photo (user)": {
           "n": 2,
@@ -96,13 +97,13 @@
         },
         "repair_shop": {
           "n": 200,
-          "count": 6,
-          "rate": 0.03
+          "count": 7,
+          "rate": 0.035
         },
         "runway": {
           "n": 200,
-          "count": 14,
-          "rate": 0.07
+          "count": 25,
+          "rate": 0.125
         },
         "storage_room": {
           "n": 200,
@@ -112,416 +113,110 @@
       },
       "held_out_far_centre": {
         "n": 1086,
-        "count": 11,
-        "rate": 0.010128913443830571
+        "count": 22,
+        "rate": 0.020257826887661142
       },
       "held_out_far_box": {
         "n": 1086,
-        "count": 35,
-        "rate": 0.03222836095764273
+        "count": 57,
+        "rate": 0.052486187845303865
       },
-      "held_out_far_category_macro": 0.021500000000000002,
+      "held_out_far_category_macro": 0.035250000000000004,
       "d6_skin_rejection": {
         "n": 1000,
-        "count": 746,
-        "rate": 0.746
+        "count": 652,
+        "rate": 0.652
       },
       "d6_whole_rejection": {
         "n": 500,
-        "count": 499,
-        "rate": 0.998
+        "count": 490,
+        "rate": 0.98
+      },
+      "gate_ranking": {
+        "auprc_average_precision": 0.9963437899751597,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.9890013340236777,
+        "auroc": 0.9966710967279112,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "raw_score_ranking": {
+        "auprc_average_precision": 0.9963926317328495,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.989172113450492,
+        "auroc": 0.9966762829778578,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "gate_ranking_by_category": {
+        "Glove": {
+          "auprc_average_precision": 0.9953987170253685,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9984752380844049,
+          "auroc": 0.9997157147742818,
+          "ood_prevalence": 0.05817932922655715
+        },
+        "Helmet": {
+          "auprc_average_precision": 0.9937606232578897,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9951061768889079,
+          "auroc": 0.9987454578488371,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "Human hand": {
+          "auprc_average_precision": 0.9920859382516971,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9939472850417154,
+          "auroc": 0.9986196402616279,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "airport_terminal": {
+          "auprc_average_precision": 0.9794813148219149,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9893128923219349,
+          "auroc": 0.996868640988372,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/indoor": {
+          "auprc_average_precision": 0.9787959235923788,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9903669152826816,
+          "auroc": 0.9977925145348838,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/outdoor": {
+          "auprc_average_precision": 0.9556952894872478,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9769501309834583,
+          "auroc": 0.9933021438953488,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "helmet photo (user)": {
+          "auprc_average_precision": 0.55,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9841660802251935,
+          "auroc": 0.9968204941860466,
+          "ood_prevalence": 0.0007262164124909223
+        },
+        "repair_shop": {
+          "auprc_average_precision": 0.9799911695814786,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9890468623508224,
+          "auroc": 0.9967732558139535,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "runway": {
+          "auprc_average_precision": 0.9200886714330565,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9571197778104388,
+          "auroc": 0.9848292151162791,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "storage_room": {
+          "auprc_average_precision": 0.9976105908865384,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.999084282598549,
+          "auroc": 0.9998255813953487,
+          "ood_prevalence": 0.06775067750677506
+        }
       }
     },
     "DINOv2 AoN": {
       "d1_frr": {
         "n": 2752,
-        "count": 111,
-        "rate": 0.0403343023255814
-      },
-      "d1_family_frr": 0.0722950279968104,
-      "d1_frr_family_bootstrap_ci95": [
-        0.019528357983593606,
-        0.07377688498026354
-      ],
-      "d5_frr": {
-        "n": 1008,
-        "count": 53,
-        "rate": 0.05257936507936508
-      },
-      "held_out_far": {
-        "n": 2172,
-        "count": 8,
-        "rate": 0.003683241252302026
-      },
-      "by_category": {
-        "Glove": {
-          "n": 170,
-          "count": 0,
-          "rate": 0.0
-        },
-        "Helmet": {
-          "n": 400,
-          "count": 0,
-          "rate": 0.0
-        },
-        "Human hand": {
-          "n": 400,
-          "count": 0,
-          "rate": 0.0
-        },
-        "airport_terminal": {
-          "n": 200,
-          "count": 0,
-          "rate": 0.0
-        },
-        "hangar/indoor": {
-          "n": 200,
-          "count": 1,
-          "rate": 0.005
-        },
-        "hangar/outdoor": {
-          "n": 200,
-          "count": 2,
-          "rate": 0.01
-        },
-        "helmet photo (user)": {
-          "n": 2,
-          "count": 0,
-          "rate": 0.0
-        },
-        "repair_shop": {
-          "n": 200,
-          "count": 0,
-          "rate": 0.0
-        },
-        "runway": {
-          "n": 200,
-          "count": 5,
-          "rate": 0.025
-        },
-        "storage_room": {
-          "n": 200,
-          "count": 0,
-          "rate": 0.0
-        }
-      },
-      "held_out_far_centre": {
-        "n": 1086,
-        "count": 0,
-        "rate": 0.0
-      },
-      "held_out_far_box": {
-        "n": 1086,
-        "count": 8,
-        "rate": 0.007366482504604052
-      },
-      "held_out_far_category_macro": 0.004,
-      "d6_skin_rejection": {
-        "n": 1000,
-        "count": 969,
-        "rate": 0.969
-      },
-      "d6_whole_rejection": {
-        "n": 500,
-        "count": 500,
-        "rate": 1.0
-      }
-    },
-    "DINOv2 kNN": {
-      "d1_frr": {
-        "n": 2752,
-        "count": 219,
-        "rate": 0.07957848837209303
-      },
-      "d1_family_frr": 0.08633177448934691,
-      "d1_frr_family_bootstrap_ci95": [
-        0.03969978413043424,
-        0.1452618974688241
-      ],
-      "d5_frr": {
-        "n": 1008,
-        "count": 13,
-        "rate": 0.012896825396825396
-      },
-      "held_out_far": {
-        "n": 2172,
-        "count": 45,
-        "rate": 0.020718232044198894
-      },
-      "by_category": {
-        "Glove": {
-          "n": 170,
-          "count": 0,
-          "rate": 0.0
-        },
-        "Helmet": {
-          "n": 400,
-          "count": 0,
-          "rate": 0.0
-        },
-        "Human hand": {
-          "n": 400,
-          "count": 0,
-          "rate": 0.0
-        },
-        "airport_terminal": {
-          "n": 200,
-          "count": 1,
-          "rate": 0.005
-        },
-        "hangar/indoor": {
-          "n": 200,
-          "count": 21,
-          "rate": 0.105
-        },
-        "hangar/outdoor": {
-          "n": 200,
-          "count": 7,
-          "rate": 0.035
-        },
-        "helmet photo (user)": {
-          "n": 2,
-          "count": 0,
-          "rate": 0.0
-        },
-        "repair_shop": {
-          "n": 200,
-          "count": 1,
-          "rate": 0.005
-        },
-        "runway": {
-          "n": 200,
-          "count": 15,
-          "rate": 0.075
-        },
-        "storage_room": {
-          "n": 200,
-          "count": 0,
-          "rate": 0.0
-        }
-      },
-      "held_out_far_centre": {
-        "n": 1086,
-        "count": 14,
-        "rate": 0.01289134438305709
-      },
-      "held_out_far_box": {
-        "n": 1086,
-        "count": 31,
-        "rate": 0.0285451197053407
-      },
-      "held_out_far_category_macro": 0.022500000000000003,
-      "d6_skin_rejection": {
-        "n": 1000,
-        "count": 910,
-        "rate": 0.91
-      },
-      "d6_whole_rejection": {
-        "n": 500,
-        "count": 496,
-        "rate": 0.992
-      }
-    },
-    "ResNet kNN": {
-      "d1_frr": {
-        "n": 2752,
-        "count": 114,
-        "rate": 0.04142441860465116
-      },
-      "d1_family_frr": 0.06531187042823426,
-      "d1_frr_family_bootstrap_ci95": [
-        0.027260223573577238,
-        0.060342183902415115
-      ],
-      "d5_frr": {
-        "n": 1008,
-        "count": 9,
-        "rate": 0.008928571428571428
-      },
-      "held_out_far": {
-        "n": 2172,
-        "count": 1085,
-        "rate": 0.4995395948434622
-      },
-      "by_category": {
-        "Glove": {
-          "n": 170,
-          "count": 53,
-          "rate": 0.31176470588235294
-        },
-        "Helmet": {
-          "n": 400,
-          "count": 243,
-          "rate": 0.6075
-        },
-        "Human hand": {
-          "n": 400,
-          "count": 155,
-          "rate": 0.3875
-        },
-        "airport_terminal": {
-          "n": 200,
-          "count": 71,
-          "rate": 0.355
-        },
-        "hangar/indoor": {
-          "n": 200,
-          "count": 119,
-          "rate": 0.595
-        },
-        "hangar/outdoor": {
-          "n": 200,
-          "count": 132,
-          "rate": 0.66
-        },
-        "helmet photo (user)": {
-          "n": 2,
-          "count": 1,
-          "rate": 0.5
-        },
-        "repair_shop": {
-          "n": 200,
-          "count": 83,
-          "rate": 0.415
-        },
-        "runway": {
-          "n": 200,
-          "count": 149,
-          "rate": 0.745
-        },
-        "storage_room": {
-          "n": 200,
-          "count": 79,
-          "rate": 0.395
-        }
-      },
-      "held_out_far_centre": {
-        "n": 1086,
-        "count": 562,
-        "rate": 0.5174953959484346
-      },
-      "held_out_far_box": {
-        "n": 1086,
-        "count": 523,
-        "rate": 0.48158379373848986
-      },
-      "held_out_far_category_macro": 0.4971764705882352,
-      "d6_skin_rejection": {
-        "n": 1000,
-        "count": 334,
-        "rate": 0.334
-      },
-      "d6_whole_rejection": {
-        "n": 500,
-        "count": 133,
-        "rate": 0.266
-      }
-    },
-    "ResNet AoN + kNN (fit-only)": {
-      "d1_frr": {
-        "n": 2752,
-        "count": 82,
-        "rate": 0.029796511627906978
-      },
-      "d1_family_frr": 0.07313727003842993,
-      "d1_frr_family_bootstrap_ci95": [
-        0.017322633472624794,
-        0.04835774729935136
-      ],
-      "d5_frr": {
-        "n": 1008,
-        "count": 3,
-        "rate": 0.002976190476190476
-      },
-      "held_out_far": {
-        "n": 2172,
         "count": 74,
-        "rate": 0.03406998158379374
+        "rate": 0.02688953488372093
       },
-      "by_category": {
-        "Glove": {
-          "n": 170,
-          "count": 0,
-          "rate": 0.0
-        },
-        "Helmet": {
-          "n": 400,
-          "count": 7,
-          "rate": 0.0175
-        },
-        "Human hand": {
-          "n": 400,
-          "count": 9,
-          "rate": 0.0225
-        },
-        "airport_terminal": {
-          "n": 200,
-          "count": 7,
-          "rate": 0.035
-        },
-        "hangar/indoor": {
-          "n": 200,
-          "count": 8,
-          "rate": 0.04
-        },
-        "hangar/outdoor": {
-          "n": 200,
-          "count": 14,
-          "rate": 0.07
-        },
-        "helmet photo (user)": {
-          "n": 2,
-          "count": 0,
-          "rate": 0.0
-        },
-        "repair_shop": {
-          "n": 200,
-          "count": 6,
-          "rate": 0.03
-        },
-        "runway": {
-          "n": 200,
-          "count": 23,
-          "rate": 0.115
-        },
-        "storage_room": {
-          "n": 200,
-          "count": 0,
-          "rate": 0.0
-        }
-      },
-      "held_out_far_centre": {
-        "n": 1086,
-        "count": 21,
-        "rate": 0.019337016574585635
-      },
-      "held_out_far_box": {
-        "n": 1086,
-        "count": 53,
-        "rate": 0.04880294659300184
-      },
-      "held_out_far_category_macro": 0.033,
-      "d6_skin_rejection": {
-        "n": 1000,
-        "count": 651,
-        "rate": 0.651
-      },
-      "d6_whole_rejection": {
-        "n": 500,
-        "count": 491,
-        "rate": 0.982
-      }
-    },
-    "DINOv2 AoN + kNN": {
-      "d1_frr": {
-        "n": 2752,
-        "count": 144,
-        "rate": 0.05232558139534884
-      },
-      "d1_family_frr": 0.07285103348796772,
+      "d1_family_frr": 0.04719854412545754,
       "d1_frr_family_bootstrap_ci95": [
-        0.02033740967422718,
-        0.10549632266553877
+        0.010851756603307623,
+        0.05201329578891053
       ],
       "d5_frr": {
         "n": 1008,
@@ -561,8 +256,8 @@
         },
         "hangar/outdoor": {
           "n": 200,
-          "count": 3,
-          "rate": 0.015
+          "count": 2,
+          "rate": 0.01
         },
         "helmet photo (user)": {
           "n": 2,
@@ -576,8 +271,8 @@
         },
         "runway": {
           "n": 200,
-          "count": 5,
-          "rate": 0.025
+          "count": 6,
+          "rate": 0.03
         },
         "storage_room": {
           "n": 200,
@@ -598,25 +293,437 @@
       "held_out_far_category_macro": 0.0045,
       "d6_skin_rejection": {
         "n": 1000,
-        "count": 968,
-        "rate": 0.968
+        "count": 954,
+        "rate": 0.954
       },
       "d6_whole_rejection": {
         "n": 500,
         "count": 500,
         "rate": 1.0
+      },
+      "gate_ranking": {
+        "auprc_average_precision": 0.9937984031128954,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.9765418637617553,
+        "auroc": 0.9972335538995246,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "raw_score_ranking": {
+        "auprc_average_precision": 0.9992099842955399,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.9975411810680057,
+        "auroc": 0.999293331620198,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "gate_ranking_by_category": {
+        "Glove": {
+          "auprc_average_precision": 0.9327094297562968,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9782014038324218,
+          "auroc": 0.9977673991108071,
+          "ood_prevalence": 0.05817932922655715
+        },
+        "Helmet": {
+          "auprc_average_precision": 0.9706801176662946,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9785196764622788,
+          "auroc": 0.9978029614825581,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "Human hand": {
+          "auprc_average_precision": 0.9702375284953496,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.978191525849309,
+          "auroc": 0.997757085755814,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "airport_terminal": {
+          "auprc_average_precision": 0.942957776820336,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9784898453902943,
+          "auroc": 0.997797965116279,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/indoor": {
+          "auprc_average_precision": 0.9358491965718099,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.975321021284712,
+          "auroc": 0.9971693313953488,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/outdoor": {
+          "auprc_average_precision": 0.9349235550086833,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9737934282673888,
+          "auroc": 0.9961555232558139,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "helmet photo (user)": {
+          "auprc_average_precision": 0.14285714285714285,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9786628733997155,
+          "auroc": 0.9978197674418605,
+          "ood_prevalence": 0.0007262164124909223
+        },
+        "repair_shop": {
+          "auprc_average_precision": 0.9418305239439977,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9780353656133839,
+          "auroc": 0.9977207485465117,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "runway": {
+          "auprc_average_precision": 0.9205362837303688,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.966243857497869,
+          "auroc": 0.9941088299418605,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "storage_room": {
+          "auprc_average_precision": 0.9430419519045111,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9785239180204636,
+          "auroc": 0.9978034156976744,
+          "ood_prevalence": 0.06775067750677506
+        }
       }
     },
-    "Deployed B (reference only)": {
+    "DINOv2 kNN": {
       "d1_frr": {
         "n": 2752,
-        "count": 79,
-        "rate": 0.028706395348837208
+        "count": 137,
+        "rate": 0.049781976744186045
       },
-      "d1_family_frr": 0.0685683082756154,
+      "d1_family_frr": 0.05477134930592428,
       "d1_frr_family_bootstrap_ci95": [
-        0.01616829152402275,
-        0.04716101131895036
+        0.01571923027684878,
+        0.10743952464257706
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 4,
+        "rate": 0.003968253968253968
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 82,
+        "rate": 0.037753222836095765
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 2,
+          "rate": 0.005
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 2,
+          "rate": 0.005
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 1,
+          "rate": 0.005
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 42,
+          "rate": 0.21
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 9,
+          "rate": 0.045
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 0,
+          "rate": 0.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 2,
+          "rate": 0.01
+        },
+        "runway": {
+          "n": 200,
+          "count": 24,
+          "rate": 0.12
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 27,
+        "rate": 0.024861878453038673
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 55,
+        "rate": 0.05064456721915286
+      },
+      "held_out_far_category_macro": 0.04,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 854,
+        "rate": 0.854
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 496,
+        "rate": 0.992
+      },
+      "gate_ranking": {
+        "auprc_average_precision": 0.9842660653164179,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.9456165035824595,
+        "auroc": 0.9906411610240267,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "raw_score_ranking": {
+        "auprc_average_precision": 0.9926304114381767,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.9776117597452761,
+        "auroc": 0.9934316980919955,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "gate_ranking_by_category": {
+        "Glove": {
+          "auprc_average_precision": 0.8994708994708994,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9666315419740078,
+          "auroc": 0.9965479651162791,
+          "ood_prevalence": 0.05817932922655715
+        },
+        "Helmet": {
+          "auprc_average_precision": 0.9515448054222334,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9642183972723373,
+          "auroc": 0.9960674055232558,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "Human hand": {
+          "auprc_average_precision": 0.9515483332293507,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9642282460574852,
+          "auroc": 0.9960392441860465,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "airport_terminal": {
+          "auprc_average_precision": 0.9056077526482936,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9630349793789689,
+          "auroc": 0.9958230377906976,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/indoor": {
+          "auprc_average_precision": 0.6774567958575279,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.8368710279598888,
+          "auroc": 0.9655904796511628,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/outdoor": {
+          "auprc_average_precision": 0.8616724443228237,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9399648870453206,
+          "auroc": 0.9901844113372094,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "helmet photo (user)": {
+          "auprc_average_precision": 0.09523809523809523,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9666315419740077,
+          "auroc": 0.9965479651162791,
+          "ood_prevalence": 0.0007262164124909223
+        },
+        "repair_shop": {
+          "auprc_average_precision": 0.8972277929364213,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9589926846807652,
+          "auroc": 0.9949345930232558,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "runway": {
+          "auprc_average_precision": 0.7836990854410852,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.8941488194319525,
+          "auroc": 0.9742160247093024,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "storage_room": {
+          "auprc_average_precision": 0.9111243373636534,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9656706237338765,
+          "auroc": 0.9963699127906976,
+          "ood_prevalence": 0.06775067750677506
+        }
+      }
+    },
+    "ResNet kNN": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 70,
+        "rate": 0.025436046511627907
+      },
+      "d1_family_frr": 0.0468766149865953,
+      "d1_frr_family_bootstrap_ci95": [
+        0.014602778539438808,
+        0.04140029471422197
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 5,
+        "rate": 0.00496031746031746
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 1474,
+        "rate": 0.6786372007366482
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 90,
+          "rate": 0.5294117647058824
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 315,
+          "rate": 0.7875
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 208,
+          "rate": 0.52
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 112,
+          "rate": 0.56
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 158,
+          "rate": 0.79
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 172,
+          "rate": 0.86
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 2,
+          "rate": 1.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 130,
+          "rate": 0.65
+        },
+        "runway": {
+          "n": 200,
+          "count": 170,
+          "rate": 0.85
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 117,
+          "rate": 0.585
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 763,
+        "rate": 0.7025782688766115
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 711,
+        "rate": 0.6546961325966851
+      },
+      "held_out_far_category_macro": 0.7131911764705883,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 194,
+        "rate": 0.194
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 63,
+        "rate": 0.126
+      },
+      "gate_ranking": {
+        "auprc_average_precision": 0.8768458596878198,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.6626793086480388,
+        "auroc": 0.9213843138357103,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "raw_score_ranking": {
+        "auprc_average_precision": 0.8773634070729261,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.6641875318006408,
+        "auroc": 0.9213924278074009,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "gate_ranking_by_category": {
+        "Glove": {
+          "auprc_average_precision": 0.5573591753632985,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.7734717324103338,
+          "auroc": 0.9461311559507524,
+          "ood_prevalence": 0.05817932922655715
+        },
+        "Helmet": {
+          "auprc_average_precision": 0.5134516725713213,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.5889203708423034,
+          "auroc": 0.9078515624999999,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "Human hand": {
+          "auprc_average_precision": 0.6808655248190061,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.738740594883253,
+          "auroc": 0.9374582122093025,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "airport_terminal": {
+          "auprc_average_precision": 0.5782076365322207,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.7753176896251113,
+          "auroc": 0.9567496366279069,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/indoor": {
+          "auprc_average_precision": 0.3412050046700299,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.5767527383831748,
+          "auroc": 0.8993168604651163,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/outdoor": {
+          "auprc_average_precision": 0.3037867328641725,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.5391050002025055,
+          "auroc": 0.8974373183139535,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "helmet photo (user)": {
+          "auprc_average_precision": 0.008364927483902027,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.6767391393358719,
+          "auroc": 0.9155159883720931,
+          "ood_prevalence": 0.0007262164124909223
+        },
+        "repair_shop": {
+          "auprc_average_precision": 0.4394096215391977,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.6728798277874489,
+          "auroc": 0.929679324127907,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "runway": {
+          "auprc_average_precision": 0.27966489657380333,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.5069867631168644,
+          "auroc": 0.8771375363372094,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "storage_room": {
+          "auprc_average_precision": 0.5193607259162396,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.7301625192252414,
+          "auroc": 0.9419267805232558,
+          "ood_prevalence": 0.06775067750677506
+        }
+      }
+    },
+    "ResNet AoN + kNN (fit-only)": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 39,
+        "rate": 0.014171511627906976
+      },
+      "d1_family_frr": 0.03854161076536392,
+      "d1_frr_family_bootstrap_ci95": [
+        0.006320742143992689,
+        0.02554524676697197
       ],
       "d5_frr": {
         "n": 1008,
@@ -625,8 +732,171 @@
       },
       "held_out_far": {
         "n": 2172,
-        "count": 1,
-        "rate": 0.00046040515653775324
+        "count": 142,
+        "rate": 0.06537753222836096
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 3,
+          "rate": 0.01764705882352941
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 14,
+          "rate": 0.035
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 17,
+          "rate": 0.0425
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 9,
+          "rate": 0.045
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 13,
+          "rate": 0.065
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 28,
+          "rate": 0.14
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 1,
+          "rate": 0.5
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 9,
+          "rate": 0.045
+        },
+        "runway": {
+          "n": 200,
+          "count": 46,
+          "rate": 0.23
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 2,
+          "rate": 0.01
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 35,
+        "rate": 0.03222836095764273
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 107,
+        "rate": 0.09852670349907919
+      },
+      "held_out_far_category_macro": 0.11301470588235293,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 448,
+        "rate": 0.448
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 467,
+        "rate": 0.934
+      },
+      "gate_ranking": {
+        "auprc_average_precision": 0.995154969951593,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.9845736052589856,
+        "auroc": 0.9958964215544563,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "gate_ranking_by_category": {
+        "Glove": {
+          "auprc_average_precision": 0.9892395728747335,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.996186951481643,
+          "auroc": 0.9992219562243503,
+          "ood_prevalence": 0.05817932922655715
+        },
+        "Helmet": {
+          "auprc_average_precision": 0.991573740132566,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9935430479077043,
+          "auroc": 0.998515625,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "Human hand": {
+          "auprc_average_precision": 0.986804560177326,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9897132043985677,
+          "auroc": 0.9973932594476743,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "airport_terminal": {
+          "auprc_average_precision": 0.9723115149521666,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9856560002612574,
+          "auroc": 0.9958203124999999,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/indoor": {
+          "auprc_average_precision": 0.9641339153427244,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9826361601154863,
+          "auroc": 0.9956695130813954,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/outdoor": {
+          "auprc_average_precision": 0.933719733515162,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9653669531996648,
+          "auroc": 0.9898628270348837,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "helmet photo (user)": {
+          "auprc_average_precision": 0.5196078431372549,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9591257924591258,
+          "auroc": 0.9910973837209303,
+          "ood_prevalence": 0.0007262164124909223
+        },
+        "repair_shop": {
+          "auprc_average_precision": 0.9778459364921913,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9888600147149054,
+          "auroc": 0.9970330668604652,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "runway": {
+          "auprc_average_precision": 0.8878153381371564,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9445287415398324,
+          "auroc": 0.9863472020348836,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "storage_room": {
+          "auprc_average_precision": 0.9956225612402773,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9982377501882288,
+          "auroc": 0.9996348110465116,
+          "ood_prevalence": 0.06775067750677506
+        }
+      }
+    },
+    "DINOv2 AoN + kNN": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 96,
+        "rate": 0.03488372093023256
+      },
+      "d1_family_frr": 0.04333115962848635,
+      "d1_frr_family_bootstrap_ci95": [
+        0.008570271586895628,
+        0.07557455343401545
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 14,
+        "rate": 0.013888888888888888
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 12,
+        "rate": 0.0055248618784530384
       },
       "by_category": {
         "Glove": {
@@ -651,13 +921,13 @@
         },
         "hangar/indoor": {
           "n": 200,
-          "count": 0,
-          "rate": 0.0
+          "count": 3,
+          "rate": 0.015
         },
         "hangar/outdoor": {
           "n": 200,
-          "count": 1,
-          "rate": 0.005
+          "count": 3,
+          "rate": 0.015
         },
         "helmet photo (user)": {
           "n": 2,
@@ -671,8 +941,8 @@
         },
         "runway": {
           "n": 200,
-          "count": 0,
-          "rate": 0.0
+          "count": 6,
+          "rate": 0.03
         },
         "storage_room": {
           "n": 200,
@@ -687,19 +957,250 @@
       },
       "held_out_far_box": {
         "n": 1086,
-        "count": 1,
-        "rate": 0.0009208103130755065
+        "count": 12,
+        "rate": 0.011049723756906077
       },
-      "held_out_far_category_macro": 0.0005,
+      "held_out_far_category_macro": 0.006,
       "d6_skin_rejection": {
         "n": 1000,
-        "count": 801,
-        "rate": 0.801
+        "count": 938,
+        "rate": 0.938
       },
       "d6_whole_rejection": {
         "n": 500,
-        "count": 496,
-        "rate": 0.992
+        "count": 500,
+        "rate": 1.0
+      },
+      "gate_ranking": {
+        "auprc_average_precision": 0.9860152735060835,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.9474226151125721,
+        "auroc": 0.9941156138913871,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "gate_ranking_by_category": {
+        "Glove": {
+          "auprc_average_precision": 0.8542713567839196,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9499482222989301,
+          "auroc": 0.9947311046511628,
+          "ood_prevalence": 0.05817932922655715
+        },
+        "Helmet": {
+          "auprc_average_precision": 0.9320372330113339,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9496737139651346,
+          "auroc": 0.994698855377907,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "Human hand": {
+          "auprc_average_precision": 0.9324009324009324,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9499482222989295,
+          "auroc": 0.9947311046511628,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "airport_terminal": {
+          "auprc_average_precision": 0.8733624454148472,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.94994822229893,
+          "auroc": 0.9947311046511628,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/indoor": {
+          "auprc_average_precision": 0.8607955431366089,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.943468938364282,
+          "auroc": 0.9932003997093023,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/outdoor": {
+          "auprc_average_precision": 0.8644761608156732,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9450111325684414,
+          "auroc": 0.9934256904069768,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "helmet photo (user)": {
+          "auprc_average_precision": 0.06451612903225806,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.94994822229893,
+          "auroc": 0.9947311046511628,
+          "ood_prevalence": 0.0007262164124909223
+        },
+        "repair_shop": {
+          "auprc_average_precision": 0.8701996521248618,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.948516013811245,
+          "auroc": 0.9944821947674418,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "runway": {
+          "auprc_average_precision": 0.8468235838336001,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9356645656137367,
+          "auroc": 0.9911964026162791,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "storage_room": {
+          "auprc_average_precision": 0.8733624454148472,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.94994822229893,
+          "auroc": 0.9947311046511628,
+          "ood_prevalence": 0.06775067750677506
+        }
+      }
+    },
+    "Deployed B (reference only)": {
+      "d1_frr": {
+        "n": 2752,
+        "count": 41,
+        "rate": 0.014898255813953489
+      },
+      "d1_family_frr": 0.046094474680539635,
+      "d1_frr_family_bootstrap_ci95": [
+        0.0061586877645034704,
+        0.027835315951430052
+      ],
+      "d5_frr": {
+        "n": 1008,
+        "count": 3,
+        "rate": 0.002976190476190476
+      },
+      "held_out_far": {
+        "n": 2172,
+        "count": 32,
+        "rate": 0.014732965009208104
+      },
+      "by_category": {
+        "Glove": {
+          "n": 170,
+          "count": 1,
+          "rate": 0.0058823529411764705
+        },
+        "Helmet": {
+          "n": 400,
+          "count": 0,
+          "rate": 0.0
+        },
+        "Human hand": {
+          "n": 400,
+          "count": 2,
+          "rate": 0.005
+        },
+        "airport_terminal": {
+          "n": 200,
+          "count": 3,
+          "rate": 0.015
+        },
+        "hangar/indoor": {
+          "n": 200,
+          "count": 2,
+          "rate": 0.01
+        },
+        "hangar/outdoor": {
+          "n": 200,
+          "count": 7,
+          "rate": 0.035
+        },
+        "helmet photo (user)": {
+          "n": 2,
+          "count": 0,
+          "rate": 0.0
+        },
+        "repair_shop": {
+          "n": 200,
+          "count": 7,
+          "rate": 0.035
+        },
+        "runway": {
+          "n": 200,
+          "count": 10,
+          "rate": 0.05
+        },
+        "storage_room": {
+          "n": 200,
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "held_out_far_centre": {
+        "n": 1086,
+        "count": 5,
+        "rate": 0.004604051565377533
+      },
+      "held_out_far_box": {
+        "n": 1086,
+        "count": 27,
+        "rate": 0.024861878453038673
+      },
+      "held_out_far_category_macro": 0.015588235294117648,
+      "d6_skin_rejection": {
+        "n": 1000,
+        "count": 719,
+        "rate": 0.719
+      },
+      "d6_whole_rejection": {
+        "n": 500,
+        "count": 488,
+        "rate": 0.976
+      },
+      "gate_ranking": {
+        "auprc_average_precision": 0.9973734508804635,
+        "auprc_ood_to_id_1_to_5_reweighted": 0.9899016396459189,
+        "auroc": 0.9985614011842049,
+        "ood_prevalence": 0.44110479285134035
+      },
+      "gate_ranking_by_category": {
+        "Glove": {
+          "auprc_average_precision": 0.9761968048899716,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9923730255306725,
+          "auroc": 0.9990605762653899,
+          "ood_prevalence": 0.05817932922655715
+        },
+        "Helmet": {
+          "auprc_average_precision": 0.9901852615898933,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9928294747203803,
+          "auroc": 0.999131086482558,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "Human hand": {
+          "auprc_average_precision": 0.98820737338603,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9913586256979174,
+          "auroc": 0.9988599200581395,
+          "ood_prevalence": 0.12690355329949238
+        },
+        "airport_terminal": {
+          "auprc_average_precision": 0.9766386599293729,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9910692875159003,
+          "auroc": 0.9987663517441862,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/indoor": {
+          "auprc_average_precision": 0.9744353251606883,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9902840489231143,
+          "auroc": 0.9986537063953489,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "hangar/outdoor": {
+          "auprc_average_precision": 0.9598660520397282,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9841701666949088,
+          "auroc": 0.9974618459302325,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "helmet photo (user)": {
+          "auprc_average_precision": 0.19166666666666665,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.983071099341142,
+          "auroc": 0.9974563953488372,
+          "ood_prevalence": 0.0007262164124909223
+        },
+        "repair_shop": {
+          "auprc_average_precision": 0.9740304117174312,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9898775747960407,
+          "auroc": 0.9984892805232557,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "runway": {
+          "auprc_average_precision": 0.945472182811471,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9784272924216428,
+          "auroc": 0.9965543241279068,
+          "ood_prevalence": 0.06775067750677506
+        },
+        "storage_room": {
+          "auprc_average_precision": 0.9827002552002686,
+          "auprc_ood_to_id_1_to_5_reweighted": 0.9936204672089561,
+          "auroc": 0.9992932412790697,
+          "ood_prevalence": 0.06775067750677506
+        }
       }
     }
   }

@@ -56,10 +56,17 @@ def test_silent_errors_are_wrong_single_answers(rep_and_parts):
 
 
 def test_unreadable_cache_is_a_miss_and_key_has_version(tmp_path, monkeypatch):
+    import shutil
     from server import report as rmod
+    r = Registry()
+    entry = r.entry()
+    # This tests a broken report cache, not feature extraction. Preserve the
+    # independent feature cache so this check need not re-encode every crop.
+    features = rmod.CACHE / f"feats_{entry.id}_{entry.split}.npz"
+    if features.exists():
+        shutil.copyfile(features, tmp_path / features.name)
     monkeypatch.setattr(rmod, "CACHE", tmp_path)
     rmod._mem.clear()
-    r = Registry()
     (tmp_path / "report_enhanced_res.json").write_text('{"key": "trunc')  # half-written file
     rep = rmod.get_report(r)
     assert rep["arch_a"]["test_half"]["n"] == 2752

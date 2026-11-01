@@ -1,7 +1,7 @@
 {
   "method": "Same gc7 model, deployed temperature, OOD gate, alpha 0.10, and top-class fallback. Baseline: weighted quantile of individual scores, each family total weight 1. Alternative: arithmetic mean of accepted true-label scores within each family, then the ceil((G+1)*0.90)-th sorted family mean. Apply each resulting threshold to individual test crops. Calibration only fits thresholds; test half is report-only. Mean-score calibration is an experimental heuristic for crop-level prediction, not a demonstrated crop-level coverage guarantee.",
   "calibration_crops": 2116,
-  "accepted_calibration_crops": 2014,
+  "accepted_calibration_crops": 2065,
   "calibration_families": 88,
   "accepted_calibration_families": 88,
   "family_mean_rank": 81,
@@ -10,23 +10,23 @@
     "family_weighted": {
       "alpha": 0.1,
       "accuracy": 0.793968023255814,
-      "cp_coverage": 0.9037063953488372,
-      "cp_family_coverage": 0.8954790002241141,
-      "cp_mean_set_size": 1.4818313953488371,
-      "cp_single_class": 0.7093023255813954,
+      "cp_coverage": 0.9102470930232558,
+      "cp_family_coverage": 0.9063586901296476,
+      "cp_mean_set_size": 1.5363372093023255,
+      "cp_single_class": 0.6878633720930233,
       "actions": {
-        "show class": 0.6082848837209303,
-        "ambiguous": 0.18350290697674418,
+        "show class": 0.5919331395348837,
+        "ambiguous": 0.19912790697674418,
         "unclear": 0.0,
         "re-take": 0.0,
-        "re-aim": 0.028706395348837208,
-        "nothing shown": 0.09193313953488372,
-        "possible defect": 0.08757267441860465
+        "re-aim": 0.014898255813953489,
+        "nothing shown": 0.09047965116279069,
+        "possible defect": 0.10356104651162791
       },
-      "human_attention": 0.29978197674418605,
-      "gates_false_reject": 0.028706395348837208,
-      "gates_false_reject_family": 0.0685683082756154,
-      "single_class_wrong": 0.06722383720930232,
+      "human_attention": 0.31758720930232553,
+      "gates_false_reject": 0.014898255813953489,
+      "gates_false_reject_family": 0.046094474680539635,
+      "single_class_wrong": 0.06140988372093023,
       "silent_miss": 0.0033098882912701694,
       "silent_miss_by_class": {
         "corrosion": 0.0,
@@ -36,27 +36,27 @@
         "paint-peel-off": 0.0,
         "scratch": 0.0
       },
-      "no_defect_nothing_shown": 0.7313432835820896,
-      "no_defect_false_alarm": 0.26865671641791045,
-      "temperature": 1.0562116354922055,
-      "q_hat": 0.9330497148627894,
-      "probability_cutoff": 0.06695028513721057,
+      "no_defect_nothing_shown": 0.7194029850746269,
+      "no_defect_false_alarm": 0.28059701492537314,
+      "temperature": 1.0895623515239266,
+      "q_hat": 0.9373600723333446,
+      "probability_cutoff": 0.06263992766665538,
       "all": {
         "n": 2752,
-        "coverage": 0.9037063953488372,
-        "macro_coverage": 0.8776952856991463,
-        "family_coverage": 0.8954790002241141,
-        "mean_set_size": 1.4818313953488371,
-        "singleton_rate": 0.7093023255813954,
-        "mean_confidence": 0.8086221713532061,
+        "coverage": 0.9102470930232558,
+        "macro_coverage": 0.8842243624866853,
+        "family_coverage": 0.9063586901296476,
+        "mean_set_size": 1.5363372093023255,
+        "singleton_rate": 0.6878633720930233,
+        "mean_confidence": 0.7971632224945281,
         "per_class": {
-          "corrosion": 0.7782101167315175,
-          "crack": 0.8694968553459119,
-          "dent": 0.9468556244464128,
+          "corrosion": 0.8015564202334631,
+          "crack": 0.8726415094339622,
+          "dent": 0.9530558015943312,
           "missing-head": 0.9696969696969697,
-          "paint-peel-off": 0.852112676056338,
+          "paint-peel-off": 0.8591549295774648,
           "scratch": 0.7603305785123967,
-          "no-defect": 0.9671641791044776
+          "no-defect": 0.9731343283582089
         },
         "by_set_size": [
           {
@@ -66,33 +66,33 @@
           },
           {
             "size": 1,
-            "n": 1952,
-            "correct": 1759
+            "n": 1893,
+            "correct": 1716
           },
           {
             "size": 2,
-            "n": 459,
-            "correct": 411
+            "n": 473,
+            "correct": 424
           },
           {
             "size": 3,
-            "n": 196,
-            "correct": 180
+            "n": 216,
+            "correct": 201
           },
           {
             "size": 4,
-            "n": 108,
-            "correct": 101
+            "n": 114,
+            "correct": 109
           },
           {
             "size": 5,
-            "n": 34,
-            "correct": 33
+            "n": 51,
+            "correct": 50
           },
           {
             "size": 6,
-            "n": 3,
-            "correct": 3
+            "n": 5,
+            "correct": 5
           },
           {
             "size": 7,
@@ -102,21 +102,21 @@
         ]
       },
       "accepted": {
-        "n": 2673,
-        "coverage": 0.9038533482977927,
-        "macro_coverage": 0.8754634029172257,
-        "family_coverage": 0.8959977445853221,
-        "mean_set_size": 1.4444444444444444,
-        "singleton_rate": 0.7209128320239432,
-        "mean_confidence": 0.8134982523427008,
+        "n": 2711,
+        "coverage": 0.9096274437476946,
+        "macro_coverage": 0.8825432716850249,
+        "family_coverage": 0.9071737550849803,
+        "mean_set_size": 1.5182589450387312,
+        "singleton_rate": 0.6927333087421615,
+        "mean_confidence": 0.799090038384316,
         "per_class": {
-          "corrosion": 0.7615062761506276,
-          "crack": 0.8727272727272727,
-          "dent": 0.9471326164874552,
+          "corrosion": 0.7918367346938775,
+          "crack": 0.8723747980613893,
+          "dent": 0.9529307282415631,
           "missing-head": 0.9696969696969697,
-          "paint-peel-off": 0.85,
-          "scratch": 0.7583333333333333,
-          "no-defect": 0.9688473520249221
+          "paint-peel-off": 0.8581560283687943,
+          "scratch": 0.7603305785123967,
+          "no-defect": 0.9724770642201835
         },
         "by_set_size": [
           {
@@ -126,33 +126,33 @@
           },
           {
             "size": 1,
-            "n": 1927,
-            "correct": 1734
+            "n": 1878,
+            "correct": 1701
           },
           {
             "size": 2,
-            "n": 448,
-            "correct": 404
+            "n": 468,
+            "correct": 420
           },
           {
             "size": 3,
-            "n": 182,
-            "correct": 168
+            "n": 211,
+            "correct": 196
           },
           {
             "size": 4,
-            "n": 89,
-            "correct": 84
+            "n": 105,
+            "correct": 101
           },
           {
             "size": 5,
-            "n": 26,
-            "correct": 25
+            "n": 45,
+            "correct": 44
           },
           {
             "size": 6,
-            "n": 1,
-            "correct": 1
+            "n": 4,
+            "correct": 4
           },
           {
             "size": 7,
@@ -165,53 +165,53 @@
     "family_mean": {
       "alpha": 0.1,
       "accuracy": 0.793968023255814,
-      "cp_coverage": 0.8077761627906976,
-      "cp_family_coverage": 0.7879876650767416,
-      "cp_mean_set_size": 1.0308866279069768,
-      "cp_single_class": 0.9691133720930233,
+      "cp_coverage": 0.8125,
+      "cp_family_coverage": 0.79122993598998,
+      "cp_mean_set_size": 1.0472383720930232,
+      "cp_single_class": 0.9527616279069767,
       "actions": {
-        "show class": 0.8135901162790697,
-        "ambiguous": 0.023255813953488372,
+        "show class": 0.8099563953488372,
+        "ambiguous": 0.0345203488372093,
         "unclear": 0.0,
         "re-take": 0.0,
-        "re-aim": 0.028706395348837208,
-        "nothing shown": 0.12718023255813954,
-        "possible defect": 0.007267441860465116
+        "re-aim": 0.014898255813953489,
+        "nothing shown": 0.12863372093023256,
+        "possible defect": 0.011991279069767442
       },
-      "human_attention": 0.059229651162790664,
-      "gates_false_reject": 0.028706395348837208,
-      "gates_false_reject_family": 0.0685683082756154,
-      "single_class_wrong": 0.15334302325581395,
-      "silent_miss": 0.02399669011170873,
+      "human_attention": 0.06140988372093026,
+      "gates_false_reject": 0.014898255813953489,
+      "gates_false_reject_family": 0.046094474680539635,
+      "single_class_wrong": 0.1511627906976744,
+      "silent_miss": 0.024824162184526273,
       "silent_miss_by_class": {
         "corrosion": 0.0038910505836575876,
-        "crack": 0.05660377358490566,
-        "dent": 0.015057573073516387,
+        "crack": 0.06132075471698113,
+        "dent": 0.0141718334809566,
         "missing-head": 0.0,
         "paint-peel-off": 0.0,
         "scratch": 0.03305785123966942
       },
-      "no_defect_nothing_shown": 0.8716417910447761,
-      "no_defect_false_alarm": 0.12835820895522387,
-      "temperature": 1.0562116354922055,
-      "q_hat": 0.6529946357890529,
-      "probability_cutoff": 0.3470053642109471,
+      "no_defect_nothing_shown": 0.8776119402985074,
+      "no_defect_false_alarm": 0.12238805970149254,
+      "temperature": 1.0895623515239266,
+      "q_hat": 0.6824179529145931,
+      "probability_cutoff": 0.31758204708540694,
       "all": {
         "n": 2752,
-        "coverage": 0.8077761627906976,
-        "macro_coverage": 0.7773242961303686,
-        "family_coverage": 0.7879876650767416,
-        "mean_set_size": 1.0308866279069768,
-        "singleton_rate": 0.9691133720930233,
-        "mean_confidence": 0.8086221713532061,
+        "coverage": 0.8125,
+        "macro_coverage": 0.7815429041643217,
+        "family_coverage": 0.79122993598998,
+        "mean_set_size": 1.0472383720930232,
+        "singleton_rate": 0.9527616279069767,
+        "mean_confidence": 0.7971632224945281,
         "per_class": {
-          "corrosion": 0.6653696498054474,
-          "crack": 0.6965408805031447,
-          "dent": 0.8866253321523472,
+          "corrosion": 0.669260700389105,
+          "crack": 0.7044025157232704,
+          "dent": 0.8901682905225864,
           "missing-head": 0.9393939393939394,
           "paint-peel-off": 0.7253521126760564,
-          "scratch": 0.6115702479338843,
-          "no-defect": 0.9164179104477612
+          "scratch": 0.6198347107438017,
+          "no-defect": 0.9223880597014925
         },
         "by_set_size": [
           {
@@ -221,13 +221,13 @@
           },
           {
             "size": 1,
-            "n": 2667,
-            "correct": 2150
+            "n": 2622,
+            "correct": 2127
           },
           {
             "size": 2,
-            "n": 85,
-            "correct": 73
+            "n": 130,
+            "correct": 109
           },
           {
             "size": 3,
@@ -257,21 +257,21 @@
         ]
       },
       "accepted": {
-        "n": 2673,
-        "coverage": 0.8159371492704826,
-        "macro_coverage": 0.7797977356139688,
-        "family_coverage": 0.8101738111941559,
-        "mean_set_size": 1.0314253647586982,
-        "singleton_rate": 0.9685746352413019,
-        "mean_confidence": 0.8134982523427008,
+        "n": 2711,
+        "coverage": 0.817041682036149,
+        "macro_coverage": 0.7829177114697297,
+        "family_coverage": 0.8059008770012308,
+        "mean_set_size": 1.0472150497971229,
+        "singleton_rate": 0.9527849502028771,
+        "mean_confidence": 0.799090038384316,
         "per_class": {
-          "corrosion": 0.6443514644351465,
-          "crack": 0.7256198347107438,
-          "dent": 0.8879928315412187,
+          "corrosion": 0.6530612244897959,
+          "crack": 0.7221324717285945,
+          "dent": 0.8898756660746003,
           "missing-head": 0.9393939393939394,
-          "paint-peel-off": 0.7214285714285714,
-          "scratch": 0.6083333333333333,
-          "no-defect": 0.9314641744548287
+          "paint-peel-off": 0.723404255319149,
+          "scratch": 0.6198347107438017,
+          "no-defect": 0.9327217125382263
         },
         "by_set_size": [
           {
@@ -281,13 +281,13 @@
           },
           {
             "size": 1,
-            "n": 2589,
-            "correct": 2109
+            "n": 2583,
+            "correct": 2107
           },
           {
             "size": 2,
-            "n": 84,
-            "correct": 72
+            "n": 128,
+            "correct": 108
           },
           {
             "size": 3,
@@ -319,13 +319,13 @@
     }
   },
   "comparison": {
-    "accepted_sets_changed": 682,
+    "accepted_sets_changed": 756,
     "accepted_newly_covered": 0,
-    "accepted_newly_missed": 235,
-    "visor_actions_changed": 663,
+    "accepted_newly_missed": 251,
+    "visor_actions_changed": 711,
     "mean_minus_weighted_accepted_coverage_ci95": [
-      -0.1252322866217713,
-      -0.062020111783031
+      -0.13152274146913176,
+      -0.06531205759734071
     ]
   }
 }

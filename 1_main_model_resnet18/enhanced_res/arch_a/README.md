@@ -13,7 +13,7 @@
 `predict.py`, `trt_enhanced_res/predict_trt.py` (TensorRT) and `trt_enhanced_res/predict_onnx.py` (onnxruntime, any CPU,
 Raspberry Pi) use it by default (`--raw` gives the old top-2 output).
 
-## What it does, per crop
+## What architecture A does, per crop (legacy v2 settings)
 
 Steps 1a and 1b run in parallel, on the same crop: the quality gate needs only the pixels, the OOD gate the features
 from the model's single forward pass. Both p-values reach one decision: if both gates fire, **re-aim** wins (pointing the
@@ -50,8 +50,8 @@ full report in [`results/archB/README.md`](results/archB/README.md).
 | model | gc7, 7 classes | the good class |
 | crops it is calibrated and reported on | `d1_gc7_fix`: d1_gc7 with the 27 Oct D1 box corrections (`../../d1_grouped/label_corrections/`) | the right labels |
 | quality gate | **off** (legacy; `calibrate.py --quality` turns it back on) | it flags 22% of clean, plain panels as "blurry"; B must stay silent on clean skin |
-| OOD gate | kNN distance + AoN on gc7's features, Bonferroni, α 0.08 | AoN's positives now include the 2,868 no-defect train crops; v2's bank sent 30–44% of clean crops to re-aim, gc7's ~4% |
-| temperature | T 1.06 (gc7 val) | |
+| OOD gate | kNN distance + AoN on gc7's features, Bonferroni, combined α 0.05 (0.025 per detector) | lowered from 0.08 to prioritize low false rejection; the model, AoN and k=5 are unchanged |
+| temperature | **T 1.089562**, fitted on 4,818 validation crops / 178 families | minimize family-weighted NLL: each family has total weight 1 |
 | CP set | global family-weighted LAC, α 0.10, fitted on the cal-half crops that pass the OOD gate | only those reach the set |
 | visor | set = {no-defect} → **nothing shown**; {defect(s), no-defect} → **"POSSIBLE DENT: check"**; otherwise as in A; re-aim wins over everything | SAQR: show nothing when there is no damage |
 
@@ -60,20 +60,20 @@ full report in [`results/archB/README.md`](results/archB/README.md).
 | | B |
 |---|---:|
 | **silent miss** (a defect shown as nothing) | **0.3%** (0.1–0.6%) |
-| **visor speaks on clean D1 crops** (any message, incl. re-aim) | **26.9%** (21.4–33.1%); 760 never-trained clean crops: 27.2% |
-| CP coverage / mean set size / single answers | 90.4% / 1.48 / 71% |
-| single wrong defect class shown without warning | 6.7% |
-| inspector needed | 30.0% (A: 38.5%) |
-| **FGVC undamaged skin patches**: shown as a defect / re-aim / nothing | 16.0% / 80.1% / 3.9% (A: 24.2% shown as a defect) |
-| off-target photos the AoN never saw, shown as a defect | 3.2% (runway 10.5%) |
-| D5 (other photos): coverage / silent miss | 91.6% / 2.2% |
+| **visor speaks on clean D1 crops** (any message, incl. re-aim) | **28.1%** (22.3–34.4%); 760 never-trained clean crops: 27.6% |
+| CP coverage / mean set size / single answers | 91.0% / 1.54 / 68.8% |
+| single wrong defect class shown without warning | 6.1% |
+| inspector needed | 31.8% (A: 38.5%) |
+| **FGVC undamaged skin patches**: shown as a defect / re-aim / nothing | 23.4% / 71.9% / 4.7% (A: 24.2% shown as a defect) |
+| off-target photos the AoN never saw, shown as a defect | 6.3% (runway 22.0%) |
+| D5 (other photos): coverage / silent miss | 92.0% / 2.2% |
 
-**Choices, all made inside the cal half** ([`results/archB/choices.md`](results/archB/choices.md)):
+**Original choices, made inside the cal half; historical studies used OOD α 0.08** ([`results/archB/choices.md`](results/archB/choices.md)):
 - **Model: Ahmed's gc7**, not our retrain on the corrected boxes (gc7_fix). On val they are within noise (macro-F1
   0.704 vs 0.698, defects called no-defect 3.2% vs 3.1%); one run each
   ([`../results/gc7_fix/compare.md`](../results/gc7_fix/compare.md)). The corrections still matter for evaluation:
   on the corrected test crops gc7 scores 0.752 macro-F1 (0.747 on the old ones).
-- **OOD α 0.08.** 0.13 would stop more wallpapers and static, but the visor would speak on more clean crops.
+- **Current OOD α 0.05**, changed from 0.08 at the user's request to prioritize low FRR. CP α remains 0.10; its cutoff was refitted on the 2,065 accepted calibration crops. Test-half FRR is 1.49% (4.61% family-average). This is an operating preference, not a claim of a universally optimal threshold. Historical sweep and guard results below remain at their recorded settings.
 - **Miss guard: not adopted.** At α_miss 0.05–0.10 it never changes a decision; at 0.02 it is below what the
   calibration families can resolve and blocks every "nothing". Plain LAC gives 0.5% silent misses in the halvings.
 - **Plain-surface negatives for AoN: tried and left out** ([`results/archB/plain_negatives.md`](results/archB/plain_negatives.md)):
@@ -81,7 +81,7 @@ full report in [`results/archB/README.md`](results/archB/README.md).
 - **Quality gate stays off, also on the silent path** (decided): damaged defect crops are shown as nothing 2–5% of
   the time vs 0.9% clean.
 
-**Known limits:** clean skin from other cameras (FGVC) still looks unfamiliar: the visor speaks on 97% of those
+**Known limits:** clean skin from other cameras (FGVC) still looks unfamiliar: the visor speaks on 95.3% of those
 photos, mostly re-aim. Global LAC does not bound "defect shown as nothing" directly, and 88 calibration families
 can't certify any rate below about 1%. Defects that never become a crop are misses no layer can see.
 

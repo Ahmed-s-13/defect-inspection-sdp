@@ -139,7 +139,9 @@ What the visor shows (architecture B; details in the arch_a README):
 The set holds the true class about 90% of the time on normal crops. `--selftest` compares the 30 sample crops with the
 PyTorch model's answers (`samples_reference.json`).
 
-## 5. Results (enhanced_res gc7, 4,868 d1_gc7_fix test crops)
+## 5. Historical runtime results (enhanced_res gc7, OOD α 0.08)
+
+The deployed calibration now uses family-weighted validation temperature T = 1.089562, OOD α 0.05 and CP α 0.10: the refreshed PyTorch test-half results are 91.0% coverage, mean set size 1.54, 1.49% OOD rejection, 0.3% silent misses, and 28.1% clean-crop messages. The runtime comparisons below were measured at the former 0.08 OOD cutoff and crop-weighted temperature and have not been rerun on the target devices; they are not current visor-agreement measurements. Runtime scripts read the updated calibration JSON.
 
 The same trained model on the same crops, whole model + architecture B in every row (`benchmark.py`, full table in
 [`results/`](results/results_enhanced_res_gc7_NVIDIA_GeForce_RTX_2050.md)). Laptop: RTX 2050, i7-1260P, on AC power.
@@ -154,7 +156,7 @@ The same trained model on the same crops, whole model + architecture B in every 
 - **Same answers as PyTorch.** Across all 4,868 crops the runtimes differ from PyTorch on at most 15 crops (0.31%);
   those sit right on a threshold, where different kernels round differently. McNemar finds no significant difference.
   `--selftest` gives 30/30 on all of them, and on the Pi bundle in a fresh Python 3.11 environment.
-- **Architecture B's own numbers hold on every runtime** (its test half, 2,752 crops; expected from `calibration_gc7.json`):
+- **Historical architecture B agreement at OOD α 0.08** (its test half, 2,752 crops; expected from the calibration used in that run):
   the set holds the true class 90.3-90.4% (expected 90.4%), mean set size 1.48, a defect is shown as nothing 0.3-0.4%
   (0.3%), the visor speaks on 26.9-27.2% of clean crops (26.9%). Four of five runtimes pass all seven of `evaluate.py`'s
   tolerance checks; TensorRT FP32 is 0.0057 off (tolerance 0.005) on the share of photo families stopped by the

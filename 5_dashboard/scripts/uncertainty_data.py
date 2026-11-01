@@ -11,7 +11,6 @@ data/src/offtarget/oi/.
 """
 import html
 import json
-import shutil
 import sys
 from datetime import date
 from pathlib import Path
@@ -60,9 +59,9 @@ def main():
     entry, a = registry.entry(), registry.active()
     arch, classes = a.arch, a.classes
     nd = classes.index("no-defect")
-    for d in (OUT_D, DASH / "web/public/uncertainty"):   # uncertainty/: example crops, no longer used
-        if d.exists():
-            shutil.rmtree(d)
+    # Preserve published assets while predictions are regenerated. An interrupted
+    # export must not leave teammates or the running dashboard with missing images.
+    OUT_D.mkdir(parents=True, exist_ok=True)
 
     # ------------------------------------------------------------ the test half, as served
     split = _load_split(entry.split)

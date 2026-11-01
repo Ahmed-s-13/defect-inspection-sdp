@@ -1,0 +1,194 @@
+{
+  "scope": "OOD k only; classifier k=5 unchanged; deployment unchanged",
+  "ood_alpha": 0.05,
+  "selection": "Lowest mean family FRR on 100 seeded 44/44 family halvings of calibration; no test selection. This diagnostic tunes on calibration, so deployment would require independent recalibration.",
+  "protocol": "Controlled fit-only AoN, fixed ResNet features and bank. Each k has separately calibrated p-values. Test comparisons are exploratory; existing test data were examined in previous work. No downstream CP claims.",
+  "selected_k": 1,
+  "cal_crops": 2116,
+  "cal_families": 88,
+  "test_crops": 2752,
+  "d5_crops": 1008,
+  "nonaircraft_test_crops": 2172,
+  "rows": [
+    {
+      "k": 1,
+      "cal_family_frr_mean": 0.012241945814843986,
+      "cal_family_frr_split_p05_p95": [
+        0.0007836990595611285,
+        0.02985776016112336
+      ],
+      "d1_frr": 0.013444767441860465,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.0639963167587477,
+      "d1_rejected": 37,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 139,
+      "gate_auprc": 0.9953614434535891,
+      "deployed_aon_reference": {
+        "d1_frr": 0.013808139534883721,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.01427255985267035
+      }
+    },
+    {
+      "k": 3,
+      "cal_family_frr_mean": 0.013101861009194509,
+      "cal_family_frr_split_p05_p95": [
+        0.0005823959677915053,
+        0.03118483771366998
+      ],
+      "d1_frr": 0.014534883720930232,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.0649171270718232,
+      "d1_rejected": 40,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 141,
+      "gate_auprc": 0.9952079973808104,
+      "deployed_aon_reference": {
+        "d1_frr": 0.015261627906976744,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.014732965009208104
+      }
+    },
+    {
+      "k": 5,
+      "cal_family_frr_mean": 0.013155572049112446,
+      "cal_family_frr_split_p05_p95": [
+        0.0012109226135595306,
+        0.03041345112516511
+      ],
+      "d1_frr": 0.014171511627906976,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.06537753222836096,
+      "d1_rejected": 39,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 142,
+      "gate_auprc": 0.995154969951593,
+      "deployed_aon_reference": {
+        "d1_frr": 0.014898255813953489,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.014732965009208104
+      }
+    },
+    {
+      "k": 7,
+      "cal_family_frr_mean": 0.013075568254732382,
+      "cal_family_frr_split_p05_p95": [
+        0.0012109226135595306,
+        0.031896524585790426
+      ],
+      "d1_frr": 0.014898255813953489,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.06537753222836096,
+      "d1_rejected": 41,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 142,
+      "gate_auprc": 0.995163994229849,
+      "deployed_aon_reference": {
+        "d1_frr": 0.015625,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.01427255985267035
+      }
+    },
+    {
+      "k": 10,
+      "cal_family_frr_mean": 0.013121669132987268,
+      "cal_family_frr_split_p05_p95": [
+        0.001197860962566845,
+        0.031896524585790426
+      ],
+      "d1_frr": 0.013808139534883721,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.06583793738489871,
+      "d1_rejected": 38,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 143,
+      "gate_auprc": 0.9952096954732909,
+      "deployed_aon_reference": {
+        "d1_frr": 0.014534883720930232,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.01427255985267035
+      }
+    },
+    {
+      "k": 15,
+      "cal_family_frr_mean": 0.013344805464520007,
+      "cal_family_frr_split_p05_p95": [
+        0.001197860962566845,
+        0.03433630605505605
+      ],
+      "d1_frr": 0.01308139534883721,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.06629834254143646,
+      "d1_rejected": 36,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 144,
+      "gate_auprc": 0.9952189266250557,
+      "deployed_aon_reference": {
+        "d1_frr": 0.013808139534883721,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.01427255985267035
+      }
+    },
+    {
+      "k": 20,
+      "cal_family_frr_mean": 0.013122407584410306,
+      "cal_family_frr_split_p05_p95": [
+        0.001197860962566845,
+        0.03348184203248858
+      ],
+      "d1_frr": 0.01308139534883721,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.06537753222836096,
+      "d1_rejected": 36,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 142,
+      "gate_auprc": 0.9951920019084027,
+      "deployed_aon_reference": {
+        "d1_frr": 0.013808139534883721,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.013812154696132596
+      }
+    },
+    {
+      "k": 30,
+      "cal_family_frr_mean": 0.0129001939850932,
+      "cal_family_frr_split_p05_p95": [
+        0.0006684491978609625,
+        0.03289691211566211
+      ],
+      "d1_frr": 0.013808139534883721,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.06537753222836096,
+      "d1_rejected": 38,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 142,
+      "gate_auprc": 0.9951260847899827,
+      "deployed_aon_reference": {
+        "d1_frr": 0.014898255813953489,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.013812154696132596
+      }
+    },
+    {
+      "k": 50,
+      "cal_family_frr_mean": 0.01265545766143562,
+      "cal_family_frr_split_p05_p95": [
+        0.00033422459893048126,
+        0.03257200254765276
+      ],
+      "d1_frr": 0.014171511627906976,
+      "d5_frr": 0.002976190476190476,
+      "held_out_far": 0.0649171270718232,
+      "d1_rejected": 39,
+      "d5_rejected": 3,
+      "nonaircraft_accepted": 141,
+      "gate_auprc": 0.9948727307998394,
+      "deployed_aon_reference": {
+        "d1_frr": 0.015988372093023256,
+        "d5_frr": 0.002976190476190476,
+        "training_exposed_far": 0.013812154696132596
+      }
+    }
+  ]
+}

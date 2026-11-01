@@ -1,0 +1,80 @@
+{
+  "before_alpha": 0.08,
+  "after_alpha": 0.05,
+  "cp_alpha": 0.1,
+  "accepted_calibration_crops": 2065,
+  "before": {
+    "alpha": 0.1,
+    "accuracy": 0.793968023255814,
+    "cp_coverage": 0.9037063953488372,
+    "cp_family_coverage": 0.8954790002241141,
+    "cp_mean_set_size": 1.4818313953488371,
+    "cp_single_class": 0.7093023255813954,
+    "actions": {
+      "show class": 0.6082848837209303,
+      "ambiguous": 0.18350290697674418,
+      "unclear": 0.0,
+      "re-take": 0.0,
+      "re-aim": 0.028706395348837208,
+      "nothing shown": 0.09193313953488372,
+      "possible defect": 0.08757267441860465
+    },
+    "human_attention": 0.29978197674418605,
+    "gates_false_reject": 0.028706395348837208,
+    "gates_false_reject_family": 0.0685683082756154,
+    "single_class_wrong": 0.06722383720930232,
+    "silent_miss": 0.0033098882912701694,
+    "silent_miss_by_class": {
+      "corrosion": 0.0,
+      "crack": 0.0015723270440251573,
+      "dent": 0.006200177147918512,
+      "missing-head": 0.0,
+      "paint-peel-off": 0.0,
+      "scratch": 0.0
+    },
+    "no_defect_nothing_shown": 0.7313432835820896,
+    "no_defect_false_alarm": 0.26865671641791045
+  },
+  "after": {
+    "alpha": 0.1,
+    "accuracy": 0.793968023255814,
+    "cp_coverage": 0.9102470930232558,
+    "cp_family_coverage": 0.9059332534973146,
+    "cp_mean_set_size": 1.5399709302325582,
+    "cp_single_class": 0.6893168604651163,
+    "actions": {
+      "show class": 0.5930232558139535,
+      "ambiguous": 0.1973110465116279,
+      "unclear": 0.0,
+      "re-take": 0.0,
+      "re-aim": 0.014898255813953489,
+      "nothing shown": 0.09084302325581395,
+      "possible defect": 0.10392441860465117
+    },
+    "human_attention": 0.3161337209302325,
+    "gates_false_reject": 0.014898255813953489,
+    "gates_false_reject_family": 0.046094474680539635,
+    "single_class_wrong": 0.062136627906976744,
+    "silent_miss": 0.0033098882912701694,
+    "silent_miss_by_class": {
+      "corrosion": 0.0,
+      "crack": 0.0015723270440251573,
+      "dent": 0.006200177147918512,
+      "missing-head": 0.0,
+      "paint-peel-off": 0.0,
+      "scratch": 0.0
+    },
+    "no_defect_nothing_shown": 0.7223880597014926,
+    "no_defect_false_alarm": 0.27761194029850744
+  },
+  "before_q": {
+    "0.05": 0.9766635687800662,
+    "0.10": 0.9330497148627894,
+    "0.20": 0.7032353990351145
+  },
+  "after_q": {
+    "0.05": 0.9808216617873582,
+    "0.10": 0.9407661827967719,
+    "0.20": 0.7449497759802246
+  }
+}

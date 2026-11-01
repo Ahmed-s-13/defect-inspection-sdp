@@ -1,0 +1,163 @@
+{
+  "protocol": "Same hybrid probabilities, OOD alpha 0.05, CP alpha 0.10 and family-weighted LAC. Only the temperature fitting objective changes. Both temperatures fitted on all validation crops, using identical optimizer and bounds. Refit CP cutoff separately on the same accepted calibration crops. Test data used only for evaluation. No deployment files changed.",
+  "validation_crops": 4818,
+  "validation_families": 178,
+  "validation_family_size_min_median_max": [
+    1.0,
+    16.0,
+    233.0
+  ],
+  "accepted_calibration_crops": 2065,
+  "test_crops": 2752,
+  "accepted_test_crops": 2711,
+  "variants": {
+    "crop_weighted": {
+      "T": 1.0562116354916324,
+      "q_hat": 0.9407661827968196,
+      "probability_cutoff": 0.05923381720318044,
+      "optimizer_evaluations": 11,
+      "validation": {
+        "accuracy": 0.7729348277293483,
+        "mean_confidence": 0.775414165223027,
+        "crop_nll": 0.7782375888311184,
+        "crop_ece_15_bins": 0.04102650344300151,
+        "family_nll": 0.7937740917966623,
+        "family_ece_15_bins": 0.03776639483450279
+      },
+      "test_all": {
+        "accuracy": 0.793968023255814,
+        "mean_confidence": 0.8086221713534018,
+        "crop_nll": 0.7085363524247059,
+        "crop_ece_15_bins": 0.03985012157189455,
+        "family_nll": 0.7529503189199968,
+        "family_ece_15_bins": 0.03220939418240666
+      },
+      "test_accepted": {
+        "accuracy": 0.7985983032091479,
+        "mean_confidence": 0.8105706263574323,
+        "crop_nll": 0.7014857569175829,
+        "crop_ece_15_bins": 0.0391087233919466,
+        "family_nll": 0.7236813140282456,
+        "family_ece_15_bins": 0.034778995996882,
+        "coverage": 0.9096274437476946,
+        "family_coverage": 0.9067383081789454,
+        "macro_coverage": 0.8825432716850249,
+        "mean_set_size": 1.5215787532275913,
+        "singleton_rate": 0.6942087790483217,
+        "singleton_accuracy": 0.9048884165781084
+      },
+      "pipeline": {
+        "alpha": 0.1,
+        "accuracy": 0.793968023255814,
+        "cp_coverage": 0.9102470930232558,
+        "cp_family_coverage": 0.9059332534973146,
+        "cp_mean_set_size": 1.5399709302325582,
+        "cp_single_class": 0.6893168604651163,
+        "actions": {
+          "show class": 0.5930232558139535,
+          "ambiguous": 0.1973110465116279,
+          "unclear": 0.0,
+          "re-take": 0.0,
+          "re-aim": 0.014898255813953489,
+          "nothing shown": 0.09084302325581395,
+          "possible defect": 0.10392441860465117
+        },
+        "human_attention": 0.3161337209302325,
+        "gates_false_reject": 0.014898255813953489,
+        "gates_false_reject_family": 0.046094474680539635,
+        "single_class_wrong": 0.062136627906976744,
+        "silent_miss": 0.0033098882912701694,
+        "silent_miss_by_class": {
+          "corrosion": 0.0,
+          "crack": 0.0015723270440251573,
+          "dent": 0.006200177147918512,
+          "missing-head": 0.0,
+          "paint-peel-off": 0.0,
+          "scratch": 0.0
+        },
+        "no_defect_nothing_shown": 0.7223880597014926,
+        "no_defect_false_alarm": 0.27761194029850744
+      },
+      "unmodified_empty_sets": 0
+    },
+    "family_weighted": {
+      "T": 1.0895623515239266,
+      "q_hat": 0.9373600723333446,
+      "probability_cutoff": 0.06263992766665538,
+      "optimizer_evaluations": 11,
+      "validation": {
+        "accuracy": 0.7729348277293483,
+        "mean_confidence": 0.7638647646074027,
+        "crop_nll": 0.7788357559854668,
+        "crop_ece_15_bins": 0.0391745054210325,
+        "family_nll": 0.7931808065832109,
+        "family_ece_15_bins": 0.04647096452145526
+      },
+      "test_all": {
+        "accuracy": 0.793968023255814,
+        "mean_confidence": 0.7971632224945281,
+        "crop_nll": 0.7089742815232501,
+        "crop_ece_15_bins": 0.040036731161153236,
+        "family_nll": 0.7524557613040628,
+        "family_ece_15_bins": 0.026740122724970002
+      },
+      "test_accepted": {
+        "accuracy": 0.7985983032091479,
+        "mean_confidence": 0.799090038384316,
+        "crop_nll": 0.7020145184189814,
+        "crop_ece_15_bins": 0.041778064816184374,
+        "family_nll": 0.7236032367325764,
+        "family_ece_15_bins": 0.0292542811490622,
+        "coverage": 0.9096274437476946,
+        "family_coverage": 0.9071737550849805,
+        "macro_coverage": 0.8825432716850249,
+        "mean_set_size": 1.5182589450387312,
+        "singleton_rate": 0.6927333087421615,
+        "singleton_accuracy": 0.9057507987220448
+      },
+      "pipeline": {
+        "alpha": 0.1,
+        "accuracy": 0.793968023255814,
+        "cp_coverage": 0.9102470930232558,
+        "cp_family_coverage": 0.9063586901296476,
+        "cp_mean_set_size": 1.5363372093023255,
+        "cp_single_class": 0.6878633720930233,
+        "actions": {
+          "show class": 0.5919331395348837,
+          "ambiguous": 0.19912790697674418,
+          "unclear": 0.0,
+          "re-take": 0.0,
+          "re-aim": 0.014898255813953489,
+          "nothing shown": 0.09047965116279069,
+          "possible defect": 0.10356104651162791
+        },
+        "human_attention": 0.31758720930232553,
+        "gates_false_reject": 0.014898255813953489,
+        "gates_false_reject_family": 0.046094474680539635,
+        "single_class_wrong": 0.06140988372093023,
+        "silent_miss": 0.0033098882912701694,
+        "silent_miss_by_class": {
+          "corrosion": 0.0,
+          "crack": 0.0015723270440251573,
+          "dent": 0.006200177147918512,
+          "missing-head": 0.0,
+          "paint-peel-off": 0.0,
+          "scratch": 0.0
+        },
+        "no_defect_nothing_shown": 0.7194029850746269,
+        "no_defect_false_alarm": 0.28059701492537314
+      },
+      "unmodified_empty_sets": 0
+    }
+  },
+  "paired": {
+    "accepted_sets_changed": 17,
+    "accepted_newly_covered": 1,
+    "accepted_newly_missed": 1,
+    "visor_actions_changed": 6,
+    "family_minus_crop_coverage_difference_ci95": [
+      -0.0011140510616147684,
+      0.0011265595847934785
+    ]
+  }
+}

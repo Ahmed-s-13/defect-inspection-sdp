@@ -5,15 +5,15 @@ import { className, pct } from "../../lib/format";
 import { ABOUT, PIPE, type Outcome } from "../PipelineScene";
 
 /** The aircraft-or-not check as a picture: every point is a crop, placed by its AoN score (across) and the features'
- *  main other direction (down, for spread only). Aircraft-skin training crops sit left of the boundary, the off-target
+ *  main other direction (down, for spread only). Aircraft-skin training crops sit left of the boundary, the non-aircraft
  *  photos right. Groups can be switched off; hovering names a point; the five pipeline crops are shown as pictures. */
 export interface AonData {
   skin: [number, number, number][]; off: [number, number, number, number][]; categories: string[]; classes: string[];
   stop_logit: number; pipeline: { outcome: string; image: string; xy: [number, number] }[];
 }
 type Group = "skin" | "fit" | "held";
-const GROUPS: [Group, string][] = [["skin", "Aircraft skin: the model's training crops"], ["fit", "Off-target, training categories (people, faces, tools, vehicles, factories)"],
-  ["held", "Off-target, test categories, left out for testing (helmets, hands, gloves, hangars, runways)"]];
+const GROUPS: [Group, string][] = [["skin", "Aircraft skin: the model's training crops"], ["fit", "Non-aircraft, training categories (people, faces, tools, vehicles, factories)"],
+  ["held", "Non-aircraft, test categories, left out for testing (helmets, hands, gloves, hangars, runways)"]];
 const W = 760, H = 420, PAD = 28;
 const OUT_WORDS: Record<string, string> = { show: "Defect detected", ambiguous: "Ambiguous", possible: "Possible: check", nothing: "Nothing shown", reaim: "Re-aim" };
 /** Each dot flies in from a distance as the chart reveals (and back out when it hides): from a point pushed away from
@@ -60,7 +60,7 @@ export function AonExplorer({ d, shown }: { d: AonData; shown: boolean }) {
           <button key={g} type="button" className={`aon-toggle aon-${g}`} aria-pressed={on[g]} onClick={() => setOn({ ...on, [g]: !on[g] })}><i aria-hidden="true" />{label}</button>
         ))}
       </div>
-      <svg ref={svg} className="chart aon-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Scatter of aircraft-skin and off-target crops along the aircraft-or-not score"
+      <svg ref={svg} className="chart aon-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Scatter of aircraft-skin and non-aircraft crops along the aircraft-or-not score"
         onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
         {(["skin", "fit", "held"] as Group[]).map((g) => (
           <g key={g} className={`aon-pts aon-${g}`} style={{ opacity: shown && on[g] ? 1 : 0, transition: `opacity .6s ${shown ? delay(g) : 0}s` } as React.CSSProperties}>
@@ -107,7 +107,7 @@ function Zoom({ outcome, onClose }: { outcome: Outcome; onClose(): void }) {
         <img src={c.image} alt={ABOUT[outcome]} />
         <figcaption>
           <strong>{off ? "A glove: not aircraft skin" : `A test crop: ${ABOUT[outcome]}`}</strong>
-          <span>{off ? <>An Open Images photo from the team's off-target set, cut to the model's 224 px square{c.credit ? <> (photo: {c.credit.author}, {c.credit.license})</> : null}.</>
+          <span>{off ? <>An Open Images photo from the team's non-aircraft set, cut to the model's 224 px square{c.credit ? <> (photo: {c.credit.author}, {c.credit.license})</> : null}.</>
             : <>A 224 px square from the test photos, never trained or calibrated on. True class: {className(c.truth).toLowerCase()}.</>}</span>
           <span>Aircraft-or-not: {pct(c.aon_score, 1)} "not aircraft", p = {c.p_aon.toFixed(3)}; with the kNN distance, combined p = {c.p_ood.toFixed(3)} (stops at {PIPE.served.ood} or below).</span>
           <span>Architecture B shows: <b>{answer}</b></span>

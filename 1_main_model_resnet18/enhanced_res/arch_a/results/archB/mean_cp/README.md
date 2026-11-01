@@ -2,32 +2,32 @@
 
 Same gc7 model, deployed temperature, OOD gate, alpha 0.10, and top-class fallback. Baseline: weighted quantile of individual scores, each family total weight 1. Alternative: arithmetic mean of accepted true-label scores within each family, then the ceil((G+1)*0.90)-th sorted family mean. Apply each resulting threshold to individual test crops. Calibration only fits thresholds; test half is report-only. Mean-score calibration is an experimental heuristic for crop-level prediction, not a demonstrated crop-level coverage guarantee.
 
-Calibration: 2116 crops (2014 accepted), 88 families. Evaluation: 2752 crops (2673 accepted), 87 families.
+Calibration: 2116 crops (2065 accepted), 88 families. Evaluation: 2752 crops (2711 accepted), 87 families.
 
 | Metric | Family-weighted | Family mean |
 |---|---:|---:|
-| Probability cutoff | 6.6950% | 34.7005% |
-| Silent defect miss | 0.3310% | 2.3997% |
-| Clean crop false alarm | 26.8657% | 12.8358% |
-| Human referral | 29.9782% | 5.9230% |
-| Accepted: coverage | 0.903853 | 0.815937 |
-| Accepted: macro_coverage | 0.875463 | 0.779798 |
-| Accepted: family_coverage | 0.895998 | 0.810174 |
-| Accepted: mean_set_size | 1.444444 | 1.031425 |
-| Accepted: singleton_rate | 0.720913 | 0.968575 |
-| Accepted: mean_confidence | 0.813498 | 0.813498 |
+| Probability cutoff | 6.2640% | 31.7582% |
+| Silent defect miss | 0.3310% | 2.4824% |
+| Clean crop false alarm | 28.0597% | 12.2388% |
+| Human referral | 31.7587% | 6.1410% |
+| Accepted: coverage | 0.909627 | 0.817042 |
+| Accepted: macro_coverage | 0.882543 | 0.782918 |
+| Accepted: family_coverage | 0.907174 | 0.805901 |
+| Accepted: mean_set_size | 1.518259 | 1.047215 |
+| Accepted: singleton_rate | 0.692733 | 0.952785 |
+| Accepted: mean_confidence | 0.799090 | 0.799090 |
 
 Paired comparison:
 
 ```json
 {
-  "accepted_sets_changed": 682,
+  "accepted_sets_changed": 756,
   "accepted_newly_covered": 0,
-  "accepted_newly_missed": 235,
-  "visor_actions_changed": 663,
+  "accepted_newly_missed": 251,
+  "visor_actions_changed": 711,
   "mean_minus_weighted_accepted_coverage_ci95": [
-    -0.1252322866217713,
-    -0.062020111783031
+    -0.13152274146913176,
+    -0.06531205759734071
   ]
 }
 ```

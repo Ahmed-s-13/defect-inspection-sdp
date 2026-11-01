@@ -33,11 +33,14 @@ function Row({ d, i, open, onToggle, shown, nonAircraft }: { d: Ds; i: number; o
         <th scope="row"><button type="button" className="ds-toggle" aria-expanded={open} onClick={onToggle}><span className="ds-caret" aria-hidden="true">{open ? "−" : "+"}</span>{d.name}</button></th>
         <td className="fig">{d.size}</td>
         <td>{d.used}</td>
+        {nonAircraft && <td className="fig">{d.fit !== undefined && d.test !== undefined
+          ? <>{d.fit.toLocaleString("en-US")} train / {d.test.toLocaleString("en-US")} test</>
+          : <>0 train / {d.outcome_n?.toLocaleString("en-US") ?? "all"} test</>}</td>}
         {nonAircraft && <td className="ds-out">{d.outcome && Object.keys(d.outcome).length ? <><span className="fig">{pct(d.outcome["re-aim"] ?? 0, 1)}</span> re-aimed</> : "see below"}</td>}
       </motion.tr>
       {open && (
         <tr className="ds-detail">
-          <td colSpan={nonAircraft ? 4 : 3}>
+          <td colSpan={nonAircraft ? 5 : 3}>
             <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease }}>
               {d.detail && <p className="ds-note">{d.detail}.</p>}
               {nonAircraft && <p className="ds-note">{d.categories ? <>{d.categories} categories: {d.fit?.toLocaleString("en-US")} crops in training categories, {d.test?.toLocaleString("en-US")} in test categories (left out when we tested the check on kinds of photo it had not seen). </> : null}Licence: {d.licence}. {outcomeLine(d.outcome, d.outcome_n)}</p>}
@@ -66,7 +69,7 @@ function Table({ rows, nonAircraft, caption }: { rows: Ds[]; nonAircraft: boolea
     <div className="ds-wrap" ref={rv.ref} data-shown={rv.shown}>
       <table className="ds-table">
         <caption className="sr-only">{caption}</caption>
-        <thead><tr><th scope="col">Dataset</th><th scope="col">Size</th><th scope="col">Where we used it</th>{nonAircraft && <th scope="col">B's answer</th>}</tr></thead>
+        <thead><tr><th scope="col">Dataset</th><th scope="col">Size</th><th scope="col">Where we used it</th>{nonAircraft && <><th scope="col">Train / test crops</th><th scope="col">B's answer</th></>}</tr></thead>
         <tbody>
           {rows.map((d, i) => <Row key={d.id} d={d} i={i} open={open === d.id} onToggle={() => setOpen(open === d.id ? null : d.id)} shown={rv.shown} nonAircraft={nonAircraft} />)}
         </tbody>
@@ -87,8 +90,9 @@ export function DatasetSection({ first, dimAt }: { first: number; dimAt(...steps
       </section>
       <section className="ds-sec present-dim" data-step={first + 1} data-dim={dimAt(first + 1)}>
         <RuleDraw />
+        <p className="how-sub">For Open Images and Places365, we take the largest square centred in each photo as a centre crop. Open Images also provides labelled object boxes, which let us crop around objects such as helmets, hands and tools with surrounding context. Crops are resized to 224 × 224 pixels.</p>
         <h3 className="data-h2">Not aircraft: what the aircraft-or-not check learned from</h3>
-        <p className="how-sub">The unfamiliar-input check was trained on Open Images and Places365 photos and tested on categories left out for testing. The other sets only test it.</p>
+        <p className="how-sub">The train / test column shows the category splits used in our experiments. The controlled AoN comparison trains on 2,566 Open Images and Places365 crops and tests on 2,170 crops from different categories, plus two crops of your helmet photo (2,172 test crops total). The deployed AoN learns from both Open Images and Places365 splits, 4,736 crops in total, so those test categories are not held out from the deployed model. DTD and plain surfaces were tried separately and excluded from deployment.</p>
         <Table rows={DATA.nonaircraft} nonAircraft caption="Non-aircraft datasets" />
       </section>
     </>

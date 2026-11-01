@@ -1,5 +1,7 @@
 # Architecture B: choices made inside the cal half (test half not used)
 
+> Historical experiment: measured before the OOD change, using OOD α 0.08 where applicable (the threshold sweep lists its own values). Current B uses OOD α 0.05 and CP α 0.10. These recorded numbers are not current-deployment results; see the regenerated [Architecture B report](README.md).
+
 Model gc7, crops d1_gc7_fix, quality gate off. 200 random halvings of the 88 cal-half families (fit on 44, measure on the other 44); mean (5th–95th percentile).
 
 ## 1. OOD α
