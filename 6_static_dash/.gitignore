@@ -1,0 +1,5 @@
+# build output and installed packages; static-data/ is kept, so the site builds without running the server
+web/node_modules/
+web/dist/
+web/*.tsbuildinfo
+scripts/candidates/

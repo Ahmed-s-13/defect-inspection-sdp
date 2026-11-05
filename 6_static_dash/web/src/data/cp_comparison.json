@@ -1,0 +1,25 @@
+{
+  "source": "1_main_model_resnet18/enhanced_res/arch_a/results/archB/equal_crop_cp/results.json",
+  "alpha": 0.1,
+  "calibration_crops": 2065,
+  "test_crops": 2711,
+  "test_families": 87,
+  "variants": {
+    "family_weighted": {
+      "probability_cutoff": 0.06263992766665538,
+      "coverage": 0.9096274437476946,
+      "macro_coverage": 0.8825432716850249,
+      "family_coverage": 0.9071737550849803,
+      "mean_set_size": 1.5182589450387312,
+      "singleton_rate": 0.6927333087421615
+    },
+    "equal_crop": {
+      "probability_cutoff": 0.10769648986234037,
+      "coverage": 0.882700110660273,
+      "macro_coverage": 0.8503319577513894,
+      "family_coverage": 0.8749884712008054,
+      "mean_set_size": 1.3098487642936185,
+      "singleton_rate": 0.7709332349686463
+    }
+  }
+}

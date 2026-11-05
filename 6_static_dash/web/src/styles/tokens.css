@@ -1,0 +1,61 @@
+:root {
+  --ground: #F2F1EE; /* warm neutral; one step from the contract's #F3F2EE, which the taste inspector reads as cream */
+  --sheet: #FAFAF9;
+  --ink: #16181B;
+  --ink-2: #464A51;
+  --ink-3: #64686F;
+  --rule: #DEDCD5;
+  --rule-strong: #C8C5BC;
+  --bar: #BDB9AF;
+
+  --well: #6B6E72;
+  --well-ink: #F2F1EE;
+
+  --detected: #A4262C;
+  --detected-tint: #F5E3E2;
+  --clear: #2F7A4C;
+  --clear-tint: #E2EFE6;
+  --verify: #C99A06;
+  --verify-ink: #6B5000;
+  --verify-tint: #FAF0D0;
+  --unfamiliar: #5B6573;
+  --unfamiliar-tint: #E5E8EC;
+  --unrated: #64686F;
+  --fault: #A4262C;
+
+  --control: #0E7C86;
+  --control-ink: #0A5960;
+  --control-tint: #DCEFF0;
+
+  --font-ui: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  --font-fig: "B612", "Atkinson Hyperlegible Next", sans-serif;
+
+  --t-display: 56px;
+  --t-figure: 34px;
+  --t-h1: 24px;
+  --t-h2: 18px;
+  --t-body: 16px;
+  --t-small: 14px;
+  --t-micro: 12px;
+
+  --gap: 24px;
+  --pad: 32px;
+  --radius: 6px;
+  --topbar: 56px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+:root[data-present="on"] {
+  --t-display: 88px;
+  --t-figure: 48px;
+  --t-h1: 32px;
+  --t-h2: 24px;
+  --t-body: 20px;
+  --t-small: 17px;
+  --t-micro: 15px;
+  --gap: 32px;
+}
+
+@media (max-width: 720px) {
+  :root { --pad: 16px; --gap: 16px; --t-display: 40px; --t-figure: 28px; }
+}

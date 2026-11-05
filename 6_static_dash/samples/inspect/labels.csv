@@ -1,0 +1,8 @@
+file,cls,source_crop,group
+crack.jpg,crack,/Users/ahmed/University/Senior Design Project/Project Code/1_main_model_resnet18/data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_010570__0.jpg,467
+corrosion.jpg,corrosion,/Users/ahmed/University/Senior Design Project/Project Code/1_main_model_resnet18/data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_008376__0.jpg,581
+dent.jpg,dent,/Users/ahmed/University/Senior Design Project/Project Code/1_main_model_resnet18/data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_009007__1.jpg,52
+missing-head.jpg,missing-head,/Users/ahmed/University/Senior Design Project/Project Code/1_main_model_resnet18/data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_010457__0.jpg,221
+paint-peel-off.jpg,paint-peel-off,/Users/ahmed/University/Senior Design Project/Project Code/1_main_model_resnet18/data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_010229__0.jpg,195
+scratch.jpg,scratch,/Users/ahmed/University/Senior Design Project/Project Code/1_main_model_resnet18/data/work/crops/D1/content__Aircraft_dataset__images__train__aircraft_010207__0.jpg,426
+no-defect.jpg,no-defect,/Users/ahmed/University/Senior Design Project/Project Code/1_main_model_resnet18/data/work/crops/no_defect/healed/test/train__aircraft_000927__2.jpg,282

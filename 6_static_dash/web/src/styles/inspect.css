@@ -1,0 +1,148 @@
+.inspect { display: grid; grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr); gap: var(--gap); align-items: start; }
+.banner-fault { grid-column: 1 / -1; display: flex; gap: 10px; align-items: flex-start; margin: 0; padding: 12px 16px; background: var(--detected-tint); color: var(--ink); border-radius: var(--radius); }
+.banner-fault .glyph { margin-top: 3px; flex: none; }
+
+.well {
+  position: relative; overflow: hidden; height: calc(100vh - var(--topbar) - var(--gap) * 2 - 52px); min-height: 400px;
+  background: var(--well); border-radius: var(--radius); outline: 2px dashed transparent; outline-offset: -10px;
+  transition: outline-color .15s var(--ease);
+}
+.well.is-over { outline-color: var(--well-ink); }
+.well-image { position: absolute; object-fit: contain; user-select: none; -webkit-user-drag: none; image-orientation: from-image; }
+.well-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 0 12%; color: var(--well-ink); }
+.well-empty-title { margin: 0; font-size: var(--t-figure); font-weight: 700; line-height: 1.1; letter-spacing: -.01em; text-wrap: balance; }
+.well-empty-sub { margin: 12px 0 24px; max-width: 46ch; color: color-mix(in srgb, var(--well-ink) 88%, transparent); }
+.well-primary {
+  height: 40px; padding: 0 18px; border: 0; border-radius: var(--radius); background: var(--ground); color: var(--ink); font-weight: 700; cursor: pointer;
+  transition: transform .1s var(--ease), background-color .15s var(--ease);
+}
+.well-primary:hover { background: #fff; }
+.well-primary:active { transform: scale(.97); }
+.well-samples { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+.sample-chip {
+  display: grid; grid-template-columns: 40px auto; align-items: center; gap: 10px; padding: 4px 12px 4px 4px;
+  border: 1px solid color-mix(in srgb, var(--well-ink) 35%, transparent); border-radius: var(--radius); background: rgba(22, 24, 27, .25); color: var(--well-ink); cursor: pointer;
+  transition: border-color .15s var(--ease), transform .1s var(--ease);
+}
+.sample-chip:hover { border-color: var(--well-ink); }
+.sample-chip:active { transform: scale(.97); }
+.sample-chip img { width: 40px; height: 40px; object-fit: cover; border-radius: 3px; }
+
+.reticle { /* taste-skill-ignore: 1px dark ring keeps the light reticle visible on pale photos; an outline, not elevation */ position: absolute; left: 0; top: 0; --tone: var(--well-ink); --tone-ink: var(--ink); border: 2px solid var(--tone); cursor: move; touch-action: none; box-shadow: 0 0 0 1px rgba(22, 24, 27, .45); }
+.reticle[class*="tone-"] { transition: border-color .2s var(--ease); }
+.reticle[class*="tone-"] .reticle-label { transition: background-color .2s var(--ease), color .2s var(--ease); } /* fade in with the verdict, clear at once on a new run */
+.reticle:focus-visible { outline: 2px solid var(--control); outline-offset: 3px; }
+.reticle-label { position: absolute; left: 24px; top: 0; padding: 2px 8px; background: var(--tone); color: var(--tone-ink); font-size: var(--t-micro); white-space: nowrap; border-radius: 0 0 3px 3px; pointer-events: none; }
+.reticle.tone-detected { --tone: var(--detected); --tone-ink: #fff; }
+.reticle.tone-clear { --tone: var(--clear); --tone-ink: #fff; }
+.reticle.tone-ambiguous, .reticle.tone-unclear { --tone: var(--verify); --tone-ink: var(--ink); }
+.reticle.tone-cannot_assess, .reticle.tone-retake { --tone: var(--unfamiliar); --tone-ink: #fff; }
+.bracket { position: absolute; width: 30px; height: 30px; }
+.bracket::before { content: ""; position: absolute; width: 18px; height: 18px; border: 0 solid var(--tone); }
+.reticle[class*="tone-"] .bracket::before { transition: border-color .2s var(--ease); }
+.bracket-nw { left: -2px; top: -2px; cursor: nwse-resize; } .bracket-nw::before { left: 0; top: 0; border-width: 4px 0 0 4px; }
+.bracket-ne { right: -2px; top: -2px; cursor: nesw-resize; } .bracket-ne::before { right: 0; top: 0; border-width: 4px 4px 0 0; }
+.bracket-sw { left: -2px; bottom: -2px; cursor: nesw-resize; } .bracket-sw::before { left: 0; bottom: 0; border-width: 0 0 4px 4px; }
+.bracket-se { right: -2px; bottom: -2px; cursor: nwse-resize; } .bracket-se::before { right: 0; bottom: 0; border-width: 0 4px 4px 0; }
+.well-close {
+  position: absolute; top: 10px; right: 10px; z-index: 3; display: grid; place-items: center; width: 32px; height: 32px;
+  padding: 0; border: 0; background: none; color: var(--well-ink); cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity .18s var(--ease), transform .1s var(--ease);
+}
+.well:hover .well-close, .well-close:focus-visible { opacity: 1; pointer-events: auto; }
+.well-close:hover { color: #fff; }
+.well-close:active { transform: scale(.9); }
+.well-close svg { width: 18px; height: 18px; overflow: visible; }
+.well-close path { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.well-close .x-under { stroke: rgba(22, 24, 27, .55); stroke-width: 4.4; } /* keeps the x readable on pale photos */
+@media (hover: none) { .well-close { opacity: 1; pointer-events: auto; } }
+.fan-layer { position: absolute; inset: 0; pointer-events: none; }
+.fan-view { position: absolute; border-radius: 3px; overflow: hidden; outline: 2px solid var(--well-ink); }
+.fan-view img { width: 100%; height: 100%; object-fit: cover; }
+.well-layer { position: absolute; inset: 0; }
+.well-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.well-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-height: 42px; font-size: var(--t-small); }
+.well-back {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 8px; margin-right: 4px;
+  border: 1px solid var(--control); border-radius: var(--radius); background: var(--control-tint); color: var(--control-ink);
+  font-weight: 700; font-size: var(--t-small); cursor: pointer;
+  animation: view-enter .4s var(--ease) both;
+  transition: background-color .15s var(--ease), transform .1s var(--ease);
+}
+.well-back:hover { background: color-mix(in srgb, var(--control-tint) 70%, var(--control) 30%); }
+.well-back:active { transform: translateX(-2px) scale(.98); }
+.well-back svg { width: 14px; height: 14px; }
+.well-back path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.well-file { font-weight: 700; min-width: 0; max-width: 32ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.well-dims { color: var(--ink-3); }
+.well-actions { display: flex; gap: 8px; margin-left: auto; }
+.touch-only { display: none; }
+@media (hover: none) and (pointer: coarse) { .hover-only { display: none; } .touch-only { display: inline; } }
+
+.readout { display: flex; flex-direction: column; gap: 20px; }
+.readout-stack { display: flex; flex-direction: column; gap: 20px; }
+.readout-title { margin: 0; font-size: var(--t-h2); }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.legend li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; }
+.legend .glyph { margin-top: 3px; }
+.state { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: var(--t-small); }
+.state-detected { color: var(--detected); }
+.state-clear { color: var(--clear); }
+.state-ambiguous, .state-unclear { color: var(--verify-ink); }
+.state-cannot_assess, .state-retake { color: var(--unfamiliar); }
+.state-unrated { color: var(--unrated); }
+.state-system_fault { color: var(--fault); }
+.verdict-block { padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
+.verdict { margin: 0; display: grid; gap: 6px; font-family: var(--font-fig); font-weight: 700; }
+.verdict-state { display: inline-flex; align-items: center; gap: 10px; font-size: var(--t-figure); line-height: 1.05; letter-spacing: -.01em; }
+.verdict-state .glyph { flex: none; }
+.verdict-class { font-size: var(--t-display); line-height: 1; letter-spacing: -.02em; color: var(--ink); }
+.verdict-class.is-set { font-size: var(--t-figure); line-height: 1.1; text-wrap: balance; } /* an ambiguous set can name four classes */
+.verdict-detected .verdict-state { color: var(--detected); }
+.verdict-clear .verdict-state { color: var(--clear); }
+.verdict-ambiguous .verdict-state, .verdict-unclear .verdict-state { color: var(--verify-ink); }
+.verdict-cannot_assess .verdict-state, .verdict-retake .verdict-state { color: var(--unfamiliar); }
+.verdict-pct { font-weight: 400; color: var(--ink-2); }
+.verdict-unrated .verdict-state { color: var(--unrated); }
+.verdict-system_fault .verdict-state { color: var(--fault); }
+.verdict-sub { margin: 8px 0 0; color: var(--ink-2); }
+.verdict-wait { margin: 0; color: var(--ink-3); font-size: var(--t-h2); }
+.reliability { margin: 14px 0 0; color: var(--ink-2); font-size: var(--t-small); max-width: 52ch; }
+.fault-text { margin: 8px 0 0; }
+.bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.bar-row { display: grid; grid-template-columns: 9.5em 1fr 4.2em; align-items: center; gap: 12px; color: var(--ink-3); font-size: var(--t-small); }
+.bar-row.is-in { color: var(--ink); font-weight: 700; }
+.bar-track { position: relative; height: 10px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+/* the conformal set's cut-off: classes past it are in the answer */
+.bar-cut { position: absolute; top: -2px; bottom: -2px; left: calc(var(--cut) * 100%); width: 2px; background: var(--ink); }
+.bars-key { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; color: var(--ink-3); font-size: var(--t-micro); }
+.bar-cut-key { display: inline-block; width: 2px; height: 12px; background: var(--ink); }
+.bars-wrap.is-gated .bars { opacity: .45; }
+.bars-note { margin: 0 0 8px; color: var(--ink-3); font-size: var(--t-micro); }
+.legend-note { margin: 0; color: var(--ink-2); font-size: var(--t-small); }
+.bar-fill { display: block; height: 100%; background: var(--bar); transform-origin: left center; }
+.fill-detected { background: var(--detected); }
+.fill-clear { background: var(--clear); }
+.fill-ambiguous, .fill-unclear { background: var(--verify); }
+.fill-unrated { background: var(--ink-3); }
+.bar-figure { text-align: right; }
+.views { margin: 0; }
+.views-stage { position: relative; height: 64px; }
+.view { position: absolute; top: 4px; width: 11%; aspect-ratio: 1; margin-left: -5.5%; }
+.view img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+.views figcaption { margin-top: 8px; color: var(--ink-3); font-size: var(--t-micro); }
+.facts { margin: 0; display: grid; gap: 10px; font-size: var(--t-small); }
+.facts div { display: grid; grid-template-columns: 11em 1fr; gap: 12px; align-items: baseline; }
+.facts dt { color: var(--ink-3); }
+.facts dd { margin: 0; }
+.facts small { color: var(--ink-3); }
+.truth { height: 32px; padding: 0 8px; border: 1px solid var(--rule-strong); border-radius: var(--radius); background: var(--sheet); cursor: pointer; }
+.caveat { margin: 0; padding: 12px 14px; background: var(--unfamiliar-tint); color: var(--ink-2); font-size: var(--t-small); border-radius: var(--radius); }
+
+@media (max-width: 960px) {
+  .inspect { grid-template-columns: minmax(0, 1fr); }
+  .well { height: min(85vw, 520px); min-height: 300px; }
+  .well-actions { margin-left: 0; }
+  .well.is-empty { height: auto; }
+  .well.is-empty .well-empty { position: relative; inset: auto; padding: 32px 24px; }
+}

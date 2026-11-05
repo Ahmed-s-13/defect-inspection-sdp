@@ -1,0 +1,39 @@
+/* The Model page's title run: the stage sticks under the top bar while the sketch un-draws. */
+.title-run { position: relative; height: 175vh; margin: calc(-1 * var(--gap)) calc(-1 * var(--pad)) 0; }
+.title-stage {
+  position: sticky; top: var(--topbar); height: calc(100vh - var(--topbar)); overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; gap: 24px; padding: 0 5vw;
+}
+.title-stage .contours { position: absolute; inset: -10%; width: 120%; height: 120%; pointer-events: none; }
+.title-stage .contours path { fill: none; stroke: var(--rule); stroke-width: 1; }
+.title-stage .sketch { position: relative; width: 100%; height: auto; max-height: 82vh; overflow: visible; }
+.sketch .ink   { fill: none; stroke: var(--ink); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+.sketch .ghost { fill: none; stroke: var(--ink); stroke-width: 1; stroke-linecap: round; opacity: .38; }
+.sketch .hatch { fill: none; stroke: var(--ink); stroke-width: 1.1; stroke-linecap: round; opacity: .7; }
+.sketch .lens  { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.sketch .mark  { fill: none; stroke: var(--detected); stroke-width: 2.2; stroke-linecap: round; }
+.title-type { position: relative; will-change: transform, opacity; }
+.saqr { margin: 0; font: 700 clamp(64px, 9.4vw, 168px)/.9 var(--font-fig); letter-spacing: -.05em; white-space: nowrap; }
+.sdp { margin: .35em 0 0 .06em; font: 700 clamp(26px, 3.3vw, 58px)/1 var(--font-fig); letter-spacing: .02em; color: var(--ink-2); white-space: nowrap; }
+/* the SAQR logo in the top right, shown as it is; its mask draws it in along its outlines */
+.saqr-logo { position: absolute; top: 5%; right: 5vw; width: clamp(130px, 12vw, 210px); height: auto; overflow: visible; pointer-events: none; }
+
+@media (max-width: 860px) {
+  .title-run { height: 150vh; }
+  .title-stage { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 8px; }
+  .title-stage .sketch { max-height: 50vh; }
+  .saqr { font-size: clamp(54px, 16vw, 120px); }
+  .sdp { font-size: clamp(22px, 6vw, 40px); }
+  .saqr-logo { top: 3%; width: clamp(90px, 24vw, 130px); }
+}
+
+/* static dash, phones and small windows: the sketch, the title and the logo scale with the smaller of the screen's
+   width and height and stop at a sensible size, so they stay in proportion between 320 and 860px */
+@media (max-width: 860px) {
+  .title-stage { justify-items: center; padding: 0 max(16px, 5vw); }
+  .title-stage .sketch { width: min(100%, 440px, 52svh); max-height: 40svh; }
+  .title-type { justify-self: stretch; max-width: 440px; width: 100%; margin: 0 auto; }
+  .saqr { font-size: clamp(46px, min(14vw, 8svh), 84px); }
+  .sdp { font-size: clamp(19px, min(5.2vw, 3svh), 30px); }
+  .saqr-logo { top: 3%; right: max(16px, 5vw); width: clamp(64px, min(17vw, 11svh), 104px); }
+}
