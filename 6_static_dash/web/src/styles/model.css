@@ -252,3 +252,8 @@
 .nd-dial tbody th { color: var(--ink-2); }
 @media (max-width: 900px) { .nd-grid { grid-template-columns: minmax(0, 1fr); } .nd-sub { min-height: 0; } }
 .ladder li.is-seven { padding-top: 8px; border-top: 1px dashed var(--rule-strong); } /* taste-skill-ignore: marks the row scored over 7 classes */
+
+/* static dash: the rule drawn by a scroll-driven animation (RuleDraw): 0 with its top at 95% of the screen, full at 55% */
+@keyframes rule-draw-in { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.rule-draw.is-scroll-driven { animation: rule-draw-in linear both; animation-timeline: view(); animation-range: cover 5% cover 45%; }
+@media (prefers-reduced-motion: reduce) { .rule-draw.is-scroll-driven { animation: none; } }

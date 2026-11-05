@@ -9,6 +9,7 @@ import { layoutScene, type SceneCard, type SceneLayout, type Split } from "../li
 import { useReveal } from "../lib/useReveal";
 import { usePresent } from "../state/present";
 import "../styles/data.css";
+import { watchNear } from "../lib/near";
 
 const IMG = "data-grouping/";
 const vars = (v: Record<string, string | number>) => v as React.CSSProperties;
@@ -169,14 +170,16 @@ function GroupingScene({ dim }: { dim: boolean }) {
       const ph = p < 0.32 ? 0 : p < 0.7 ? 1 : 2;
       if (ph !== lastPhase) { lastPhase = ph; setPhase(ph); }
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(frame); };
+    // static dash: nothing to do while the scene is far off screen; one last frame as it leaves
+    const near = watchNear(runEl, () => { if (!raf) raf = requestAnimationFrame(frame); });
+    const onScroll = () => { if (near.near && !raf) raf = requestAnimationFrame(frame); };
     const onResize = () => { L = null; onScroll(); };
     remeasure.current = onResize;
     frame();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     void document.fonts?.ready.then(onResize); // caption height depends on the loaded fonts
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onResize); };
+    return () => { near.stop(); cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onResize); };
   }, []);
 
   const edges = GROUPS.flatMap((gid) => CARDS.filter((c) => c.gid === gid).slice(1));
@@ -373,11 +376,13 @@ function CropScene({ dim }: { dim: boolean }) {
       const ph = p < 0.27 ? 0 : p < 0.52 ? 1 : p < 0.8 ? 2 : 3;
       if (ph !== lastPhase) { lastPhase = ph; setPhase(ph); }
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(frame); };
+    // static dash: nothing to do while the scene is far off screen; one last frame as it leaves
+    const near = watchNear(runEl, () => { if (!raf) raf = requestAnimationFrame(frame); });
+    const onScroll = () => { if (near.near && !raf) raf = requestAnimationFrame(frame); };
     frame();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    return () => { near.stop(); cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, []);
 
   const hole = `M0 0H${crop.w}V${crop.h}H0Z M${cl} ${ct}v${cs}h${cs}v${-cs}Z`;

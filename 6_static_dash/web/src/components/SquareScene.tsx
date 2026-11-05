@@ -6,6 +6,7 @@ import { useReveal } from "../lib/useReveal";
 import { RuleDraw } from "./RuleDraw";
 import { SoftmaxBars } from "./SoftmaxBars";
 import { STATE_WORDS, StateGlyph } from "./StateBadge";
+import { watchNear } from "../lib/near";
 
 /** scripts/sweep_crops.py: architecture B's answer for every 224 px square on one photo, 16 px apart. */
 interface Sweep {
@@ -127,11 +128,13 @@ export function SquareScene({ first, dimAt }: { first: number; dimAt(step: numbe
       const next = phase < 0 ? PHASE_AT.length : phase;
       if (next !== lastPhase) { lastPhase = next; setPhase(next); }
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(frame); };
+    // static dash: nothing to do while the scene is far off screen; one last frame as it leaves
+    const near = watchNear(runEl, () => { if (!raf) raf = requestAnimationFrame(frame); });
+    const onScroll = () => { if (near.near && !raf) raf = requestAnimationFrame(frame); };
     frame();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    return () => { near.stop(); cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, [sweep]);
 
   const a = sweep ? answerAt(sweep, ...cell) : null;

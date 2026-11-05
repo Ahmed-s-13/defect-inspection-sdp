@@ -1,6 +1,7 @@
 import { useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { usePresent } from "../state/present";
+import { watchNear } from "./near";
 import { nextShown } from "./reveal";
 
 /** A section's entrance and exit, tied to the scroll direction like the title sketch.
@@ -24,11 +25,13 @@ export function useReveal<T extends Element>(show = 0.85, hide = 0.55) {
       lastY = scrollY;
       setReached((prev) => nextShown(prev, top, dir, innerHeight, show, hide));
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(check); };
+    // static dash: a section far off screen is not checked on every scroll (its state only changes on screen)
+    const near = ref.current ? watchNear(ref.current, () => { lastY = scrollY; if (!raf) raf = requestAnimationFrame(check); }, "50% 0px") : null;
+    const onScroll = () => { if ((!near || near.near) && !raf) raf = requestAnimationFrame(check); };
     check();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    return () => { near?.stop(); cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, [show, hide]);
 
   const shown = reduce || reached;

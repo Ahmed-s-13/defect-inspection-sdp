@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import logoMask from "../data/logoMask.json";
+import { watchNear } from "../lib/near";
 import "../styles/title.css";
 
 /** The Model page's title: a hand-drawn sketch of the team's helmet beside S.A.Q.R. (SDP'26 under it), and the SAQR
@@ -22,11 +23,9 @@ export function HelmetTitle({ step }: { step?: number }) {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let intro = reduce ? 1 : 0, raf = 0;
 
-    // static dash: scrolling stays smooth on phones. Each stroke is written only when its value changes and nothing
-    // is done once the title has finished erasing. On phones the sketch and the logo still draw in on arrival, but
-    // scrolling fades them out whole (moved by the compositor) instead of un-drawing their strokes, which a phone
-    // would have to repaint, mask and filter on every frame
-    const phone = matchMedia("(max-width: 860px)").matches;
+    // static dash: smooth on phones. The scroll position is worked out from measurements taken once (and again on
+    // resize), so a frame never forces the browser to lay the page out; each stroke is written only when its value
+    // changes; and nothing runs once the title is far off screen
     const last = new Map<Element, Record<string, string>>();
     const put = (el: HTMLElement | SVGElement, prop: "strokeDashoffset" | "visibility" | "opacity" | "transform", v: string) => {
       const seen = last.get(el) ?? {};
@@ -34,54 +33,49 @@ export function HelmetTitle({ step }: { step?: number }) {
       seen[prop] = v; last.set(el, seen);
       el.style[prop] = v;
     };
+    let geo: { top: number; span: number; pin: number } | null = null;
+    const measure = () => {
+      const box = run.current, stick = box?.firstElementChild as HTMLElement | null;
+      if (!box || !stick) return;
+      geo = { top: box.getBoundingClientRect().top + scrollY, span: Math.max(1, box.offsetHeight - stick.offsetHeight), pin: parseFloat(getComputedStyle(stick).top) || 0 };
+    };
     let prevErase = -1, prevIntro = -1;
 
     const paint = (now: number) => {
       raf = 0;
       if (intro < 1) intro = Math.min(1, (now - t0) / INTRO_MS);
-      const box = run.current;
-      if (!box) return;
-      const stick = box.firstElementChild as HTMLElement;
-      const span = Math.max(1, box.offsetHeight - stick.offsetHeight);
-      const raw = Math.min(1, Math.max(0, (stick.getBoundingClientRect().top - box.getBoundingClientRect().top) / (span * 0.85)));
-      const erase = Math.round(raw * 400) / 400;                 // finer steps than a frame can show
+      if (!geo) measure();
+      if (!geo) return;
+      const slid = Math.min(geo.span, Math.max(0, scrollY + geo.pin - geo.top));   // how far the pinned stage has moved
+      const erase = Math.round(Math.min(1, slid / (geo.span * 0.85)) * 500) / 500;
       if (erase === prevErase && intro === prevIntro) { if (intro < 1) raf = requestAnimationFrame(paint); return; }
       prevErase = erase; prevIntro = intro;
       // each list is drawn in order and un-drawn in reverse: the helmet's strokes, and the logo's beside them
-      const sketch = (list: SVGElement[], e: number) => list.forEach((el, i) => {
+      const sketch = (list: SVGElement[]) => list.forEach((el, i) => {
         const k = list.length, drawn = Math.min(1, Math.max(0, (intro - (i / k) * 0.75) / 0.25));
-        const kept = 1 - Math.min(1, Math.max(0, (e - ((k - 1 - i) / k) * 0.75) / 0.25));
+        const kept = 1 - Math.min(1, Math.max(0, (erase - ((k - 1 - i) / k) * 0.75) / 0.25));
         const shown = Math.min(drawn, kept);
         put(el, "strokeDashoffset", (1 - shown).toFixed(3));
         put(el, "visibility", shown <= 0.001 ? "hidden" : "visible"); // a round cap would leave a dot
       });
-      sketch(els, phone ? 0 : erase);
-      sketch(marks, phone ? 0 : erase);
-      const art = strokes.current?.ownerSVGElement;
-      if (phone && art) {
-        const gone = Math.min(1, Math.max(0, (erase - 0.1) / 0.8));     // the helmet lingers a little, then goes
-        put(art, "opacity", (1 - gone).toFixed(3));
-        put(art, "transform", `translateY(${(-gone * 32).toFixed(1)}px) scale(${(1 - gone * 0.06).toFixed(3)})`);
-      }
+      sketch(els);
+      sketch(marks);
       // the rest of the logo fills in once its outlines are drawn, and is the first to go
-      const filled = Math.min(1, Math.max(0, (intro - 0.75) / 0.25));
-      if (fill) put(fill, "opacity", (phone ? filled : Math.min(filled, 1 - Math.min(1, Math.max(0, erase / 0.3)))).toFixed(3));
-      if (phone && logo.current) {
-        const gone = Math.min(1, Math.max(0, erase / 0.45));
-        put(logo.current, "opacity", (1 - gone).toFixed(3));
-        put(logo.current, "transform", `translateY(${(-gone * 24).toFixed(1)}px)`);
-      }
+      if (fill) put(fill, "opacity", Math.min(Math.min(1, Math.max(0, (intro - 0.75) / 0.25)), 1 - Math.min(1, Math.max(0, erase / 0.3))).toFixed(3));
       if (type.current) {
         put(type.current, "opacity", (1 - erase * 0.85).toFixed(3));
         put(type.current, "transform", `translateY(${(-erase * 40).toFixed(1)}px)`);
       }
       if (intro < 1) raf = requestAnimationFrame(paint);
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(paint); };
+    const near = watchNear(run.current!, () => { if (!raf) raf = requestAnimationFrame(paint); });
+    const onScroll = () => { if (near.near && !raf) raf = requestAnimationFrame(paint); };
+    const onResize = () => { geo = null; onScroll(); };
     raf = requestAnimationFrame(paint);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    window.addEventListener("resize", onResize);
+    void document.fonts?.ready.then(onResize);
+    return () => { near.stop(); cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onResize); };
   }, []);
 
   return (
@@ -171,7 +165,9 @@ export function HelmetTitle({ step }: { step?: number }) {
               <feComposite in2="a" operator="in" />
             </filter>
           </defs>
-          <image href="brand/saqr_logo.png" width={logoMask.w} height={logoMask.h} mask="url(#saqr-logo-mask)" filter="url(#saqr-logo-grey)" />
+          {/* static dash: the filter's result baked into an image (brand/saqr_logo_ink2.png), so a phone doesn't run the
+              filter again on every frame the mask changes */}
+          <image href="brand/saqr_logo_ink2.png" width={logoMask.w} height={logoMask.h} mask="url(#saqr-logo-mask)" />
         </svg>
       </div>
       {step != null && <i hidden data-step={step} data-step-at={0} />}

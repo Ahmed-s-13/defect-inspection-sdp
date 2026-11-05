@@ -9,6 +9,7 @@ import { RuleDraw } from "./RuleDraw";
 import { SoftmaxBars } from "./SoftmaxBars";
 import { StateGlyph } from "./StateBadge";
 import "../styles/pipeline.css";
+import { watchNear } from "../lib/near";
 
 /** scripts/pipeline_scene.py: five test crops through architecture B, one per visor outcome, with the numbers each
  *  stage works on, the alpha grid and the data behind the stage details. */
@@ -130,11 +131,13 @@ export function PipelineScene({ rep, first, dimAt }: { rep: Report; first: numbe
       const key = `${w.crop}:${w.stage}:${w.stage === "visor" && w.t >= DROP_AT + 0.3}`; // landing is a change too
       if (key !== last) { last = key; setPos(w); }
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(frame); };
+    // static dash: nothing to do while the scene is far off screen; one last frame as it leaves
+    const near = watchNear(runEl, () => { if (!raf) raf = requestAnimationFrame(frame); });
+    const onScroll = () => { if (near.near && !raf) raf = requestAnimationFrame(frame); };
     frame();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    return () => { near.stop(); cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, []);
 
   // a detail closes when the crop moves on, on Escape, or on a click outside it

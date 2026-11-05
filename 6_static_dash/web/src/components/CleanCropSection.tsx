@@ -5,6 +5,7 @@ import cc from "../data/cleancrop.json";
 import healer from "../data/healer.json";
 import { className, int, pct } from "../lib/format";
 import { useReveal } from "../lib/useReveal";
+import { watchNear } from "../lib/near";
 
 /** scripts/clean_cropper_samples.py: one D1 photo through the clean cropper, its pick funnel, and d1_gc7's counts. */
 const C = cc;
@@ -64,11 +65,13 @@ function CleanScene({ steps, dim }: { steps: number[]; dim: boolean }) {
       const ph = p < 0.2 ? 0 : p < 0.42 ? 1 : p < 0.64 ? 2 : p < 0.86 ? 3 : 4;
       if (ph !== lastPhase) { lastPhase = ph; setPhase(ph); }
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(frameFn); };
+    // static dash: nothing to do while the scene is far off screen; one last frame as it leaves
+    const near = watchNear(runEl, () => { if (!raf) raf = requestAnimationFrame(frameFn); });
+    const onScroll = () => { if (near.near && !raf) raf = requestAnimationFrame(frameFn); };
     frameFn();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    return () => { near.stop(); cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, []);
 
   const at = (c: { left: number; top: number }) => ({ left: `${(c.left / W) * 100}%`, top: `${(c.top / H) * 100}%` });
