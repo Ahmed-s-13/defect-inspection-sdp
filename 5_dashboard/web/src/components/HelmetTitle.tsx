@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import logoMask from "../data/logoMask.json";
 import "../styles/title.css";
 
-/** The Model page's title: a hand-drawn sketch of the team's helmet beside S.A.Q.R. (SDP'26 under it), and the SAQR
+/** The Model page's title: a hand-drawn sketch of the team's helmet beside S.A.Q.R. (SDP 26-27 under it), and the SAQR
  *  logo in the top right. Both draw themselves on arrival: the logo is revealed along its own outlines (a mask traced
  *  by scripts/logo_mask.py), then filled in, so the image itself is shown unchanged. Scrolling down un-draws them
  *  (details first, the outlines last) and scrolling back up redraws them.
@@ -43,7 +43,7 @@ export function HelmetTitle({ step }: { step?: number }) {
       // the rest of the logo fills in once its outlines are drawn, and is the first to go
       if (fill) fill.style.opacity = String(Math.min(Math.min(1, Math.max(0, (intro - 0.75) / 0.25)), 1 - Math.min(1, Math.max(0, erase / 0.3))));
       if (type.current) {
-        type.current.style.opacity = String(1 - erase * 0.85);
+        type.current.style.opacity = String(1 - erase);
         type.current.style.transform = `translateY(${-erase * 40}px)`;
       }
       if (intro < 1) raf = requestAnimationFrame(paint);
@@ -124,7 +124,8 @@ export function HelmetTitle({ step }: { step?: number }) {
         </svg>
         <div className="title-type" ref={type}>
           <h1 className="saqr">S.A.Q.R.</h1>
-          <p className="sdp">SDP’26</p>
+          <p className="saqr-full">Standalone Aircraft Quality Recognition</p>
+          <p className="sdp">SDP 26-27</p>
         </div>
         {/* the SAQR logo from the brand identity, mirrored to face left (web/public/brand/saqr_logo.png); the mask shows it
             along its outlines first */}
@@ -134,7 +135,7 @@ export function HelmetTitle({ step }: { step?: number }) {
               <rect className="logo-fill" width={logoMask.w} height={logoMask.h} fill="#fff" />
               {logoMask.paths.map((d) => <path key={d.slice(0, 24)} className="logo-line" d={d} fill="none" stroke="#fff" strokeWidth={logoMask.pen} strokeLinecap="round" strokeLinejoin="round" />)}
             </mask>
-            {/* the logo in the page's secondary ink (as SDP'26): its shape and shading (the image's alpha) filled with
+            {/* the logo in the page's secondary ink (as SDP 26-27): its shape and shading (the image's alpha) filled with
                 var(--ink-2), the alpha scaled so the darkest parts come out as the full colour */}
             <filter id="saqr-logo-grey" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
               <feComponentTransfer in="SourceAlpha" result="a"><feFuncA type="linear" slope={1 / logoMask.alphaMax} /></feComponentTransfer>

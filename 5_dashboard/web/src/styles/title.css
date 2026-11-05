@@ -14,6 +14,7 @@
 .sketch .mark  { fill: none; stroke: var(--detected); stroke-width: 2.2; stroke-linecap: round; }
 .title-type { position: relative; will-change: transform, opacity; }
 .saqr { margin: 0; font: 700 clamp(64px, 9.4vw, 168px)/.9 var(--font-fig); letter-spacing: -.05em; white-space: nowrap; }
+.saqr-full { margin: .7em 0 0 .12em; font: 600 clamp(15px, 1.55vw, 28px)/1.2 var(--font-fig); color: var(--ink); }
 .sdp { margin: .35em 0 0 .06em; font: 700 clamp(26px, 3.3vw, 58px)/1 var(--font-fig); letter-spacing: .02em; color: var(--ink-2); white-space: nowrap; }
 /* the SAQR logo in the top right, shown as it is; its mask draws it in along its outlines */
 .saqr-logo { position: absolute; top: 5%; right: 5vw; width: clamp(130px, 12vw, 210px); height: auto; overflow: visible; pointer-events: none; }
@@ -23,6 +24,7 @@
   .title-stage { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 8px; }
   .title-stage .sketch { max-height: 50vh; }
   .saqr { font-size: clamp(54px, 16vw, 120px); }
+  .saqr-full { font-size: clamp(14px, 3.6vw, 22px); }
   .sdp { font-size: clamp(22px, 6vw, 40px); }
   .saqr-logo { top: 3%; width: clamp(90px, 24vw, 130px); }
 }
