@@ -22,6 +22,20 @@ export function HelmetTitle({ step }: { step?: number }) {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let intro = reduce ? 1 : 0, raf = 0;
 
+    // static dash: scrolling stays smooth on phones. Each stroke is written only when its value changes and nothing
+    // is done once the title has finished erasing. On phones the sketch and the logo still draw in on arrival, but
+    // scrolling fades them out whole (moved by the compositor) instead of un-drawing their strokes, which a phone
+    // would have to repaint, mask and filter on every frame
+    const phone = matchMedia("(max-width: 860px)").matches;
+    const last = new Map<Element, Record<string, string>>();
+    const put = (el: HTMLElement | SVGElement, prop: "strokeDashoffset" | "visibility" | "opacity" | "transform", v: string) => {
+      const seen = last.get(el) ?? {};
+      if (seen[prop] === v) return;
+      seen[prop] = v; last.set(el, seen);
+      el.style[prop] = v;
+    };
+    let prevErase = -1, prevIntro = -1;
+
     const paint = (now: number) => {
       raf = 0;
       if (intro < 1) intro = Math.min(1, (now - t0) / INTRO_MS);
@@ -29,22 +43,37 @@ export function HelmetTitle({ step }: { step?: number }) {
       if (!box) return;
       const stick = box.firstElementChild as HTMLElement;
       const span = Math.max(1, box.offsetHeight - stick.offsetHeight);
-      const erase = Math.min(1, Math.max(0, (stick.getBoundingClientRect().top - box.getBoundingClientRect().top) / (span * 0.85)));
+      const raw = Math.min(1, Math.max(0, (stick.getBoundingClientRect().top - box.getBoundingClientRect().top) / (span * 0.85)));
+      const erase = Math.round(raw * 400) / 400;                 // finer steps than a frame can show
+      if (erase === prevErase && intro === prevIntro) { if (intro < 1) raf = requestAnimationFrame(paint); return; }
+      prevErase = erase; prevIntro = intro;
       // each list is drawn in order and un-drawn in reverse: the helmet's strokes, and the logo's beside them
-      const sketch = (list: SVGElement[]) => list.forEach((el, i) => {
+      const sketch = (list: SVGElement[], e: number) => list.forEach((el, i) => {
         const k = list.length, drawn = Math.min(1, Math.max(0, (intro - (i / k) * 0.75) / 0.25));
-        const kept = 1 - Math.min(1, Math.max(0, (erase - ((k - 1 - i) / k) * 0.75) / 0.25));
+        const kept = 1 - Math.min(1, Math.max(0, (e - ((k - 1 - i) / k) * 0.75) / 0.25));
         const shown = Math.min(drawn, kept);
-        el.style.strokeDashoffset = String(1 - shown);
-        el.style.visibility = shown <= 0.001 ? "hidden" : "visible"; // a round cap would leave a dot
+        put(el, "strokeDashoffset", (1 - shown).toFixed(3));
+        put(el, "visibility", shown <= 0.001 ? "hidden" : "visible"); // a round cap would leave a dot
       });
-      sketch(els);
-      sketch(marks);
+      sketch(els, phone ? 0 : erase);
+      sketch(marks, phone ? 0 : erase);
+      const art = strokes.current?.ownerSVGElement;
+      if (phone && art) {
+        const gone = Math.min(1, Math.max(0, (erase - 0.1) / 0.8));     // the helmet lingers a little, then goes
+        put(art, "opacity", (1 - gone).toFixed(3));
+        put(art, "transform", `translateY(${(-gone * 32).toFixed(1)}px) scale(${(1 - gone * 0.06).toFixed(3)})`);
+      }
       // the rest of the logo fills in once its outlines are drawn, and is the first to go
-      if (fill) fill.style.opacity = String(Math.min(Math.min(1, Math.max(0, (intro - 0.75) / 0.25)), 1 - Math.min(1, Math.max(0, erase / 0.3))));
+      const filled = Math.min(1, Math.max(0, (intro - 0.75) / 0.25));
+      if (fill) put(fill, "opacity", (phone ? filled : Math.min(filled, 1 - Math.min(1, Math.max(0, erase / 0.3)))).toFixed(3));
+      if (phone && logo.current) {
+        const gone = Math.min(1, Math.max(0, erase / 0.45));
+        put(logo.current, "opacity", (1 - gone).toFixed(3));
+        put(logo.current, "transform", `translateY(${(-gone * 24).toFixed(1)}px)`);
+      }
       if (type.current) {
-        type.current.style.opacity = String(1 - erase * 0.85);
-        type.current.style.transform = `translateY(${-erase * 40}px)`;
+        put(type.current, "opacity", (1 - erase * 0.85).toFixed(3));
+        put(type.current, "transform", `translateY(${(-erase * 40).toFixed(1)}px)`);
       }
       if (intro < 1) raf = requestAnimationFrame(paint);
     };

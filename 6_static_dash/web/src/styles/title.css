@@ -37,3 +37,8 @@
   .sdp { font-size: clamp(19px, min(5.2vw, 3svh), 30px); }
   .saqr-logo { top: 3%; right: max(16px, 5vw); width: clamp(64px, min(17vw, 11svh), 104px); }
 }
+/* static dash, phones: the sketch and the logo get layers of their own, so redrawing one doesn't repaint the page
+   around it, and the logo's fade is done by the compositor */
+@media (max-width: 860px) {
+  .title-stage .sketch, .saqr-logo { will-change: transform; }
+}
